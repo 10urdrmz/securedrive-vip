@@ -22,8 +22,8 @@ export default function Step1Vehicles() {
 
   return (
     <div>
-      <div style={{ marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Tahsis Edilecek VIP Aracınızı Belirleyin</h2>
+      <div style={{ marginBottom: '14px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Tahsis Edilecek VIP Aracınızı Belirleyin</h2>
         <span className="preset-chip" style={{ color: 'var(--accent-green)' }}>
           {activeRoute ? `${activeRoute.distanceKm} km · ~${activeRoute.durationMin} dk` : 'Canlı DB Filosu'}
         </span>
@@ -83,10 +83,12 @@ export default function Step1Vehicles() {
               </div>
 
               <div className="vehicle-right-action">
-                <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Sabit Fiyat
-                </span>
-                <div className="vehicle-rate mono">{fareFormatted}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>
+                    Sabit Fiyat
+                  </span>
+                  <div className="vehicle-rate mono">{fareFormatted}</div>
+                </div>
                 <button type="button" className="btn-select-chip">
                   {isSelected ? 'Seçildi' : 'Tahsis Et'}
                 </button>

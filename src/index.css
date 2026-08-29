@@ -2441,6 +2441,7 @@ textarea.input-field-box {
 
   .vehicle-right-action {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     width: 100%;

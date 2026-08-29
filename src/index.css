@@ -2022,7 +2022,10 @@ textarea.input-field-box {
   color: var(--text-muted);
 }
 
-/* Responsive */
+/* ==============================================================================
+   COMPREHENSIVE RESPONSIVE DESIGN & MOBILE OPTIMIZATION (iPhone 14/15/16/17+)
+   ============================================================================== */
+
 @media (max-width: 1100px) {
   .booking-form-grid {
     grid-template-columns: 1fr 1fr 1fr;
@@ -2048,60 +2051,481 @@ textarea.input-field-box {
     flex-wrap: wrap;
     gap: 10px;
   }
+  .light-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
 }
 
 @media (max-width: 768px) {
+  /* Prevent iOS automatic zoom on text/inputs */
+  input,
+  select,
+  textarea,
+  .input-field-box input,
+  input.input-field-box,
+  textarea.input-field-box,
+  select.input-field-box {
+    font-size: 16px !important;
+    min-height: 48px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+  }
+
+  .container {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Header & Navigation */
+  .site-header {
+    height: 60px;
+    padding: 0;
+  }
+
+  .site-header-container {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .header-actions-desktop {
+    display: none;
+  }
+
+  .header-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .header-mobile-drawer {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 20px 20px max(24px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 99999;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-nav-link {
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 10px;
+    color: var(--text);
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    background: #f1f5f9;
+    color: #2563eb;
+    border-color: #e2e8f0;
+  }
+
+  /* Hero Section & Booking Widget */
   .hero-section {
-    padding-top: 96px;
+    padding-top: 76px;
+    padding-bottom: 28px;
+  }
+
+  .hero-pill-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    margin-bottom: 12px;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .hero-title {
-    font-size: 28px;
+    font-size: 24px;
+    line-height: 1.22;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .hero-subtitle {
+    font-size: 13.5px;
+    line-height: 1.45;
+    margin-bottom: 18px;
+  }
+
+  .booking-widget-card {
+    padding: 14px 12px;
+    border-radius: 16px;
+    margin-top: 6px;
   }
 
   .booking-tabs-bar {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: stretch;
+    gap: 10px;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+
+  .service-chips {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .service-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip-btn {
+    font-size: 12px;
+    padding: 8px 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 38px;
+  }
+
+  .trip-toggle-group {
+    width: 100%;
+    display: flex;
+  }
+
+  .trip-toggle-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    padding: 8px 6px;
+    min-height: 36px;
   }
 
   .booking-form-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .input-block {
+    width: 100%;
+  }
+
+  .input-field-box {
+    min-height: 48px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .btn-swap {
+    display: flex;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: #ffffff;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-sm);
+    z-index: 15;
+  }
+
+  .autocomplete-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    z-index: 9999;
+    max-height: 250px;
+    border-radius: 12px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+  }
+
+  .dropdown-option {
+    padding: 12px 14px;
+    min-height: 48px;
   }
 
   .btn-submit-search {
     grid-column: span 1;
     width: 100%;
+    min-height: 50px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 12px;
+    margin-top: 4px;
   }
 
-  .btn-swap {
+  .quick-preset-bar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+    gap: 6px;
+  }
+
+  .quick-preset-bar::-webkit-scrollbar {
     display: none;
   }
 
-  .trust-strip,
-  .amenities-container-grid,
-  .fleet-grid-3,
-  .routes-grid-3,
-  .form-grid-2,
-  .payment-chips-grid,
-  .page-split-grid,
-  .corporate-form-grid {
-    grid-template-columns: 1fr;
+  .quick-label {
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .preset-chip {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    min-height: 30px;
+  }
+
+  .trust-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .trust-cell {
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .trust-cell h4 {
+    font-size: 11.5px;
+  }
+
+  .trust-cell p {
+    font-size: 10.5px;
+  }
+
+  /* Booking Wizard Steps Bar on Mobile */
+  .booking-flow-section {
+    margin-top: 14px;
+    padding-top: 0;
+  }
+
+  .steps-nav-card {
+    padding: 12px 14px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .steps-list {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 4px;
+    width: 100%;
+  }
+
+  .steps-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .step-item {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--bg-chip);
+    gap: 6px;
+  }
+
+  .step-item.active {
+    background: #0d0d0d;
+    color: #ffffff;
+  }
+
+  .step-item.active .step-badge {
+    background: #ffffff;
+    color: #0d0d0d;
+    border-color: #ffffff;
+  }
+
+  .step-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+
+  /* Step 1: Vehicle Selection on Mobile */
+  .vehicle-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .vehicle-minimal-card {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .vehicle-thumb {
+    width: 100%;
+    height: 140px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .vehicle-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .vehicle-meta h3 {
+    font-size: 15px;
+  }
+
+  .specs-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .spec-chip {
+    font-size: 10.5px;
+    padding: 3px 7px;
   }
 
   .vehicle-right-action {
-    align-items: flex-start;
-    flex-direction: row;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .vehicle-rate {
+    font-size: 17px;
+    font-weight: 800;
+  }
+
+  .btn-select-chip {
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 40px;
+    border-radius: 10px;
+  }
+
+  /* Step Navigation Bottom Bar */
+  .step-nav-bar {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .step-nav-bar button,
+  .step-nav-bar a {
+    width: 100% !important;
+    min-height: 48px;
+    font-size: 14px;
+    font-weight: 600;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  /* Step 2: Amenities */
+  .amenities-container-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .amenity-row-card {
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  /* Step 3: Passenger & Payment */
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .payment-chips-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .payment-chip {
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  /* Step 4 & Tracking: Voucher / Boarding Pass */
+  #voucher-pass-card,
+  .ticket-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .ticket-header {
+    padding: 14px 16px;
   }
 
   .ticket-body {
     grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 16px;
+  }
+
+  .ticket-route {
+    padding: 12px 14px;
+  }
+
+  .ticket-details-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
   .ticket-qr-col {
@@ -2109,29 +2533,91 @@ textarea.input-field-box {
     border-top: 1px dashed var(--border);
     padding-left: 0;
     padding-top: 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .ticket-details-grid {
-    grid-template-columns: 1fr 1fr;
+  .ticket-qr-col img {
+    width: 110px !important;
+    height: 110px !important;
   }
 
-  .site-header-container {
-    padding: 0 16px;
-    height: 64px;
+  .ticket-actions-bar {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .ticket-actions-bar button,
+  .ticket-actions-bar a {
+    width: 100%;
+    min-height: 46px;
+    justify-content: center;
+  }
+
+  /* Modals */
+  .modal-sheet {
+    width: calc(100% - 24px) !important;
+    max-width: calc(100% - 24px) !important;
+    max-height: 90vh !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+    margin: 12px auto;
+  }
+
+  /* General Grid Layouts */
+  .fleet-grid-3,
+  .routes-grid-3,
+  .page-split-grid,
+  .corporate-form-grid,
+  .services-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+
+  /* Light Footer */
+  .light-trust-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .light-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .light-footer-main {
+    padding: 30px 16px 20px 16px;
+  }
+
+  /* Admin */
+  .admin-wrapper {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
   }
 
   .admin-content {
-    padding: 16px;
+    padding: 14px;
   }
 
   .admin-top-header {
-    padding: 0 16px;
+    padding: 0 14px;
+    height: 56px;
   }
 
   .admin-table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
+
 
 /* ==========================================================================
    CargoMax Inspired Logistics Admin Dashboard Styles

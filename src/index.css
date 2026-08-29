@@ -1296,6 +1296,10 @@ textarea.input-field-box {
   gap: 20px;
 }
 
+.flow-grid > div {
+  min-width: 0;
+}
+
 /* Sidebar Sticky */
 .sidebar-sticky {
   position: sticky;
@@ -1451,6 +1455,10 @@ textarea.input-field-box {
 
 .vehicle-minimal-card:hover .vehicle-thumb img {
   transform: scale(1.04);
+}
+
+.vehicle-meta {
+  min-width: 0;
 }
 
 .vehicle-meta h3 {
@@ -2404,10 +2412,12 @@ textarea.input-field-box {
   }
 
   .vehicle-minimal-card {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
     padding: 14px;
     border-radius: 14px;
+    min-width: 0;
   }
 
   .vehicle-thumb {

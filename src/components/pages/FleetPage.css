@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Fleet Page Responsive Styles
+   ========================================================================== */
+
+.fleet-page-container {
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.fleet-page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.fleet-page-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-top: 16px;
+  color: var(--text);
+}
+
+.fleet-page-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 12px auto 0 auto;
+  line-height: 1.6;
+}
+
+.fleet-filters {
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.fleet-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-normal) var(--ease-spring), transform var(--duration-normal) var(--ease-spring);
+}
+
+.fleet-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+.fleet-card-image-wrap {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+}
+
+.fleet-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.fleet-card:hover .fleet-card-image {
+  transform: scale(1.05);
+}
+
+.fleet-card-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.fleet-card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.fleet-card-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.fleet-card-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.fleet-card-specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 24px;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.spec-icon {
+  color: var(--text-muted);
+}
+
+.spec-icon-accent {
+  color: var(--accent-green);
+}
+
+.fleet-card-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 20px;
+}
+
+.fleet-card-price-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.fleet-card-price {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.fleet-card-btn {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+  background: var(--accent-black);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--duration-fast);
+}
+
+.fleet-card-btn:hover {
+  background: #262626;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet (max 992px) */
+@media (max-width: 992px) {
+  .fleet-page-container {
+    padding: 40px 20px;
+  }
+  
+  .fleet-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .fleet-page-title {
+    font-size: 32px;
+  }
+}
+
+/* Mobile Large (max 768px) */
+@media (max-width: 768px) {
+  .fleet-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .fleet-filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .fleet-filters::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .fleet-page-title {
+    font-size: 28px;
+  }
+
+  .fleet-card-image-wrap {
+    height: 200px;
+  }
+}
+
+/* Mobile Small (max 480px) */
+@media (max-width: 480px) {
+  .fleet-page-container {
+    padding: 30px 16px;
+  }
+
+  .fleet-page-title {
+    font-size: 24px;
+    margin-top: 12px;
+  }
+
+  .fleet-page-subtitle {
+    font-size: 14px;
+  }
+
+  .fleet-card-content {
+    padding: 16px;
+  }
+
+  .fleet-card-title {
+    font-size: 18px;
+  }
+
+  .fleet-card-specs {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .fleet-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .fleet-card-price-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .fleet-card-price-label {
+    margin-bottom: 0;
+  }
+
+  .fleet-card-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

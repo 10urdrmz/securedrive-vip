@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import RouteMapSidebar from './RouteMapSidebar';
 import {
@@ -26,6 +26,10 @@ export default function BookingWizardLayout() {
   const { pickup, destination, confirmedBooking } = useBooking();
   const currentStepKey = getWizardStepFromPath(location.pathname);
   const currentStep = STEPS.find((step) => step.key === currentStepKey) || STEPS[0];
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <section className="booking-flow-section active" id="booking-flow-section">

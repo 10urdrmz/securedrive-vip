@@ -61,7 +61,12 @@ export default function Step1Vehicles() {
             <div 
               key={vehicle.id}
               className={`vehicle-minimal-card ${isSelected ? 'selected' : ''}`}
-              onClick={() => setSelectedVehicleId(vehicle.id)}
+              onClick={() => {
+                setSelectedVehicleId(vehicle.id);
+                if (window.innerWidth <= 768) {
+                  setTimeout(() => navigate(BOOKING_WIZARD_PATHS.amenities), 400);
+                }
+              }}
             >
               <div className="vehicle-thumb">
                 <img src={vehicle.image} alt={vehicle.name} loading="lazy" />

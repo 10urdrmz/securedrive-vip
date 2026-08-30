@@ -9,12 +9,12 @@ export default function AuthPage() {
   const location = useLocation();
   const { user, booting, login, register } = useAuth();
   const [activeTab, setActiveTab] = useState('login'); // 'login' or 'register'
-  
+
   // Login fields
   const [loginIdentifier, setLoginIdentifier] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
-  
+
   // Register fields
   const [fullName, setFullName] = useState('');
   const [regEmail, setRegEmail] = useState('');
@@ -117,7 +117,7 @@ export default function AuthPage() {
   return (
     <div className="auth-page-wrap">
       <div className="auth-card">
-        
+
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <Link to="/" className="brand-logo" style={{ textDecoration: 'none', display: 'inline-flex', marginBottom: '8px' }}>
@@ -131,16 +131,16 @@ export default function AuthPage() {
 
         {/* Tab Switcher */}
         <div className="service-chips" style={{ justifyContent: 'center', marginBottom: '20px' }}>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={`chip-btn ${activeTab === 'login' ? 'active' : ''}`}
             onClick={() => { setActiveTab('login'); setErrorMsg(''); }}
             style={{ flex: 1, textAlign: 'center' }}
           >
             Giriş Yap
           </button>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={`chip-btn ${activeTab === 'register' ? 'active' : ''}`}
             onClick={() => { setActiveTab('register'); setErrorMsg(''); }}
             style={{ flex: 1, textAlign: 'center' }}
@@ -175,11 +175,14 @@ export default function AuthPage() {
               <label className="input-label">Kullanıcı Adı veya E-Posta</label>
               <div className="input-field-box" style={{ height: '42px' }}>
                 <User size={15} color="var(--text-muted)" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
                   placeholder="admin, sofor veya yolcu"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   required
                 />
               </div>
@@ -189,15 +192,18 @@ export default function AuthPage() {
               <label className="input-label">Şifre</label>
               <div className="input-field-box" style={{ height: '42px' }}>
                 <Lock size={15} color="var(--text-muted)" />
-                <input 
-                  type={showPassword ? 'text' : 'password'} 
+                <input
+                  type={showPassword ? 'text' : 'password'}
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   placeholder="••••••••"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   required
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}
                 >
@@ -224,8 +230,8 @@ export default function AuthPage() {
               Beni hatırla (30 gün)
             </label>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn-action-primary"
               disabled={loading}
               style={{
@@ -247,11 +253,13 @@ export default function AuthPage() {
               <label className="input-label">Ad Soyad *</label>
               <div className="input-field-box" style={{ height: '40px' }}>
                 <User size={15} color="var(--text-muted)" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Örn: Onur Sefa"
+                  autoCapitalize="words"
+                  autoCorrect="off"
                   required
                 />
               </div>
@@ -261,11 +269,14 @@ export default function AuthPage() {
               <label className="input-label">E-Posta Adresi *</label>
               <div className="input-field-box" style={{ height: '40px' }}>
                 <Mail size={15} color="var(--text-muted)" />
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
                   placeholder="ornek@email.com"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   required
                 />
               </div>
@@ -275,11 +286,13 @@ export default function AuthPage() {
               <label className="input-label">Telefon Numarası *</label>
               <div className="input-field-box" style={{ height: '40px' }}>
                 <Phone size={15} color="var(--text-muted)" />
-                <input 
-                  type="text" 
+                <input
+                  type="tel"
                   value={regPhone}
                   onChange={(e) => setRegPhone(e.target.value)}
                   placeholder="+90 532 000 00 00"
+                  autoCapitalize="none"
+                  autoCorrect="off"
                   required
                 />
               </div>
@@ -289,8 +302,8 @@ export default function AuthPage() {
               <label className="input-label">Şifre Belirleyin *</label>
               <div className="input-field-box" style={{ height: '40px' }}>
                 <Lock size={15} color="var(--text-muted)" />
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
                   placeholder="••••••••"
@@ -299,8 +312,8 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn-action-primary"
               disabled={loading}
               style={{
@@ -327,8 +340,8 @@ export default function AuthPage() {
             Hızlı Test Girişleri (3 Rol):
           </span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="preset-chip"
               onClick={() => handleQuickFill('admin', 'admin123')}
               style={{ justifyContent: 'space-between', padding: '6px 12px', fontSize: '12px' }}
@@ -339,8 +352,8 @@ export default function AuthPage() {
               <small style={{ color: 'var(--text-muted)' }}>/admin</small>
             </button>
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="preset-chip"
               onClick={() => handleQuickFill('sofor', 'sofor123')}
               style={{ justifyContent: 'space-between', padding: '6px 12px', fontSize: '12px' }}
@@ -351,8 +364,8 @@ export default function AuthPage() {
               <small style={{ color: 'var(--text-muted)' }}>/driver</small>
             </button>
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="preset-chip"
               onClick={() => handleQuickFill('yolcu', 'yolcu123')}
               style={{ justifyContent: 'space-between', padding: '6px 12px', fontSize: '12px' }}

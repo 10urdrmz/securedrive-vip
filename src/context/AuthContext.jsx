@@ -9,12 +9,26 @@ import {
   registerCustomer as authRegister,
   updateSessionUser
 } from '../lib/auth';
+import { startDriverLocationTracking, stopDriverLocationTracking } from '../lib/locationService';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => restoreSession());
   const [booting, setBooting] = useState(false);
+
+  // Global Şoför Canlı GPS Takibi (Ana sayfa, rezervasyon, şoför paneli vb. tüm sayfalarda aktif)
+  useEffect(() => {
+    if (user && user.role === 'driver') {
+      startDriverLocationTracking(user);
+    } else {
+      stopDriverLocationTracking();
+    }
+
+    return () => {
+      stopDriverLocationTracking();
+    };
+  }, [user]);
 
   const syncFromStorage = useCallback(() => {
     setUser(restoreSession());

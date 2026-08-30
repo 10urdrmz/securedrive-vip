@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { fetchDriverBookings, updateBookingStatus } from '../../lib/bookingService';
+import { supabase } from '../../lib/supabase';
+import { fetchDriverBookings, updateBookingStatus, bookingAssignedToDriver } from '../../lib/bookingService';
+import { sendNativeNotification } from '../../lib/nativeNotifications';
+import { addLocationListener, removeLocationListener } from '../../lib/locationService';
 import { getStatusLabel, normalizeStatusStep } from '../../lib/bookingStatus';
 import NotificationBell from '../common/NotificationBell';
 import { fetchDriverReviewStats, getDriverStatsForPhone } from '../../lib/reviewService';
 import BookingCodeLink from '../common/BookingCodeLink';
+import DriverLiveMap from './DriverLiveMap';
 import {
   Car,
   Phone,
@@ -149,6 +153,7 @@ export default function DriverPortal() {
   const [feedbackType, setFeedbackType] = useState('success');
   const [taskFilter, setTaskFilter] = useState('active');
   const [driverRating, setDriverRating] = useState({ average: 4.99, count: 0, complaints: 0 });
+  const [liveLocation, setLiveLocation] = useState(null);
 
   const fetchDriverTasks = useCallback(async () => {
     if (!currentUser) return;
@@ -169,6 +174,54 @@ export default function DriverPortal() {
   useEffect(() => {
     fetchDriverTasks();
   }, [fetchDriverTasks]);
+
+  // Live GPS tracking listener
+  useEffect(() => {
+    const handleUpdate = (coords) => {
+      setLiveLocation(coords);
+    };
+
+    addLocationListener(handleUpdate);
+    return () => {
+      removeLocationListener(handleUpdate);
+    };
+  }, []);
+
+  // Realtime listener for incoming assignments and task updates
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const channelId = `driver-realtime-tasks-${currentUser.id || currentUser.phone || 'driver'}`;
+    const channel = supabase
+      .channel(channelId)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        (payload) => {
+          const row = payload.new;
+          if (row && bookingAssignedToDriver(row, currentUser)) {
+            fetchDriverTasks();
+
+            // Görev yeni atandıysa telefona yerel bildirim fırlat
+            const isNew = payload.eventType === 'INSERT' || 
+              (payload.eventType === 'UPDATE' && payload.old?.chauffeur_phone !== row.chauffeur_phone);
+            
+            if (isNew) {
+              sendNativeNotification({
+                title: '🚗 Yeni VIP Transfer Görevi!',
+                body: `${row.passenger_name || 'VIP Yolcu'} · ${row.pickup_location || 'Havalimanı'} → ${row.destination_location || 'Otel'}`,
+                extra: { code: row.code }
+              });
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUser, fetchDriverTasks]);
 
   useEffect(() => {
     if (!currentUser?.phone) return;
@@ -240,87 +293,164 @@ export default function DriverPortal() {
   return (
     <div className="driver-portal">
       <div className="driver-shell">
+        
+        {/* Left / Top Panel */}
         <aside className="driver-panel">
           <div className="driver-profile">
             <div className="driver-profile__avatar">{initials}</div>
             <div className="driver-profile__info">
               <div className="driver-profile__top">
                 <h1>{currentUser.full_name}</h1>
-                <span className={`driver-profile__status${isOnDuty ? '' : ' idle'}`}>
-                  {isOnDuty ? 'Nöbette' : 'Molada'}
-                </span>
+                <button
+                  type="button"
+                  className={`driver-profile__status-btn ${isOnDuty ? 'active' : 'idle'}`}
+                  onClick={() => setIsOnDuty(!isOnDuty)}
+                  title="Nöbet Durumunu Değiştir"
+                >
+                  <span className="status-dot" />
+                  <span>{isOnDuty ? 'Nöbette' : 'Molada'}</span>
+                </button>
               </div>
               <p>{currentUser.phone || currentUser.email}</p>
-              <p className="driver-profile__plate">{currentUser.vehicle_plate || '34 VIP 770'}</p>
+              <div className="driver-profile__meta-row">
+                <span className="driver-profile__plate">{currentUser.vehicle_plate || '34 VIP 770'}</span>
+                <span className="driver-profile__rating-chip">★ {driverRating.average} Puan</span>
+                {liveLocation && (
+                  <span className="driver-profile__gps-chip" title={`Doğruluk: ±${liveLocation.accuracy}m`}>
+                    <span className="gps-live-dot" />
+                    <span>GPS Canlı ({liveLocation.speed} km/s)</span>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="driver-panel__divider" />
+          {/* Desktop full navigation list */}
+          <div className="driver-panel__desktop-menu">
+            <div className="driver-panel__divider" />
+            <div className="driver-menu-group">
+              <button
+                type="button"
+                className="driver-menu-item driver-menu-item--status"
+                onClick={() => setIsOnDuty(!isOnDuty)}
+              >
+                <span className="driver-menu-item__icon"><CircleDot size={18} strokeWidth={1.75} /></span>
+                <span className="driver-menu-item__label">Durum güncelle</span>
+                <span className="driver-menu-item__chevron"><ChevronRight size={16} /></span>
+              </button>
+              <div className="driver-menu-item driver-menu-item--static">
+                <span className="driver-menu-item__icon"><Award size={18} strokeWidth={1.75} /></span>
+                <span className="driver-menu-item__label">Şoför puanı</span>
+                <span className="driver-menu-item__badge green">{driverRating.average}</span>
+              </div>
+            </div>
 
-          <div className="driver-menu-group">
-            <button
-              type="button"
-              className="driver-menu-item driver-menu-item--status"
-              onClick={() => setIsOnDuty(!isOnDuty)}
-            >
-              <span className="driver-menu-item__icon"><CircleDot size={18} strokeWidth={1.75} /></span>
-              <span className="driver-menu-item__label">Durum güncelle</span>
-              <span className="driver-menu-item__chevron"><ChevronRight size={16} /></span>
+            <div className="driver-panel__divider" />
+
+            <div className="driver-menu-group">
+              <p className="driver-menu-group__title">Görevler</p>
+              <DriverMenuItem
+                icon={Navigation}
+                label="Aktif görevler"
+                badge={activeTasks.length || '0'}
+                active={taskFilter === 'active'}
+                onClick={() => setTaskFilter('active')}
+              />
+              <DriverMenuItem
+                icon={CheckCircle2}
+                label="Tamamlanan"
+                badge={completedTasks.length || '0'}
+                active={taskFilter === 'completed'}
+                onClick={() => setTaskFilter('completed')}
+              />
+              <DriverMenuItem
+                icon={ListChecks}
+                label="Tüm görevler"
+                badge={tasks.length || '0'}
+                active={taskFilter === 'all'}
+                onClick={() => setTaskFilter('all')}
+              />
+            </div>
+
+            <div className="driver-panel__divider" />
+
+            <div className="driver-menu-group">
+              <div className="driver-menu-item driver-menu-item--static">
+                <span className="driver-menu-item__icon"><Bell size={18} strokeWidth={1.75} /></span>
+                <span className="driver-menu-item__label">Bildirimler</span>
+                <span className="driver-menu-item__bell"><NotificationBell variant="light" /></span>
+              </div>
+              <DriverMenuItem icon={RefreshCw} label="Listeyi yenile" onClick={fetchDriverTasks} />
+            </div>
+
+            <div className="driver-panel__divider" />
+
+            <button type="button" className="driver-menu-item driver-menu-item--logout" onClick={handleLogout}>
+              <span className="driver-menu-item__icon"><LogOut size={18} strokeWidth={1.75} /></span>
+              <span className="driver-menu-item__label">Çıkış yap</span>
             </button>
-            <DriverMenuItem icon={User} label="Profilim" />
-            <div className="driver-menu-item driver-menu-item--static">
-              <span className="driver-menu-item__icon"><Award size={18} strokeWidth={1.75} /></span>
-              <span className="driver-menu-item__label">Şoför puanı</span>
-              <span className="driver-menu-item__badge green">{driverRating.average}</span>
+          </div>
+
+          {/* Mobile Quick Bar */}
+          <div className="driver-panel__mobile-bar">
+            <div className="driver-panel__mobile-actions">
+              <div className="driver-mobile-action-item">
+                <NotificationBell variant="light" />
+              </div>
+              <button 
+                type="button" 
+                className="driver-mobile-btn"
+                onClick={fetchDriverTasks}
+                title="Yenile"
+              >
+                <RefreshCw size={14} className={loading ? 'spin' : ''} />
+                <span>Yenile</span>
+              </button>
+              <button 
+                type="button" 
+                className="driver-mobile-btn logout"
+                onClick={handleLogout}
+                title="Çıkış Yap"
+              >
+                <LogOut size={14} />
+                <span>Çıkış</span>
+              </button>
             </div>
           </div>
-
-          <div className="driver-panel__divider" />
-
-          <div className="driver-menu-group">
-            <p className="driver-menu-group__title">Görevler</p>
-            <DriverMenuItem
-              icon={Navigation}
-              label="Aktif görevler"
-              badge={activeTasks.length || '0'}
-              active={taskFilter === 'active'}
-              onClick={() => setTaskFilter('active')}
-            />
-            <DriverMenuItem
-              icon={CheckCircle2}
-              label="Tamamlanan"
-              badge={completedTasks.length || '0'}
-              active={taskFilter === 'completed'}
-              onClick={() => setTaskFilter('completed')}
-            />
-            <DriverMenuItem
-              icon={ListChecks}
-              label="Tüm görevler"
-              badge={tasks.length || '0'}
-              active={taskFilter === 'all'}
-              onClick={() => setTaskFilter('all')}
-            />
-          </div>
-
-          <div className="driver-panel__divider" />
-
-          <div className="driver-menu-group">
-            <div className="driver-menu-item driver-menu-item--static">
-              <span className="driver-menu-item__icon"><Bell size={18} strokeWidth={1.75} /></span>
-              <span className="driver-menu-item__label">Bildirimler</span>
-              <span className="driver-menu-item__bell"><NotificationBell variant="light" /></span>
-            </div>
-            <DriverMenuItem icon={RefreshCw} label="Listeyi yenile" onClick={fetchDriverTasks} />
-          </div>
-
-          <div className="driver-panel__divider" />
-
-          <button type="button" className="driver-menu-item driver-menu-item--logout" onClick={handleLogout}>
-            <span className="driver-menu-item__icon"><LogOut size={18} strokeWidth={1.75} /></span>
-            <span className="driver-menu-item__label">Çıkış yap</span>
-          </button>
         </aside>
 
+        {/* Mobile Horizontal Task Filter Tabs */}
+        <div className="driver-mobile-tabs">
+          <button
+            type="button"
+            className={`driver-mobile-tab ${taskFilter === 'active' ? 'active' : ''}`}
+            onClick={() => setTaskFilter('active')}
+          >
+            <Navigation size={14} />
+            <span>Aktif</span>
+            <span className="tab-count">{activeTasks.length}</span>
+          </button>
+          <button
+            type="button"
+            className={`driver-mobile-tab ${taskFilter === 'completed' ? 'active' : ''}`}
+            onClick={() => setTaskFilter('completed')}
+          >
+            <CheckCircle2 size={14} />
+            <span>Tamamlanan</span>
+            <span className="tab-count">{completedTasks.length}</span>
+          </button>
+          <button
+            type="button"
+            className={`driver-mobile-tab ${taskFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setTaskFilter('all')}
+          >
+            <ListChecks size={14} />
+            <span>Tümü</span>
+            <span className="tab-count">{tasks.length}</span>
+          </button>
+        </div>
+
+        {/* Workspace */}
         <main className="driver-workspace">
           <header className="driver-workspace__head">
             <div>
@@ -335,6 +465,9 @@ export default function DriverPortal() {
           {feedbackMsg && (
             <div className={`driver-toast ${feedbackType}`}>{feedbackMsg}</div>
           )}
+
+          {/* Şoför Canlı GPS & Navigasyon Haritası */}
+          <DriverLiveMap activeTask={activeTasks[0] || null} />
 
           {loading ? (
             <div className="driver-skeleton-grid">

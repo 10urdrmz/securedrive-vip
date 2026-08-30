@@ -6,6 +6,10 @@ import './index.css';
 import './styles/driver-portal.css';
 import 'leaflet/dist/leaflet.css';
 
+import { initMobileNative } from './lib/mobile';
+
+initMobileNative();
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>

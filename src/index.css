@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
+  /* Safe Area Insets for iOS & Android Notch / Home Bar */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+
   /* Transitions.dev Pure Color System */
   --bg: #fdfdfd;
   --bg-stage: #f9f9f9;
@@ -221,6 +227,21 @@ a {
   margin: 0 auto;
 }
 
+.client-layout-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fcfcfd;
+}
+
+.client-main-content {
+  flex: 1;
+  width: 100%;
+  padding-top: calc(74px + var(--sat));
+  padding-bottom: max(20px, var(--sab));
+}
+
 /* ==============================================================================
    PREMIUM SITE HEADER / NAVBAR
    ============================================================================== */
@@ -235,6 +256,7 @@ a {
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid #eef2f6;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.02);
+  padding-top: var(--sat);
 }
 
 .site-header-container {
@@ -1607,41 +1629,137 @@ textarea.input-field-box {
   color: var(--text-muted);
 }
 
-/* Step 3: Passenger */
+/* Step 3: Passenger & Payment */
 .passenger-card-box {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  padding: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.passenger-auth-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #065f46;
+}
+
+.passenger-auth-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.passenger-auth-fill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.passenger-auth-fill-btn:hover {
+  background: #059669;
+  color: #ffffff;
 }
 
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 14px;
+  margin-bottom: 12px;
 }
 
 .payment-chips-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 14px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .payment-chip-card {
   background: var(--bg-stage);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 12px;
+  padding: 14px;
   cursor: pointer;
   transition: all var(--duration-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.payment-chip-card:hover {
+  border-color: var(--border-strong);
+  background: #ffffff;
 }
 
 .payment-chip-card.selected {
   background: #ffffff;
   border-color: var(--accent-black);
   box-shadow: 0 0 0 2px var(--accent-black);
+}
+
+.payment-chip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.payment-chip-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-chip-title-wrap strong {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.payment-chip-radio {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.payment-chip-card.selected .payment-chip-radio {
+  border-color: var(--accent-black);
+}
+
+.payment-chip-radio .radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-black);
+}
+
+.payment-chip-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
 }
 
 /* Step 4: Boarding Pass Ticket */
@@ -2094,10 +2212,15 @@ textarea.input-field-box {
     max-width: 100%;
   }
 
+  .client-main-content {
+    padding-top: calc(60px + var(--sat));
+    padding-bottom: max(24px, var(--sab));
+  }
+
   /* Header & Navigation */
   .site-header {
-    height: 60px;
-    padding: 0;
+    height: auto;
+    padding-top: var(--sat);
   }
 
   .site-header-container {
@@ -2123,16 +2246,16 @@ textarea.input-field-box {
 
   .header-mobile-drawer {
     position: fixed;
-    top: 60px;
+    top: calc(60px + var(--sat));
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px - var(--sat));
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    padding: 20px 20px max(24px, env(safe-area-inset-bottom));
+    padding: 20px 20px max(24px, var(--sab));
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -2503,9 +2626,27 @@ textarea.input-field-box {
   }
 
   /* Step 3: Passenger & Payment */
+  .passenger-card-box {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .passenger-auth-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .passenger-auth-fill-btn {
+    width: 100%;
+    justify-content: center;
+    height: 32px;
+  }
+
   .form-grid-2 {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .payment-chips-grid {
@@ -2513,8 +2654,7 @@ textarea.input-field-box {
     gap: 8px;
   }
 
-  .payment-chip {
-    min-height: 48px;
+  .payment-chip-card {
     padding: 12px 14px;
     border-radius: 12px;
   }
@@ -3526,5 +3666,98 @@ textarea.input-field-box {
 .booking-code-link:hover {
   text-decoration: underline;
   color: #1d4ed8 !important;
+}
+
+/* ==============================================================================
+   LIVE RADAR & DRIVER GPS PINS
+   ============================================================================== */
+.live-driver-radar-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.radar-ping-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  margin-left: -22px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.25);
+  border: 2px solid #10b981;
+  animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-ping {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.driver-car-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.live-driver-radar-marker:hover .driver-car-icon,
+.live-driver-radar-marker.selected .driver-car-icon {
+  transform: scale(1.15);
+  background: #059669;
+}
+
+.driver-name-tag {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 3;
+}
+
+.driver-name-tag strong {
+  font-weight: 700;
+}
+
+.driver-name-tag small {
+  color: #34d399;
+  font-weight: 600;
+}
+
+.pulse-icon {
+  animation: radar-pulse-glow 1.5s infinite;
+}
+
+@keyframes radar-pulse-glow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.9); }
 }
 

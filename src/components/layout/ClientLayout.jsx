@@ -7,9 +7,9 @@ import VehicleModal from '../modals/VehicleModal';
 
 export default function ClientLayout() {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fcfcfd' }}>
+    <div className="client-layout-root">
       <Navbar />
-      <main style={{ flex: 1, paddingTop: '74px', width: '100%' }}>
+      <main className="client-main-content">
         <Outlet />
       </main>
       <Footer />

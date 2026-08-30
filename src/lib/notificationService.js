@@ -49,10 +49,21 @@ function createLiveSubscription(user) {
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'notifications' },
-      (payload) => {
+      async (payload) => {
         const row = payload.new;
         if (matchesUser(row, user)) {
           notify({ event: 'INSERT', notification: row });
+          try {
+            const { sendNativeNotification } = await import('./nativeNotifications');
+            await sendNativeNotification({
+              id: row.id,
+              title: row.title || 'SecureDrive VIP',
+              body: row.message || '',
+              extra: { code: row.booking_code, link: row.link_path }
+            });
+          } catch (e) {
+            console.warn('Native notif error:', e);
+          }
         }
       }
     )

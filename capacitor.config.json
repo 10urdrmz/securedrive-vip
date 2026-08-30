@@ -1,0 +1,12 @@
+{
+  "appId": "com.securedrive.app",
+  "appName": "SecureDrive",
+  "webDir": "dist",
+  "server": {
+    "url": "https://securedriveorg.pages.dev",
+    "cleartext": false
+  },
+  "ios": {
+    "contentInset": "automatic"
+  }
+}

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
+import { useAuth } from '../../context/AuthContext';
 import { getConfirmationPath, loadSubmittedBookingRecord, BOOKING_WIZARD_PATHS } from '../../lib/bookingWizard';
-import { ArrowLeft, CheckCircle2, Lock, CreditCard, Banknote } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Lock, CreditCard, Banknote, User, Mail, Phone, FileText, ShieldCheck, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function Step3Passenger() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const {
     passenger,
     setPassenger,
@@ -22,6 +24,35 @@ export default function Step3Passenger() {
       navigate(getConfirmationPath(submitted.booking.code), { replace: true });
     }
   }, [navigate]);
+
+  // Oturum açmış kullanıcının bilgilerini otomatik doldur
+  useEffect(() => {
+    if (user) {
+      const parts = (user.full_name || '').trim().split(/\s+/);
+      const fName = parts[0] || '';
+      const lName = parts.slice(1).join(' ') || '';
+
+      setPassenger((prev) => ({
+        ...prev,
+        name: prev.name && prev.name.trim() !== '' ? prev.name : fName,
+        surname: prev.surname && prev.surname.trim() !== '' ? prev.surname : lName,
+        email: prev.email && prev.email.trim() !== '' ? prev.email : (user.email || ''),
+        phone: prev.phone && prev.phone.trim() !== '' ? prev.phone : (user.phone || '')
+      }));
+    }
+  }, [user, setPassenger]);
+
+  const handlePrefillProfile = () => {
+    if (!user) return;
+    const parts = (user.full_name || '').trim().split(/\s+/);
+    setPassenger((prev) => ({
+      ...prev,
+      name: parts[0] || '',
+      surname: parts.slice(1).join(' ') || '',
+      email: user.email || '',
+      phone: user.phone || ''
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,17 +93,45 @@ export default function Step3Passenger() {
   return (
     <div>
       <div className="passenger-card-box">
-        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '14px' }}>
-          Yolcu İletişim Bilgileri
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text)' }}>
+            Yolcu İletişim Bilgileri
+          </h2>
+        </div>
+
+        {/* Logged in User Quick Sync Banner */}
+        {user && (
+          <div className="passenger-auth-banner">
+            <div className="passenger-auth-info">
+              <ShieldCheck size={16} color="#059669" />
+              <span>
+                Giriş yapıldı: <strong>{user.full_name || user.email}</strong> (Bilgiler aktarıldı)
+              </span>
+            </div>
+            <button
+              type="button"
+              className="passenger-auth-fill-btn"
+              onClick={handlePrefillProfile}
+              title="Profil bilgilerinizi form alanlarına yeniden yükleyin"
+            >
+              <Sparkles size={12} />
+              <span>Profilimi Doldur</span>
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-grid-2">
             <div className="input-block">
               <label className="input-label">Adınız *</label>
               <div className="input-field-box">
+                <User size={15} color="var(--text-muted)" />
                 <input 
                   type="text" 
+                  name="given-name"
+                  autoComplete="given-name"
+                  autoCapitalize="words"
+                  autoCorrect="off"
                   required
                   value={passenger.name} 
                   onChange={(e) => setPassenger({ ...passenger, name: e.target.value })}
@@ -84,8 +143,13 @@ export default function Step3Passenger() {
             <div className="input-block">
               <label className="input-label">Soyadınız *</label>
               <div className="input-field-box">
+                <User size={15} color="var(--text-muted)" />
                 <input 
                   type="text" 
+                  name="family-name"
+                  autoComplete="family-name"
+                  autoCapitalize="words"
+                  autoCorrect="off"
                   required
                   value={passenger.surname} 
                   onChange={(e) => setPassenger({ ...passenger, surname: e.target.value })}
@@ -99,8 +163,14 @@ export default function Step3Passenger() {
             <div className="input-block">
               <label className="input-label">E-Posta Adresiniz *</label>
               <div className="input-field-box">
+                <Mail size={15} color="var(--text-muted)" />
                 <input 
                   type="email" 
+                  name="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   required
                   value={passenger.email} 
                   onChange={(e) => setPassenger({ ...passenger, email: e.target.value })}
@@ -112,12 +182,17 @@ export default function Step3Passenger() {
             <div className="input-block">
               <label className="input-label">Telefon (WhatsApp) *</label>
               <div className="input-field-box">
+                <Phone size={15} color="var(--text-muted)" />
                 <input 
                   type="tel" 
+                  name="tel"
+                  autoComplete="tel"
+                  autoCapitalize="none"
+                  autoCorrect="off"
                   required
                   value={passenger.phone} 
                   onChange={(e) => setPassenger({ ...passenger, phone: e.target.value })}
-                  placeholder="+90 532..."
+                  placeholder="+90 532 000 00 00"
                 />
               </div>
             </div>
@@ -126,6 +201,7 @@ export default function Step3Passenger() {
           <div className="input-block" style={{ marginBottom: '16px' }}>
             <label className="input-label">Şoföre Özel Not / Karşılama Detayı</label>
             <div className="input-field-box">
+              <FileText size={15} color="var(--text-muted)" />
               <input 
                 type="text" 
                 value={passenger.notes} 
@@ -135,9 +211,9 @@ export default function Step3Passenger() {
             </div>
           </div>
 
-          <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
+          <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '18px 0' }} />
 
-          <h2 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '10px' }}>
+          <h2 style={{ fontSize: '14.5px', fontWeight: 700, marginBottom: '10px', color: 'var(--text)' }}>
             Ödeme Seçeneği
           </h2>
 
@@ -146,33 +222,48 @@ export default function Step3Passenger() {
               className={`payment-chip-card ${passenger.paymentMethod === 'credit-card' ? 'selected' : ''}`}
               onClick={() => setPassenger({ ...passenger, paymentMethod: 'credit-card' })}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                <Lock size={12} color="var(--accent-green)" />
-                <strong style={{ fontSize: '12.5px' }}>3D Secure Kart</strong>
+              <div className="payment-chip-header">
+                <div className="payment-chip-title-wrap">
+                  <Lock size={14} color="#10b981" />
+                  <strong>3D Secure Kredi Kartı</strong>
+                </div>
+                <div className="payment-chip-radio">
+                  {passenger.paymentMethod === 'credit-card' && <div className="radio-dot" />}
+                </div>
               </div>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Online %100 Güvenli</span>
+              <span className="payment-chip-sub">%100 Güvenli Online Tahsilat</span>
             </div>
 
             <div 
               className={`payment-chip-card ${passenger.paymentMethod === 'pay-in-car-card' ? 'selected' : ''}`}
               onClick={() => setPassenger({ ...passenger, paymentMethod: 'pay-in-car-card' })}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                <CreditCard size={12} />
-                <strong style={{ fontSize: '12.5px' }}>Araçta Kredi Kartı</strong>
+              <div className="payment-chip-header">
+                <div className="payment-chip-title-wrap">
+                  <CreditCard size={14} color="#0284c7" />
+                  <strong>Araçta Kredi Kartı</strong>
+                </div>
+                <div className="payment-chip-radio">
+                  {passenger.paymentMethod === 'pay-in-car-card' && <div className="radio-dot" />}
+                </div>
               </div>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Mobil POS Cihazı</span>
+              <span className="payment-chip-sub">VIP Araç İçi Mobil POS Cihazı</span>
             </div>
 
             <div 
               className={`payment-chip-card ${passenger.paymentMethod === 'pay-in-car-cash' ? 'selected' : ''}`}
               onClick={() => setPassenger({ ...passenger, paymentMethod: 'pay-in-car-cash' })}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                <Banknote size={12} />
-                <strong style={{ fontSize: '12.5px' }}>Araçta Nakit</strong>
+              <div className="payment-chip-header">
+                <div className="payment-chip-title-wrap">
+                  <Banknote size={14} color="#d97706" />
+                  <strong>Araçta Nakit Ödeme</strong>
+                </div>
+                <div className="payment-chip-radio">
+                  {passenger.paymentMethod === 'pay-in-car-cash' && <div className="radio-dot" />}
+                </div>
               </div>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>TRY / EUR / USD / GBP</span>
+              <span className="payment-chip-sub">TRY / EUR / USD / GBP Geçerli</span>
             </div>
           </div>
         </form>
@@ -185,7 +276,7 @@ export default function Step3Passenger() {
           className="btn-ghost" 
           onClick={() => navigate(BOOKING_WIZARD_PATHS.amenities)}
         >
-          <ArrowLeft size={12} />
+          <ArrowLeft size={13} />
           <span>Özellikleri Değiştir</span>
         </button>
 
@@ -195,9 +286,9 @@ export default function Step3Passenger() {
           id="btn-confirm-reservation"
           onClick={handleSubmit}
           disabled={loading}
-          style={{ height: '42px', padding: '0 24px' }}
+          style={{ height: '44px', padding: '0 24px', fontSize: '13.5px' }}
         >
-          <CheckCircle2 size={13} />
+          <CheckCircle2 size={15} />
           <span>{loading ? 'Supabase Kaydediliyor...' : 'Rezervasyonu Tamamla & Tahsis Et'}</span>
         </button>
       </div>

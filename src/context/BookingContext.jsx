@@ -130,16 +130,26 @@ export function BookingProvider({ children }) {
   });
 
   useEffect(() => {
-    const user = getCurrentUser();
-    if (!user) return;
-    const parts = (user.full_name || '').trim().split(/\s+/);
-    setPassenger((prev) => ({
-      ...prev,
-      name: parts[0] || prev.name,
-      surname: parts.slice(1).join(' ') || prev.surname,
-      email: user.email || prev.email,
-      phone: user.phone || prev.phone
-    }));
+    const syncUserToPassenger = () => {
+      const user = getCurrentUser();
+      if (!user) return;
+      const parts = (user.full_name || '').trim().split(/\s+/);
+      setPassenger((prev) => ({
+        ...prev,
+        name: prev.name && prev.name.trim() !== '' ? prev.name : (parts[0] || ''),
+        surname: prev.surname && prev.surname.trim() !== '' ? prev.surname : (parts.slice(1).join(' ') || ''),
+        email: prev.email && prev.email.trim() !== '' ? prev.email : (user.email || ''),
+        phone: prev.phone && prev.phone.trim() !== '' ? prev.phone : (user.phone || '')
+      }));
+    };
+
+    syncUserToPassenger();
+    window.addEventListener('storage', syncUserToPassenger);
+    window.addEventListener('securedrive-auth-changed', syncUserToPassenger);
+    return () => {
+      window.removeEventListener('storage', syncUserToPassenger);
+      window.removeEventListener('securedrive-auth-changed', syncUserToPassenger);
+    };
   }, []);
 
   useEffect(() => {

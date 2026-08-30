@@ -155,8 +155,13 @@ export default function HeroBookingWidget() {
     }
 
     clearSubmittedBooking();
-    setModalStep('VEHICLES');
+    setModalStep('LOADING');
     setBookingModalOpen(true);
+
+    // Smooth transition from Vito loading animation to vehicle selection
+    setTimeout(() => {
+      setModalStep('VEHICLES');
+    }, 1400);
   };
 
   const handleSelectVehicle = (vId) => {
@@ -594,7 +599,7 @@ export default function HeroBookingWidget() {
             {/* Modal Header */}
             <div className="car-modal-header">
               <div className="car-modal-header-left">
-                {modalStep !== 'VEHICLES' && modalStep !== 'CONFIRMATION' && (
+                {modalStep !== 'LOADING' && modalStep !== 'VEHICLES' && modalStep !== 'CONFIRMATION' && (
                   <button
                     type="button"
                     className="car-modal-back-btn"
@@ -609,12 +614,13 @@ export default function HeroBookingWidget() {
                 )}
                 <div>
                   <h3 className="car-modal-title">
+                    {modalStep === 'LOADING' && 'VIP Müsaitlik Taranıyor...'}
                     {modalStep === 'VEHICLES' && 'Araç Seçimi (1/3)'}
                     {modalStep === 'AMENITIES' && 'Donanım & Ekstralar (2/3)'}
                     {modalStep === 'PASSENGER' && 'Yolcu & Ödeme (3/3)'}
                     {modalStep === 'CONFIRMATION' && 'Rezervasyon Onayı'}
                   </h3>
-                  {modalStep !== 'CONFIRMATION' && (
+                  {modalStep !== 'CONFIRMATION' && modalStep !== 'LOADING' && (
                     <div className="car-modal-step-dots">
                       <span className={`step-dot ${modalStep === 'VEHICLES' || modalStep === 'AMENITIES' || modalStep === 'PASSENGER' ? 'active' : ''}`} />
                       <span className={`step-dot ${modalStep === 'AMENITIES' || modalStep === 'PASSENGER' ? 'active' : ''}`} />
@@ -633,6 +639,37 @@ export default function HeroBookingWidget() {
                 <X size={18} />
               </button>
             </div>
+
+            {/* STEP 0: VITO ANIMATED LOADING TRANSIT SCREEN */}
+            {modalStep === 'LOADING' && (
+              <div className="car-modal-loading-screen">
+                <div className="car-loading-route-pill">
+                  <span>{pickup?.name?.split('(')[0]?.trim()} ➔ {destination?.name?.split('(')[0]?.trim()}</span>
+                  <small>VIP Rota Hesaplanıyor</small>
+                </div>
+
+                <div className="car-loading-stage">
+                  <div className="car-loading-glow"></div>
+                  <img 
+                    src="/vito-loading.png" 
+                    alt="Mercedes-Benz Vito VIP" 
+                    className="car-loading-vito-img"
+                  />
+                  <div className="car-loading-road">
+                    <div className="car-road-line"></div>
+                  </div>
+                </div>
+
+                <div className="car-loading-text-group">
+                  <h4>VIP Filo ve Müsaitlik Taranıyor</h4>
+                  <p>Protokol şoförleri ve sabit fiyat garantisi hazırlanıyor...</p>
+                  
+                  <div className="car-loading-progress-bar">
+                    <div className="car-loading-progress-fill"></div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* STEP 1: VEHICLE SELECTION (Streamlined iOS Cards) */}
             {modalStep === 'VEHICLES' && (
@@ -910,7 +947,7 @@ export default function HeroBookingWidget() {
             )}
 
             {/* FIXED STICKY BOTTOM BAR (Native iOS Feel) */}
-            {modalStep !== 'CONFIRMATION' && (
+            {modalStep !== 'CONFIRMATION' && modalStep !== 'LOADING' && (
               <div className="car-modal-ios-sticky-bar">
                 <div className="car-sticky-price-group">
                   <span className="car-sticky-price-label">Toplam Tutar:</span>

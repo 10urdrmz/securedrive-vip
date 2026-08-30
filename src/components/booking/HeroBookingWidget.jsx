@@ -12,12 +12,10 @@ import {
   Radar, 
   ChevronRight, 
   ChevronLeft,
-  ChevronDown,
   Calendar, 
   Users, 
   ShieldCheck, 
   Sparkles, 
-  TrendingDown, 
   Check, 
   X,
   Search,
@@ -32,14 +30,10 @@ import {
   FileText,
   Clock,
   Award,
+  Fuel,
+  Gauge,
   SlidersHorizontal,
-  ArrowUpDown,
-  Share2,
-  Edit2,
-  Info,
-  Headphones,
-  Tag,
-  Monitor
+  RotateCcw
 } from 'lucide-react';
 
 export default function HeroBookingWidget() {
@@ -80,30 +74,14 @@ export default function HeroBookingWidget() {
     setLuggage
   } = useBooking();
 
-  // Turna App View Steps: 'SEARCH' | 'LOADING' | 'VEHICLES' | 'PASSENGER' | 'CONFIRMATION'
-  const [currentStep, setCurrentStep] = useState('SEARCH');
-  const [differentDropoff, setDifferentDropoff] = useState(false);
+  // In-place booking modal step: 'SEARCH' | 'VEHICLES' | 'AMENITIES' | 'PASSENGER' | 'CONFIRMATION'
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [modalStep, setModalStep] = useState('VEHICLES');
+  const [vehicleFilter, setVehicleFilter] = useState('ALL');
   const [pickupOpen, setPickupOpen] = useState(false);
   const [destOpen, setDestOpen] = useState(false);
   const [pickupQuery, setPickupQuery] = useState(pickup?.name || '');
   const [destQuery, setDestQuery] = useState(destination?.name || '');
-  
-  // Dates & Times
-  const [pickupDate, setPickupDate] = useState('31 Ağu, Pzt');
-  const [pickupTime, setPickupTime] = useState('10:00');
-  const [dropoffDate, setDropoffDate] = useState('3 Eyl, Per');
-  const [dropoffTime, setDropoffTime] = useState('10:00');
-  const [paxModalOpen, setPaxModalOpen] = useState(false);
-  const [notTcCitizen, setNotTcCitizen] = useState(false);
-
-  // Accordions in passenger step
-  const [vehicleAccOpen, setVehicleAccOpen] = useState(true);
-  const [deliveryAccOpen, setDeliveryAccOpen] = useState(false);
-  const [amenitiesAccOpen, setAmenitiesAccOpen] = useState(false);
-
-  // Vehicle filter & coupon
-  const [vehicleSort, setVehicleSort] = useState('recommended');
-  const [selectedCoupon, setSelectedCoupon] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   const prices = calculatePrices();
@@ -113,14 +91,14 @@ export default function HeroBookingWidget() {
     if (!datetime) {
       const now = new Date();
       now.setDate(now.getDate() + 1);
-      now.setHours(10, 0, 0, 0);
+      now.setHours(12, 0, 0, 0);
       setDatetime(now.toISOString().slice(0, 16));
     }
   }, [datetime, setDatetime]);
 
   // Pre-fill user profile if logged in
   useEffect(() => {
-    if (user && currentStep === 'PASSENGER') {
+    if (user && modalStep === 'PASSENGER') {
       const parts = (user.full_name || '').trim().split(/\s+/);
       setPassenger((prev) => ({
         ...prev,
@@ -130,7 +108,7 @@ export default function HeroBookingWidget() {
         phone: prev.phone && prev.phone.trim() !== '' ? prev.phone : (user.phone || '')
       }));
     }
-  }, [user, currentStep, setPassenger]);
+  }, [user, modalStep, setPassenger]);
 
   const availableAirports = useMemo(
     () => buildRoutePickupOptions(popularRoutes, airports || []),
@@ -153,6 +131,14 @@ export default function HeroBookingWidget() {
     (d.district && d.district.toLowerCase().includes(destQuery.toLowerCase()))
   );
 
+  const filteredFleet = fleet.filter((v) => {
+    if (vehicleFilter === 'ALL') return true;
+    if (vehicleFilter === 'MINIVAN') return (v.class || '').toLowerCase().includes('vito') || (v.class || '').toLowerCase().includes('minivan');
+    if (vehicleFilter === 'SEDAN') return (v.class || '').toLowerCase().includes('sedan') || (v.name || '').toLowerCase().includes('maybach') || (v.name || '').toLowerCase().includes('s-class');
+    if (vehicleFilter === 'SPRINTER') return (v.class || '').toLowerCase().includes('sprinter') || (v.name || '').toLowerCase().includes('sprinter');
+    return true;
+  });
+
   const selectedVehicleObj = fleet.find((v) => v.id === selectedVehicleId) || fleet[0] || {
     id: 'vito-vip',
     name: 'Mercedes-Benz Vito VIP Lounge',
@@ -164,9 +150,9 @@ export default function HeroBookingWidget() {
     baseRateKm: 32
   };
 
-  const handleStartSearch = () => {
+  const handleStartSearch = (e) => {
+    if (e) e.preventDefault();
     if (!pickup) {
-      // Default to Istanbul Airport if not selected
       const defaultP = availableAirports[0] || { id: 'IST', name: 'İstanbul Havalimanı (IST)' };
       setPickup(defaultP);
       setPickupQuery(defaultP.name);
@@ -178,16 +164,13 @@ export default function HeroBookingWidget() {
     }
 
     clearSubmittedBooking();
-    // Show Turna "Lütfen Bekleyin" loading screen for 600ms then show vehicles
-    setCurrentStep('LOADING');
-    setTimeout(() => {
-      setCurrentStep('VEHICLES');
-    }, 600);
+    setModalStep('VEHICLES');
+    setBookingModalOpen(true);
   };
 
   const handleSelectVehicle = (vId) => {
     setSelectedVehicleId(vId);
-    setCurrentStep('PASSENGER');
+    setModalStep('AMENITIES');
   };
 
   const handleConfirmReservation = async (e) => {
@@ -215,7 +198,7 @@ export default function HeroBookingWidget() {
         });
       } catch {}
 
-      setCurrentStep('CONFIRMATION');
+      setModalStep('CONFIRMATION');
     } catch (err) {
       console.error(err);
       alert('İşlem sırasında bir hata oluştu.');
@@ -225,63 +208,114 @@ export default function HeroBookingWidget() {
   };
 
   return (
-    <div className="turna-app-wrapper">
-      {/* =========================================================================
-          SCREEN 1: TURNA APP MAIN SEARCH SCREEN (SCREENSHOT 1)
-         ========================================================================= */}
-      {currentStep === 'SEARCH' && (
-        <div className="turna-search-screen">
-          {/* Top Road Background Banner */}
-          <div className="turna-road-banner">
-            <div className="turna-road-topbar">
-              <div className="turna-round-nav-btn">
-                <ChevronLeft size={20} color="#1e293b" />
+    <div className="car-theme-root">
+      {/* Hero Section */}
+      <section className="car-hero-section">
+        {/* Background Image with Dark Overlay */}
+        <div className="car-hero-bg">
+          <div className="car-hero-overlay"></div>
+        </div>
+
+        <div className="car-container car-hero-container">
+          <div className="car-hero-content">
+            {/* Tagline Badge */}
+            <div className="car-hero-badge">
+              <Sparkles size={14} color="#ff7101" />
+              <span>D2 Lisanslı Protokol Şoförleri • %100 Sabit Fiyat Garantisi</span>
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="car-hero-title">
+              Lüks VIP Transfer & <span>Şoförlü Araç</span>
+            </h1>
+            <p className="car-hero-desc">
+              Havalimanı VIP karşılama, tahsisli protokol şoförü ve lüks şehirlerarası transfer hizmetlerinde Türkiye'nin lider platformu.
+            </p>
+
+            {/* Quick Specs Badges */}
+            <div className="car-hero-specs-row">
+              <div className="car-spec-pill">
+                <div className="car-spec-icon-box">
+                  <Car size={16} color="#ffffff" />
+                </div>
+                <span>Mercedes-Benz VIP Filo</span>
               </div>
-              <div className="turna-vehicle-type-pill">
-                <Car size={18} color="#000080" />
-                <ChevronDown size={16} color="#64748b" />
+
+              <div className="car-spec-pill">
+                <div className="car-spec-icon-box">
+                  <Gauge size={16} color="#ffffff" />
+                </div>
+                <span>60 Dk Ücretsiz Rötar Bekleme</span>
+              </div>
+
+              <div className="car-spec-pill">
+                <div className="car-spec-icon-box">
+                  <ShieldCheck size={16} color="#ffffff" />
+                </div>
+                <span>T.C. Ulaştırma Bakanlığı Belgeli</span>
               </div>
             </div>
-            <h1 className="turna-main-heading">VIP Transfer & Araç</h1>
           </div>
 
-          {/* Main White Card with Divider Lines */}
-          <div className="turna-form-card">
-            {/* Row 1: Alış ve Bırakış Yeri */}
-            <div 
-              className="turna-form-row turna-location-row"
-              onClick={() => {
-                setPickupOpen(true);
-                setDestOpen(false);
-              }}
-            >
-              <div className="turna-row-label">Alış ve Bırakış Yeri</div>
-              <div className="turna-row-val">
-                {pickup ? pickup.name : 'İstanbul Havalimanı (IST) ➔ Otel / Adres'}
+          {/* Clean Floating Search & Filter Bar */}
+          <div className="car-filter-box">
+            {/* Tabs */}
+            <div className="car-tabs-row">
+              <button
+                type="button"
+                className={`car-tab-btn ${serviceType === 'transfer' ? 'active' : ''}`}
+                onClick={() => setServiceType('transfer')}
+              >
+                <Plane size={15} />
+                <span>Havalimanı VIP Transfer</span>
+              </button>
+              <button
+                type="button"
+                className={`car-tab-btn ${serviceType === 'chauffeur' ? 'active' : ''}`}
+                onClick={() => setServiceType('chauffeur')}
+              >
+                <Car size={15} />
+                <span>Özel Şoförlü Tahsis</span>
+              </button>
+              <div className="car-trip-type-switch">
+                <button
+                  type="button"
+                  className={`car-type-pill ${tripType === 'oneway' ? 'active' : ''}`}
+                  onClick={() => setTripType('oneway')}
+                >
+                  Tek Yön
+                </button>
+                <button
+                  type="button"
+                  className={`car-type-pill ${tripType === 'roundtrip' ? 'active' : ''}`}
+                  onClick={() => setTripType('roundtrip')}
+                >
+                  Gidiş-Dönüş
+                </button>
               </div>
             </div>
 
-            {/* Location Dropdown Modal/List if Open */}
-            {pickupOpen && (
-              <div className="turna-dropdown-overlay" onClick={() => setPickupOpen(false)}>
-                <div className="turna-dropdown-box" onClick={(e) => e.stopPropagation()}>
-                  <div className="turna-dropdown-header">
-                    <h4>Kalkış / Alış Noktası Seçin</h4>
-                    <button type="button" onClick={() => setPickupOpen(false)}><X size={18} /></button>
-                  </div>
+            {/* Search Inputs Grid */}
+            <form onSubmit={handleStartSearch} className="car-search-grid">
+              {/* Pickup Location */}
+              <div className="car-input-field" onClick={() => { setPickupOpen(true); setDestOpen(false); }}>
+                <label>KALKIŞ NOKTASI</label>
+                <div className="car-input-inner">
+                  <Plane size={16} color="#ff7101" />
                   <input
                     type="text"
-                    className="turna-dropdown-search-input"
                     value={pickupQuery}
-                    onChange={(e) => setPickupQuery(e.target.value)}
-                    placeholder="Havalimanı veya İlçe Ara..."
-                    autoFocus
+                    onChange={(e) => { setPickupQuery(e.target.value); setPickupOpen(true); }}
+                    placeholder="Havalimanı veya Adres..."
                   />
-                  <div className="turna-dropdown-items-list">
+                </div>
+
+                {pickupOpen && (
+                  <div className="car-autocomplete-dropdown" onClick={(e) => e.stopPropagation()}>
                     {filteredAirports.map((a) => (
                       <div
                         key={a.id}
-                        className="turna-dropdown-row"
+                        className="car-dropdown-item"
                         onClick={() => {
                           setPickup(a);
                           setPickupQuery(a.name);
@@ -289,7 +323,7 @@ export default function HeroBookingWidget() {
                           setDestOpen(true);
                         }}
                       >
-                        <Plane size={16} color="#000080" />
+                        <Plane size={14} color="#ff7101" />
                         <div>
                           <strong>{a.name}</strong>
                           <small>{a.city} · VIP Terminal</small>
@@ -297,37 +331,35 @@ export default function HeroBookingWidget() {
                       </div>
                     ))}
                   </div>
-                </div>
+                )}
               </div>
-            )}
 
-            {destOpen && (
-              <div className="turna-dropdown-overlay" onClick={() => setDestOpen(false)}>
-                <div className="turna-dropdown-box" onClick={(e) => e.stopPropagation()}>
-                  <div className="turna-dropdown-header">
-                    <h4>Varış / Bırakış Noktası Seçin</h4>
-                    <button type="button" onClick={() => setDestOpen(false)}><X size={18} /></button>
-                  </div>
+              {/* Destination Location */}
+              <div className="car-input-field" onClick={() => { setDestOpen(true); setPickupOpen(false); }}>
+                <label>VARIŞ NOKTASI</label>
+                <div className="car-input-inner">
+                  <Hotel size={16} color="#198754" />
                   <input
                     type="text"
-                    className="turna-dropdown-search-input"
                     value={destQuery}
-                    onChange={(e) => setDestQuery(e.target.value)}
-                    placeholder="Otel, Marina veya Semt Ara..."
-                    autoFocus
+                    onChange={(e) => { setDestQuery(e.target.value); setDestOpen(true); }}
+                    placeholder="Otel, Marina veya Semt..."
                   />
-                  <div className="turna-dropdown-items-list">
+                </div>
+
+                {destOpen && (
+                  <div className="car-autocomplete-dropdown" onClick={(e) => e.stopPropagation()}>
                     {filteredDestinations.map((d) => (
                       <div
                         key={d.id}
-                        className="turna-dropdown-row"
+                        className="car-dropdown-item"
                         onClick={() => {
                           setDestination(d);
                           setDestQuery(d.name);
                           setDestOpen(false);
                         }}
                       >
-                        <Hotel size={16} color="#059669" />
+                        <Hotel size={14} color="#198754" />
                         <div>
                           <strong>{d.name}</strong>
                           <small>{d.district ? `${d.district}, ${d.city}` : d.city}</small>
@@ -335,516 +367,414 @@ export default function HeroBookingWidget() {
                       </div>
                     ))}
                   </div>
+                )}
+              </div>
+
+              {/* Transfer Datetime */}
+              <div className="car-input-field">
+                <label>TARİH VE SAAT</label>
+                <div className="car-input-inner">
+                  <Calendar size={16} color="#696665" />
+                  <input
+                    type="datetime-local"
+                    value={datetime}
+                    onChange={(e) => setDatetime(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
-            )}
 
-            {/* Row 2: Alış Tarihi & Alış Saati (Split 2 Columns) */}
-            <div className="turna-form-split-row">
-              <div className="turna-split-col">
-                <span className="turna-field-sub">Alış tarihi</span>
-                <div className="turna-field-main">{pickupDate}</div>
-              </div>
-              <div className="turna-split-col right-col">
-                <span className="turna-field-sub">Alış saati</span>
-                <div className="turna-field-main with-chevron">
-                  <span>{pickupTime}</span>
-                  <ChevronDown size={16} color="#475569" />
-                </div>
-              </div>
-            </div>
-
-            {/* Row 3: Bırakış Tarihi & Bırakış Saati (Split 2 Columns) */}
-            <div className="turna-form-split-row">
-              <div className="turna-split-col">
-                <span className="turna-field-sub">Bırakış tarihi</span>
-                <div className="turna-field-main">{dropoffDate}</div>
-              </div>
-              <div className="turna-split-col right-col">
-                <span className="turna-field-sub">Bırakış saati</span>
-                <div className="turna-field-main with-chevron">
-                  <span>{dropoffTime}</span>
-                  <ChevronDown size={16} color="#475569" />
-                </div>
-              </div>
-            </div>
-
-            {/* Row 4: Sürücü/Yolcu Yaşı ve Kapasite */}
-            <div className="turna-form-row turna-age-row">
-              <div className="turna-age-left">
-                <span>Sürücü / Yolcu: <strong>{pax} Yolcu, {luggage} Bagaj</strong></span>
-                <ChevronDown size={16} color="#475569" onClick={() => setPaxModalOpen(!paxModalOpen)} />
-                <Info size={16} color="#64748b" style={{ marginLeft: '4px' }} />
-              </div>
-            </div>
-
-            {paxModalOpen && (
-              <div className="turna-pax-mini-box">
-                <div className="turna-pax-counter-row">
-                  <span>Yolcu:</span>
-                  <div className="turna-counter-btns">
-                    <button type="button" onClick={() => setPax(Math.max(1, pax - 1))}>-</button>
-                    <b>{pax}</b>
-                    <button type="button" onClick={() => setPax(Math.min(16, pax + 1))}>+</button>
-                  </div>
-                </div>
-                <div className="turna-pax-counter-row">
-                  <span>Bagaj:</span>
-                  <div className="turna-counter-btns">
-                    <button type="button" onClick={() => setLuggage(Math.max(0, luggage - 1))}>-</button>
-                    <b>{luggage}</b>
-                    <button type="button" onClick={() => setLuggage(Math.min(16, luggage + 1))}>+</button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Primary Action Button: Deep Cobalt Navy Pill with >> */}
-            <button
-              type="button"
-              className="turna-cobalt-btn"
-              onClick={handleStartSearch}
-            >
-              <span>VIP Araç Bul</span>
-              <span className="turna-btn-arrows">❯❯</span>
-            </button>
-
-            {/* Toggle: Aracı farklı bir yere bırakacağım */}
-            <div className="turna-toggle-row">
-              <label className="turna-switch">
-                <input
-                  type="checkbox"
-                  checked={differentDropoff}
-                  onChange={(e) => setDifferentDropoff(e.target.checked)}
-                />
-                <span className="turna-slider round"></span>
-              </label>
-              <span className="turna-toggle-label">Aracı farklı bir yere bırakacağım</span>
-            </div>
-          </div>
-
-          {/* Second Card: Rezervasyon Sorgula */}
-          <Link to="/takip" className="turna-secondary-card">
-            <div className="turna-monitor-icon-box">
-              <Monitor size={22} color="#7c3aed" />
-            </div>
-            <span className="turna-sec-card-title">Rezervasyon Sorgula & Canlı Takip</span>
-          </Link>
-
-          {/* Bottom Trust & Support Strip */}
-          <div className="turna-bottom-trust-strip">
-            <div className="turna-trust-item">
-              <Headphones size={16} color="#7c3aed" />
-              <span>7/24 Canlı Destek</span>
-            </div>
-            <div className="turna-trust-item">
-              <Tag size={16} color="#7c3aed" />
-              <span>Turna Puan Kazan</span>
-            </div>
+              {/* Submit Button */}
+              <button type="submit" className="car-search-btn">
+                <Search size={16} strokeWidth={2.5} />
+                <span>VIP Araç Bul</span>
+              </button>
+            </form>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* =========================================================================
-          SCREEN 2: TURNA LOADING / TRANSIT SCREEN (SCREENSHOT 2)
-         ========================================================================= */}
-      {currentStep === 'LOADING' && (
-        <div className="turna-loading-screen">
-          <div className="turna-road-banner-mini"></div>
-          
-          <div className="turna-loading-center">
-            {/* Big Brand Logo */}
-            <div className="turna-brand-logo-large">
-              <span className="turna-logo-chevrons">❯❯</span>
-              <span className="turna-logo-word">turna</span>
-              <span className="turna-logo-sub-tag">VIP</span>
+      {/* Recommended Vehicles Section (CarCard Grid) */}
+      <section className="car-section-pad" id="inventory">
+        <div className="car-container">
+          <div className="car-section-header">
+            <div>
+              <span className="car-section-sub">LÜKS ARAÇ FİLOMUZ</span>
+              <h2 className="car-section-title">En Çok Tercih Edilen VIP Araçlar</h2>
             </div>
 
-            {/* Location & Date Summary Card */}
-            <div className="turna-loading-summary-card">
-              <div className="turna-loading-loc-head">
-                <strong>{pickup?.name || 'İstanbul Havalimanı'}</strong>
-                <small>{pickup?.city || 'İstanbul, Türkiye'}</small>
-              </div>
-              <div className="turna-loading-date-row">
-                <span>{pickupDate}</span>
-                <Calendar size={18} color="#94a3b8" />
-                <span>{dropoffDate}</span>
-              </div>
-            </div>
-
-            {/* Circular Cobalt Pulsing Action Indicator */}
-            <div className="turna-loading-pulse-circle">
-              <span className="turna-circle-chevrons">❯❯</span>
-            </div>
-            <div className="turna-loading-text">Lütfen bekleyin</div>
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================================
-          SCREEN 3: TURNA VEHICLE RESULTS SCREEN (SCREENSHOT 3)
-         ========================================================================= */}
-      {currentStep === 'VEHICLES' && (
-        <div className="turna-results-screen">
-          {/* Top Route Header Bar */}
-          <div className="turna-results-topbar">
-            <button
-              type="button"
-              className="turna-top-back-btn"
-              onClick={() => setCurrentStep('SEARCH')}
-            >
-              <ChevronLeft size={22} color="#0f172a" />
-            </button>
-
-            <div className="turna-top-route-box">
-              <div className="turna-top-route-title">
-                {pickup?.name?.split('(')[0]?.trim() || 'İstanbul Havalimanı'}
-              </div>
-              <div className="turna-top-route-sub">
-                {pickupDate} - {dropoffDate}
-              </div>
-            </div>
-
-            <div className="turna-top-action-icons">
-              <button type="button" className="turna-icon-action-btn" onClick={() => setCurrentStep('SEARCH')}>
-                <Edit2 size={16} />
-              </button>
-              <button type="button" className="turna-icon-action-btn">
-                <Share2 size={16} />
-              </button>
+            {/* Filter Pills */}
+            <div className="car-filter-pills">
+              {[
+                { id: 'ALL', label: 'Tüm Filo' },
+                { id: 'MINIVAN', label: 'VIP Minivan' },
+                { id: 'SEDAN', label: 'Lüks Sedan' },
+                { id: 'SPRINTER', label: 'VIP Sprinter' }
+              ].map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`car-filter-pill ${vehicleFilter === c.id ? 'active' : ''}`}
+                  onClick={() => setVehicleFilter(c.id)}
+                >
+                  {c.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Filter Chips Bar */}
-          <div className="turna-filter-chips-strip">
-            <button type="button" className="turna-chip-btn">
-              <ArrowUpDown size={14} />
-              <span>Sırala: Önerilen</span>
-            </button>
-            <button type="button" className="turna-chip-btn">
-              <SlidersHorizontal size={14} />
-              <span>Filtrele</span>
-            </button>
-            <button type="button" className="turna-chip-btn">
-              <span>Vites Tipi</span>
-              <ChevronDown size={14} />
-            </button>
-            <button type="button" className="turna-chip-btn">
-              <span>Araç Sınıfı</span>
-              <ChevronDown size={14} />
-            </button>
-          </div>
-
-          {/* Coupon / Discount Banner Card */}
-          <div className="turna-coupon-banner-grid">
-            <div className="turna-coupon-card">
-              <div className="turna-coupon-left">
-                <strong>1</strong>
-                <span>Tümünü Uygula</span>
-              </div>
-              <input type="checkbox" checked={selectedCoupon} onChange={(e) => setSelectedCoupon(e.target.checked)} />
-            </div>
-
-            <div className="turna-coupon-card active">
-              <div className="turna-coupon-left">
-                <div className="turna-coupon-brand">
-                  <span>❯❯ turna</span>
-                </div>
-                <div className="turna-coupon-text">
-                  <Info size={12} color="#7c3aed" />
-                  <span>%25 indirim</span>
-                </div>
-              </div>
-              <input type="checkbox" checked={selectedCoupon} onChange={(e) => setSelectedCoupon(e.target.checked)} />
-            </div>
-          </div>
-
-          {/* Vehicle List Cards */}
-          <div className="turna-results-cards-list">
-            {fleet.map((v) => {
-              const baseDailyRate = v.baseOpeningRate + 1460;
-              const totalDaysPrice = baseDailyRate * 3;
-              const totalFormatted = formatMoney(totalDaysPrice);
-              const isSelected = v.id === selectedVehicleId;
+          {/* Cars Grid */}
+          <div className="car-grid-3">
+            {filteredFleet.map((car) => {
+              const baseFare = car.baseOpeningRate + (35 * car.baseRateKm);
+              const fareFormatted = formatMoney(baseFare);
 
               return (
-                <div
-                  key={v.id}
-                  className={`turna-car-card ${isSelected ? 'selected' : ''}`}
-                  onClick={() => handleSelectVehicle(v.id)}
-                >
-                  <div className="turna-car-card-header">
-                    <div className="turna-car-img-box">
-                      <img src={v.image} alt={v.name} loading="lazy" />
-                      <div className="turna-provider-logo">AVIS</div>
-                    </div>
-
-                    <div className="turna-car-info-box">
-                      <h3 className="turna-car-name">{v.name}</h3>
-                      <span className="turna-car-sub">veya benzeri bir araba</span>
-
-                      <div className="turna-car-specs-grid">
-                        <div className="turna-spec-item"><Users size={14} /> {v.seats} Koltuklu</div>
-                        <div className="turna-spec-item">🕹️ Otomatik</div>
-                        <div className="turna-spec-item">⛽ Dizel/Benzin</div>
-                        <div className="turna-spec-item">⏱️ 1500 Km</div>
-                      </div>
-
-                      <div className="turna-car-deposit">
-                        <span>💳 Depozito: 5.000 TL</span>
-                      </div>
-
-                      <div className="turna-car-cancellation">
-                        <Check size={14} color="#059669" strokeWidth={3} />
-                        <span>Ücretsiz İptal</span>
-                      </div>
+                <div key={car.id} className="car-card-box">
+                  {/* Top Image & Badges */}
+                  <div className="car-card-img-wrap">
+                    <img src={car.image} alt={car.name} loading="lazy" />
+                    <div className="car-badge-overlay">
+                      <span className="flag-tag flag-tag-orange">VIP Tahsis</span>
+                      <span className="flag-tag flag-tag-dark">{car.class}</span>
                     </div>
                   </div>
 
-                  <div className="turna-car-card-footer">
-                    <span className="turna-car-rate-calc">
-                      {formatMoney(baseDailyRate)} x 3 Gün
-                    </span>
-                    <strong className="turna-car-total-bold">
-                      {totalFormatted}
-                    </strong>
+                  {/* Body Content */}
+                  <div className="car-card-body">
+                    <h3 className="car-card-title">{car.name}</h3>
+                    <p className="car-card-desc">Özel şoförlü VIP transfer, deri koltuk ve ücretsiz ikramlar.</p>
+
+                    {/* Specs Row */}
+                    <div className="car-card-specs">
+                      <div className="car-spec-item">
+                        <Users size={14} color="#ff7101" />
+                        <span>{car.seats} Kişi</span>
+                      </div>
+                      <div className="car-spec-item">
+                        <Briefcase size={14} color="#ff7101" />
+                        <span>{car.luggage} Bagaj</span>
+                      </div>
+                      <div className="car-spec-item">
+                        <Wifi size={14} color="#ff7101" />
+                        <span>5G Wi-Fi</span>
+                      </div>
+                    </div>
+
+                    {/* Pricing & CTA */}
+                    <div className="car-card-footer">
+                      <div>
+                        <span className="car-price-sub">Sabit Fiyat:</span>
+                        <strong className="car-price-val">{fareFormatted}</strong>
+                      </div>
+                      <button
+                        type="button"
+                        className="car-action-btn"
+                        onClick={() => {
+                          setSelectedVehicleId(car.id);
+                          setModalStep('AMENITIES');
+                          setBookingModalOpen(true);
+                        }}
+                      >
+                        <span>Hemen Seç</span>
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
         </div>
-      )}
+      </section>
 
       {/* =========================================================================
-          SCREEN 4: TURNA CHECKOUT & PASSENGER FORM (SCREENSHOT 4)
+          SIMPLIFIED & STREAMLINED IN-PLACE BOOKING MODAL
          ========================================================================= */}
-      {currentStep === 'PASSENGER' && (
-        <div className="turna-passenger-screen">
-          {/* Top Bar with Back Button and Title */}
-          <div className="turna-passenger-topbar">
-            <button
-              type="button"
-              className="turna-top-back-btn"
-              onClick={() => setCurrentStep('VEHICLES')}
-            >
-              <ChevronLeft size={22} color="#0f172a" />
-            </button>
-            <h2 className="turna-passenger-top-title">İletişim Bilgileri</h2>
-          </div>
+      {bookingModalOpen && (
+        <div className="car-modal-backdrop" onClick={() => setBookingModalOpen(false)}>
+          <div className="car-modal-box" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="car-modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {modalStep !== 'VEHICLES' && modalStep !== 'CONFIRMATION' && (
+                  <button
+                    type="button"
+                    className="car-modal-back-btn"
+                    onClick={() => {
+                      if (modalStep === 'AMENITIES') setModalStep('VEHICLES');
+                      else if (modalStep === 'PASSENGER') setModalStep('AMENITIES');
+                    }}
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                )}
+                <h3 className="car-modal-title">
+                  {modalStep === 'VEHICLES' && 'Araç Seçimi (1/3)'}
+                  {modalStep === 'AMENITIES' && 'Donanım & Ekstralar (2/3)'}
+                  {modalStep === 'PASSENGER' && 'Yolcu Bilgileri & Ödeme (3/3)'}
+                  {modalStep === 'CONFIRMATION' && 'Rezervasyon Onaylandı'}
+                </h3>
+              </div>
 
-          <div className="turna-passenger-scroll-body">
-            {/* Collapsible Accordion 1: Selected Car */}
-            <div className="turna-accordion-card">
-              <div 
-                className="turna-accordion-header"
-                onClick={() => setVehicleAccOpen(!vehicleAccOpen)}
+              <button
+                type="button"
+                className="car-modal-close"
+                onClick={() => setBookingModalOpen(false)}
               >
-                <div className="turna-acc-car-preview">
-                  <img src={selectedVehicleObj.image} alt={selectedVehicleObj.name} />
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* STEP 1: VEHICLE SELECTION */}
+            {modalStep === 'VEHICLES' && (
+              <div className="car-modal-body">
+                <div className="car-modal-route-pill">
+                  <span>{pickup?.name?.split('(')[0]?.trim()} ➔ {destination?.name?.split('(')[0]?.trim()}</span>
+                  <small>Sabit Fiyat Garantisi</small>
+                </div>
+
+                <div className="car-modal-vehicle-list">
+                  {fleet.map((v) => {
+                    const isSelected = v.id === selectedVehicleId;
+                    const fare = v.baseOpeningRate + (35 * v.baseRateKm);
+
+                    return (
+                      <div
+                        key={v.id}
+                        className={`car-modal-vehicle-card ${isSelected ? 'selected' : ''}`}
+                        onClick={() => handleSelectVehicle(v.id)}
+                      >
+                        <div className="car-modal-vehicle-img">
+                          <img src={v.image} alt={v.name} />
+                        </div>
+                        <div className="car-modal-vehicle-info">
+                          <h4>{v.name}</h4>
+                          <span className="car-class-badge">{v.class}</span>
+                          <div className="car-modal-specs">
+                            <span><Users size={12} /> {v.seats} Kişi</span>
+                            <span><Briefcase size={12} /> {v.luggage} Bagaj</span>
+                          </div>
+                        </div>
+                        <div className="car-modal-vehicle-price">
+                          <strong>{formatMoney(fare)}</strong>
+                          <button type="button" className="car-select-sm-btn">Seç</button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: AMENITIES & EXTRAS */}
+            {modalStep === 'AMENITIES' && (
+              <div className="car-modal-body">
+                <div className="car-modal-route-pill">
+                  <span>Seçilen Araç: <strong>{selectedVehicleObj.name}</strong></span>
+                </div>
+
+                <div className="car-amenities-list">
+                  {amenitiesList.map((am) => {
+                    const current = selectedAmenities[am.id] || { selected: false, count: 0 };
+                    const isChecked = current.selected || am.checkedByDefault;
+
+                    return (
+                      <div
+                        key={am.id}
+                        className={`car-amenity-row ${isChecked ? 'active' : ''}`}
+                        onClick={() => toggleAmenity(am.id)}
+                      >
+                        <div className="car-amenity-checkbox">
+                          {isChecked && <Check size={14} strokeWidth={3} />}
+                        </div>
+                        <div className="car-amenity-info">
+                          <div className="car-amenity-head">
+                            <strong>{am.title}</strong>
+                            {am.isFree ? (
+                              <span className="car-tag-free">Dahil</span>
+                            ) : (
+                              <span className="car-tag-price">+{formatMoney(am.priceTRY)}</span>
+                            )}
+                          </div>
+                          <p>{am.subtitle}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="car-modal-footer-bar">
                   <div>
-                    <strong>{selectedVehicleObj.name}</strong>
-                    <small>veya benzeri bir araba</small>
+                    <span className="car-footer-sub">Toplam Tutar:</span>
+                    <strong className="car-footer-price">{formatMoney(prices.grandTotalTRY || prices.total)}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    className="car-primary-action-btn"
+                    onClick={() => setModalStep('PASSENGER')}
+                  >
+                    <span>Yolcu Bilgilerine Geç</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: PASSENGER & CHECKOUT */}
+            {modalStep === 'PASSENGER' && (
+              <div className="car-modal-body">
+                <form onSubmit={handleConfirmReservation} className="car-passenger-form">
+                  <div className="car-form-row-2">
+                    <div className="car-field">
+                      <label>ADINIZ *</label>
+                      <input
+                        type="text"
+                        required
+                        value={passenger.name}
+                        onChange={(e) => setPassenger({ ...passenger, name: e.target.value })}
+                        placeholder="Adınız"
+                      />
+                    </div>
+                    <div className="car-field">
+                      <label>SOYADINIZ *</label>
+                      <input
+                        type="text"
+                        required
+                        value={passenger.surname}
+                        onChange={(e) => setPassenger({ ...passenger, surname: e.target.value })}
+                        placeholder="Soyadınız"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="car-form-row-2">
+                    <div className="car-field">
+                      <label>E-POSTA ADRESİ *</label>
+                      <input
+                        type="email"
+                        required
+                        value={passenger.email}
+                        onChange={(e) => setPassenger({ ...passenger, email: e.target.value })}
+                        placeholder="ornek@email.com"
+                      />
+                    </div>
+                    <div className="car-field">
+                      <label>TELEFON (WHATSAPP) *</label>
+                      <input
+                        type="tel"
+                        required
+                        value={passenger.phone}
+                        onChange={(e) => setPassenger({ ...passenger, phone: e.target.value })}
+                        placeholder="+90 532 000 00 00"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="car-field">
+                    <label>UÇUŞ KODU (OPSİYONEL - CANLI RADAR TAKİBİ)</label>
+                    <input
+                      type="text"
+                      value={passenger.flightNumber || ''}
+                      onChange={(e) => setPassenger({ ...passenger, flightNumber: e.target.value })}
+                      placeholder="Örn: TK 1980"
+                    />
+                  </div>
+
+                  <div className="car-field">
+                    <label>ÖDEME TÜRÜ</label>
+                    <div className="car-payment-options">
+                      <label className={`car-payment-opt ${passenger.paymentMethod === 'cash' ? 'active' : ''}`}>
+                        <input
+                          type="radio"
+                          name="paym"
+                          value="cash"
+                          checked={passenger.paymentMethod === 'cash'}
+                          onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
+                        />
+                        <Banknote size={16} color="#198754" />
+                        <span>Araçta Nakit / Kredi Kartı</span>
+                      </label>
+
+                      <label className={`car-payment-opt ${passenger.paymentMethod === 'online' ? 'active' : ''}`}>
+                        <input
+                          type="radio"
+                          name="paym"
+                          value="online"
+                          checked={passenger.paymentMethod === 'online'}
+                          onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
+                        />
+                        <CreditCard size={16} color="#ff7101" />
+                        <span>Online Güvenli Ödeme</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="car-submit-btn"
+                    disabled={submitting}
+                  >
+                    <Lock size={16} />
+                    <span>{submitting ? 'Oluşturuluyor...' : `VIP Rezervasyonu Onayla (${formatMoney(prices.grandTotalTRY || prices.total)})`}</span>
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* STEP 4: CONFIRMATION */}
+            {modalStep === 'CONFIRMATION' && (
+              <div className="car-modal-body" style={{ textAlign: 'center', padding: '24px 16px' }}>
+                <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#ecfdf5', color: '#198754', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Check size={32} strokeWidth={3} />
+                </div>
+
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#24272c', margin: '0 0 6px' }}>
+                  Rezervasyonunuz Başarıyla Onaylandı!
+                </h3>
+                <p style={{ fontSize: '13.5px', color: '#696665', margin: '0 0 20px' }}>
+                  VIP aracınız adınıza tahsis edildi. Kupon detayları SMS ve WhatsApp ile iletilmiştir.
+                </p>
+
+                <div style={{ background: '#f8f9fa', border: '1.5px dashed #ededed', borderRadius: '16px', padding: '16px', textAlign: 'left', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#696665' }}>REZERVASYON KODU</span>
+                    <strong style={{ fontSize: '16px', color: '#ff7101', fontFamily: 'monospace' }}>
+                      {confirmedBooking?.code || 'SDRV-VIP'}
+                    </strong>
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#24272c', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div>🛫 <b>Kalkış:</b> {pickup?.name}</div>
+                    <div>🏨 <b>Varış:</b> {destination?.name}</div>
+                    <div>🚘 <b>Araç:</b> {selectedVehicleObj.name}</div>
+                    <div>💰 <b>Tutar:</b> {formatMoney(prices.grandTotalTRY || prices.total)}</div>
                   </div>
                 </div>
-                <ChevronDown size={18} color="#64748b" style={{ transform: vehicleAccOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-              </div>
 
-              {vehicleAccOpen && (
-                <div className="turna-accordion-content">
-                  <div className="turna-acc-specs-row">
-                    <span>🪑 {selectedVehicleObj.seats} Koltuk</span>
-                    <span>🕹️ Otomatik Vites</span>
-                    <span>⛽ Dizel / Hibrit</span>
-                  </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="car-submit-btn"
+                    onClick={() => {
+                      setBookingModalOpen(false);
+                      navigate('/takip');
+                    }}
+                  >
+                    <Radar size={16} />
+                    <span>Canlı Radar ve Şoför Takibini Aç</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="btn-ghost"
+                    onClick={() => setBookingModalOpen(false)}
+                    style={{ padding: '10px', color: '#696665' }}
+                  >
+                    Kapat
+                  </button>
                 </div>
-              )}
-            </div>
-
-            {/* Collapsible Accordion 2: Araç Teslim Bilgileri */}
-            <div className="turna-accordion-card">
-              <div 
-                className="turna-accordion-header"
-                onClick={() => setDeliveryAccOpen(!deliveryAccOpen)}
-              >
-                <strong>Araç Teslim Bilgileri</strong>
-                <ChevronDown size={18} color="#64748b" style={{ transform: deliveryAccOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
-
-              {deliveryAccOpen && (
-                <div className="turna-accordion-content">
-                  <p style={{ margin: 0, fontSize: '13px', color: '#475569' }}>
-                    Alış: <b>{pickup?.name || 'İstanbul Havalimanı (IST)'}</b> ({pickupDate}, {pickupTime})<br />
-                    İade: <b>{destination?.name || 'Aynı Nokta'}</b> ({dropoffDate}, {dropoffTime})
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Collapsible Accordion 3: Ofis Bilgileri / Güzergah */}
-            <div className="turna-accordion-card">
-              <div 
-                className="turna-accordion-header"
-                onClick={() => setAmenitiesAccOpen(!amenitiesAccOpen)}
-              >
-                <strong>Ofis Bilgileri</strong>
-                <ChevronDown size={18} color="#64748b" style={{ transform: amenitiesAccOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-              </div>
-
-              {amenitiesAccOpen && (
-                <div className="turna-accordion-content">
-                  <p style={{ margin: 0, fontSize: '13px', color: '#475569' }}>
-                    Havalimanı Terminal İçi Gelen Yolcu Kapısı No: 9 VIP Karşılama Masası
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Form Box 1: Kişisel Bilgiler */}
-            <div className="turna-white-form-box">
-              <h3 className="turna-box-heading">Kişisel Bilgiler</h3>
-
-              <div className="turna-clean-input-group">
-                <input
-                  type="text"
-                  required
-                  value={passenger.name}
-                  onChange={(e) => setPassenger({ ...passenger, name: e.target.value })}
-                  placeholder="İsim"
-                />
-              </div>
-
-              <div className="turna-clean-input-group">
-                <input
-                  type="text"
-                  required
-                  value={passenger.surname}
-                  onChange={(e) => setPassenger({ ...passenger, surname: e.target.value })}
-                  placeholder="Soyisim"
-                />
-              </div>
-
-              <div className="turna-clean-input-group">
-                <input
-                  type="text"
-                  placeholder="Doğum Tarihi (GG.AA.YYYY)"
-                />
-              </div>
-
-              <div className="turna-tc-row">
-                <div className="turna-clean-input-group" style={{ flex: 1, margin: 0 }}>
-                  <input
-                    type="text"
-                    maxLength={11}
-                    placeholder="T.C. Kimlik No"
-                    disabled={notTcCitizen}
-                  />
-                </div>
-                <label className="turna-checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={notTcCitizen}
-                    onChange={(e) => setNotTcCitizen(e.target.checked)}
-                  />
-                  <span>T.C. Vatandaşı Değil</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Form Box 2: İletişim Bilgileri */}
-            <div className="turna-white-form-box">
-              <h3 className="turna-box-heading">İletişim Bilgileri</h3>
-
-              <div className="turna-clean-input-group">
-                <input
-                  type="email"
-                  required
-                  value={passenger.email}
-                  onChange={(e) => setPassenger({ ...passenger, email: e.target.value })}
-                  placeholder="E-posta Adresi"
-                />
-              </div>
-
-              <div className="turna-clean-input-group">
-                <input
-                  type="tel"
-                  required
-                  value={passenger.phone}
-                  onChange={(e) => setPassenger({ ...passenger, phone: e.target.value })}
-                  placeholder="Cep Telefonu (+90 532 ...)"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Sticky Bottom Bar with Total & Action Button (Screenshot 4) */}
-          <div className="turna-sticky-checkout-bar">
-            <div className="turna-sticky-price-wrap">
-              <span className="turna-sticky-price-label">Toplam tutar</span>
-              <div className="turna-sticky-price-val">
-                <strong>{formatMoney(prices.grandTotalTRY || 6940.18)}</strong>
-                <ChevronDown size={16} color="#0f172a" style={{ transform: 'rotate(180deg)' }} />
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="turna-checkout-cobalt-btn"
-              disabled={submitting}
-              onClick={handleConfirmReservation}
-            >
-              <span>{submitting ? 'İşleniyor...' : 'Ödemeye İlerle'}</span>
-              <ChevronRight size={18} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================================
-          SCREEN 5: CONFIRMATION / BOARDING PASS SCREEN
-         ========================================================================= */}
-      {currentStep === 'CONFIRMATION' && (
-        <div className="turna-confirmation-screen">
-          <div className="turna-confirm-card">
-            <div className="turna-confirm-icon-wrap">
-              <Check size={36} color="#059669" strokeWidth={3} />
-            </div>
-
-            <h2 className="turna-confirm-title">Rezervasyonunuz Başarıyla Alındı!</h2>
-            <p className="turna-confirm-desc">
-              VIP transfer kuponunuz ve sürücü detaylarınız SMS & WhatsApp ile tarafınıza iletilmiştir.
-            </p>
-
-            <div className="turna-voucher-box">
-              <div className="turna-voucher-row">
-                <span className="turna-voucher-label">REZERVASYON KODU</span>
-                <strong className="turna-voucher-code">{confirmedBooking?.code || 'SDRV-7492'}</strong>
-              </div>
-              <div className="turna-voucher-details">
-                <div>🛫 <b>Kalkış:</b> {pickup?.name || 'İstanbul Havalimanı (IST)'}</div>
-                <div>🏨 <b>Varış:</b> {destination?.name || 'Beşiktaş'}</div>
-                <div>🚘 <b>Araç:</b> {selectedVehicleObj.name}</div>
-                <div>💰 <b>Tutar:</b> {formatMoney(prices.grandTotalTRY || 6940.18)}</div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="turna-cobalt-btn"
-              onClick={() => navigate('/takip')}
-            >
-              <Radar size={18} />
-              <span>Canlı Sürücü ve Radar Takibini Aç</span>
-            </button>
-
-            <button
-              type="button"
-              className="turna-return-home-btn"
-              onClick={() => setCurrentStep('SEARCH')}
-            >
-              Ana Sayfaya Dön
-            </button>
+            )}
           </div>
         </div>
       )}

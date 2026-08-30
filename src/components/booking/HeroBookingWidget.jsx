@@ -220,7 +220,7 @@ export default function HeroBookingWidget() {
           <div className="car-hero-content">
             {/* Tagline Badge */}
             <div className="car-hero-badge">
-              <Sparkles size={14} color="#ff7101" />
+              <Sparkles size={14} color="#144c7f" />
               <span>D2 Lisanslı Protokol Şoförleri • %100 Sabit Fiyat Garantisi</span>
             </div>
 
@@ -301,7 +301,7 @@ export default function HeroBookingWidget() {
               <div className="car-input-field" onClick={() => { setPickupOpen(true); setDestOpen(false); }}>
                 <label>KALKIŞ NOKTASI</label>
                 <div className="car-input-inner">
-                  <Plane size={16} color="#ff7101" />
+                  <Plane size={16} color="#144c7f" />
                   <input
                     type="text"
                     value={pickupQuery}
@@ -323,7 +323,7 @@ export default function HeroBookingWidget() {
                           setDestOpen(true);
                         }}
                       >
-                        <Plane size={14} color="#ff7101" />
+                        <Plane size={14} color="#144c7f" />
                         <div>
                           <strong>{a.name}</strong>
                           <small>{a.city} · VIP Terminal</small>
@@ -448,15 +448,15 @@ export default function HeroBookingWidget() {
                     {/* Specs Row */}
                     <div className="car-card-specs">
                       <div className="car-spec-item">
-                        <Users size={14} color="#ff7101" />
+                        <Users size={14} color="#144c7f" />
                         <span>{car.seats} Kişi</span>
                       </div>
                       <div className="car-spec-item">
-                        <Briefcase size={14} color="#ff7101" />
+                        <Briefcase size={14} color="#144c7f" />
                         <span>{car.luggage} Bagaj</span>
                       </div>
                       <div className="car-spec-item">
-                        <Wifi size={14} color="#ff7101" />
+                        <Wifi size={14} color="#144c7f" />
                         <span>5G Wi-Fi</span>
                       </div>
                     </div>
@@ -704,7 +704,7 @@ export default function HeroBookingWidget() {
                           checked={passenger.paymentMethod === 'online'}
                           onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
                         />
-                        <CreditCard size={16} color="#ff7101" />
+                        <CreditCard size={16} color="#144c7f" />
                         <span>Online Güvenli Ödeme</span>
                       </label>
                     </div>
@@ -739,7 +739,7 @@ export default function HeroBookingWidget() {
                 <div style={{ background: '#f8f9fa', border: '1.5px dashed #ededed', borderRadius: '16px', padding: '16px', textAlign: 'left', marginBottom: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: '#696665' }}>REZERVASYON KODU</span>
-                    <strong style={{ fontSize: '16px', color: '#ff7101', fontFamily: 'monospace' }}>
+                    <strong style={{ fontSize: '16px', color: '#144c7f', fontFamily: 'monospace' }}>
                       {confirmedBooking?.code || 'SDRV-VIP'}
                     </strong>
                   </div>

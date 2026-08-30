@@ -7,10 +7,10 @@
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
 
-  /* Automotive Luxury Car Theme (ai-website-cloner-template) */
-  --primary: #ff7101;
-  --primary-hover: #e66500;
-  --primary-light: rgba(255, 113, 1, 0.08);
+  /* Automotive Luxury Car Theme (#144c7f) */
+  --primary: #144c7f;
+  --primary-hover: #0e375e;
+  --primary-light: rgba(20, 76, 127, 0.08);
   --dark: #24272c;
   --dark-2: #1c1e22;
   --dark-3: #111215;
@@ -20,7 +20,7 @@
   --bg-light: #f8f9fa;
   --bg-surface: #ffffff;
 
-  --accent-primary: #ff7101;
+  --accent-primary: #144c7f;
   --accent-green: #198754;
 
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -31,7 +31,7 @@
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 12px 32px rgba(255, 113, 1, 0.12);
+  --shadow-card-hover: 0 12px 32px rgba(20, 76, 127, 0.12);
   --shadow-modal: 0 24px 48px rgba(0, 0, 0, 0.16);
 
   /* Radii */
@@ -307,8 +307,8 @@ a {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #ff7101;
-  box-shadow: 0 0 0 3px rgba(255, 113, 1, 0.2);
+  background: #144c7f;
+  box-shadow: 0 0 0 3px rgba(20, 76, 127, 0.2);
 }
 
 .header-logo-text {
@@ -322,18 +322,18 @@ a {
 
 .header-logo-text span {
   font-weight: 700;
-  color: #ff7101;
+  color: #144c7f;
 }
 
 .header-vip-tag {
   font-size: 10px;
   font-weight: 800;
-  background: rgba(255, 113, 1, 0.08);
-  color: #ff7101;
+  background: rgba(20, 76, 127, 0.08);
+  color: #144c7f;
   padding: 2px 7px;
   border-radius: 6px;
   letter-spacing: 0.05em;
-  border: 1px solid rgba(255, 113, 1, 0.2);
+  border: 1px solid rgba(20, 76, 127, 0.2);
 }
 
 /* Desktop Navigation */
@@ -357,13 +357,13 @@ a {
 }
 
 .header-nav-link:hover {
-  color: #ff7101;
-  background: rgba(255, 113, 1, 0.05);
+  color: #144c7f;
+  background: rgba(20, 76, 127, 0.05);
 }
 
 .header-nav-link.active {
-  color: #ff7101;
-  background: rgba(255, 113, 1, 0.08);
+  color: #144c7f;
+  background: rgba(20, 76, 127, 0.08);
   font-weight: 700;
 }
 
@@ -379,9 +379,9 @@ a {
 }
 
 .header-tracking-btn {
-  background: rgba(255, 113, 1, 0.08);
-  border: 1px solid rgba(255, 113, 1, 0.2);
-  color: #ff7101;
+  background: rgba(20, 76, 127, 0.08);
+  border: 1px solid rgba(20, 76, 127, 0.2);
+  color: #144c7f;
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 12px;
@@ -7659,7 +7659,7 @@ textarea.input-field-box {
 }
 
 .car-hero-title span {
-  color: #ff7101;
+  color: #144c7f;
 }
 
 .car-hero-desc {
@@ -7693,7 +7693,7 @@ textarea.input-field-box {
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  background: #ff7101;
+  background: #144c7f;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7737,12 +7737,12 @@ textarea.input-field-box {
 }
 
 .car-tab-btn:hover {
-  color: #ff7101;
+  color: #144c7f;
 }
 
 .car-tab-btn.active {
-  color: #ff7101;
-  background: rgba(255, 113, 1, 0.08);
+  color: #144c7f;
+  background: rgba(20, 76, 127, 0.08);
 }
 
 .car-trip-type-switch {
@@ -7819,7 +7819,7 @@ textarea.input-field-box {
 }
 
 .car-search-btn {
-  background: #ff7101;
+  background: #144c7f;
   color: #ffffff;
   border: none;
   border-radius: 12px;
@@ -7832,13 +7832,13 @@ textarea.input-field-box {
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(255, 113, 1, 0.3);
+  box-shadow: 0 4px 14px rgba(20, 76, 127, 0.3);
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .car-search-btn:hover {
-  background: #e66500;
+  background: #0e375e;
   transform: translateY(-1px);
 }
 
@@ -7867,7 +7867,7 @@ textarea.input-field-box {
 }
 
 .car-dropdown-item:hover {
-  background: #fff7ed;
+  background: #eff6ff;
 }
 
 .car-dropdown-item strong {
@@ -7899,7 +7899,7 @@ textarea.input-field-box {
 .car-section-sub {
   font-size: 11.5px;
   font-weight: 800;
-  color: #ff7101;
+  color: #144c7f;
   letter-spacing: 0.08em;
   display: block;
   margin-bottom: 4px;
@@ -7932,10 +7932,10 @@ textarea.input-field-box {
 }
 
 .car-filter-pill.active {
-  background: #ff7101;
-  border-color: #ff7101;
+  background: #144c7f;
+  border-color: #144c7f;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(255, 113, 1, 0.25);
+  box-shadow: 0 2px 8px rgba(20, 76, 127, 0.25);
 }
 
 /* 3-Col Cars Grid */
@@ -8003,7 +8003,7 @@ textarea.input-field-box {
 }
 
 .flag-tag-orange {
-  background: #ff7101;
+  background: #144c7f;
 }
 
 .flag-tag-dark {
@@ -8076,7 +8076,7 @@ textarea.input-field-box {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: #ff7101;
+  background: #144c7f;
   color: #ffffff;
   border: none;
   padding: 8px 16px;
@@ -8088,7 +8088,7 @@ textarea.input-field-box {
 }
 
 .car-action-btn:hover {
-  background: #e66500;
+  background: #0e375e;
 }
 
 /* Modal Styles */
@@ -8175,7 +8175,7 @@ textarea.input-field-box {
   justify-content: space-between;
   font-size: 12.5px;
   font-weight: 700;
-  color: #ff7101;
+  color: #144c7f;
 }
 
 .car-modal-vehicle-list {
@@ -8198,8 +8198,8 @@ textarea.input-field-box {
 
 .car-modal-vehicle-card:hover,
 .car-modal-vehicle-card.selected {
-  border-color: #ff7101;
-  background: #fff7ed;
+  border-color: #144c7f;
+  background: #eff6ff;
 }
 
 .car-modal-vehicle-img {
@@ -8231,7 +8231,7 @@ textarea.input-field-box {
 .car-class-badge {
   font-size: 10.5px;
   font-weight: 700;
-  color: #ff7101;
+  color: #144c7f;
 }
 
 .car-modal-specs {
@@ -8258,7 +8258,7 @@ textarea.input-field-box {
 }
 
 .car-select-sm-btn {
-  background: #ff7101;
+  background: #144c7f;
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -8287,8 +8287,8 @@ textarea.input-field-box {
 }
 
 .car-amenity-row.active {
-  border-color: #ff7101;
-  background: #fff7ed;
+  border-color: #144c7f;
+  background: #eff6ff;
 }
 
 .car-amenity-checkbox {
@@ -8305,8 +8305,8 @@ textarea.input-field-box {
 }
 
 .car-amenity-row.active .car-amenity-checkbox {
-  background: #ff7101;
-  border-color: #ff7101;
+  background: #144c7f;
+  border-color: #144c7f;
 }
 
 .car-amenity-info {
@@ -8337,8 +8337,8 @@ textarea.input-field-box {
 .car-tag-price {
   font-size: 11px;
   font-weight: 700;
-  color: #ff7101;
-  background: #fff7ed;
+  color: #144c7f;
+  background: #eff6ff;
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -8366,7 +8366,7 @@ textarea.input-field-box {
 .car-footer-price {
   font-size: 18px;
   font-weight: 900;
-  color: #ff7101;
+  color: #144c7f;
   font-family: monospace;
 }
 
@@ -8374,7 +8374,7 @@ textarea.input-field-box {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #ff7101;
+  background: #144c7f;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -8418,7 +8418,7 @@ textarea.input-field-box {
 }
 
 .car-field input:focus {
-  border-color: #ff7101;
+  border-color: #144c7f;
   background: #ffffff;
 }
 
@@ -8443,13 +8443,13 @@ textarea.input-field-box {
 }
 
 .car-payment-opt.active {
-  border-color: #ff7101;
-  background: #fff7ed;
+  border-color: #144c7f;
+  background: #eff6ff;
 }
 
 .car-submit-btn {
   width: 100%;
-  background: #ff7101;
+  background: #144c7f;
   color: #ffffff;
   border: none;
   border-radius: 12px;
@@ -8461,12 +8461,12 @@ textarea.input-field-box {
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(255, 113, 1, 0.3);
+  box-shadow: 0 4px 14px rgba(20, 76, 127, 0.3);
   margin-top: 6px;
 }
 
 .car-submit-btn:hover {
-  background: #e66500;
+  background: #0e375e;
 }
 
 

@@ -1,8 +1,19 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
-import { Satellite, RefreshCw, Car, Radio, MapPin, Clock, ShieldCheck, Gauge, Compass, Trash2, Navigation, Layers } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { GPS_REALTIME_CHANNEL } from '../../lib/locationService';
+import {
+  Car,
+  MapPin,
+  RefreshCw,
+  Layers,
+  Radio,
+  Trash2,
+  Compass,
+  CheckCircle2,
+  Clock,
+  UserCheck
+} from 'lucide-react';
 
 const COORDS = {
   IST: { pickup: [41.2753, 28.7519], label: 'İstanbul Havalimanı (IST)' },
@@ -28,6 +39,18 @@ function resolveRoute(booking) {
   return { pickup, dest };
 }
 
+function findAssignedTransfer(driver, transfers) {
+  if (!driver || !transfers) return null;
+  const phone = driver.phone ? driver.phone.replace(/[^0-9]/g, '') : '';
+  const name = (driver.driver_name || '').toLowerCase();
+
+  return transfers.find((t) => {
+    const tPhone = t.chauffeur_phone ? t.chauffeur_phone.replace(/[^0-9]/g, '') : '';
+    const tName = (t.chauffeur_name || '').toLowerCase();
+    return (phone && tPhone && phone === tPhone) || (name && tName && (name.includes(tName) || tName.includes(name)));
+  });
+}
+
 export default function AdminLiveMap() {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -37,26 +60,30 @@ export default function AdminLiveMap() {
   const [transfers, setTransfers] = useState([]);
   const [liveDrivers, setLiveDrivers] = useState({});
   const [selectedDriverId, setSelectedDriverId] = useState(null);
+  const [showRoutes, setShowRoutes] = useState(true);
   const [loading, setLoading] = useState(true);
   const [channelStatus, setChannelStatus] = useState('connecting');
   const [lastSignalTime, setLastSignalTime] = useState(null);
-  const [showRoutes, setShowRoutes] = useState(true);
 
-  // Transferleri yükle
+  // Aktif Transferleri Yükle
   const loadTransfers = async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('bookings')
         .select('*')
-        .lt('status_step', 6)
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) console.warn('Live map fetch:', error.message);
-      setTransfers(data || []);
-    } catch (err) {
-      console.warn(err);
+      if (error) {
+        setTransfers([]);
+      } else {
+        const active = (data || []).filter(
+          (b) => b.status_step >= 2 && b.status_step <= 5
+        );
+        setTransfers(active);
+      }
+    } catch {
       setTransfers([]);
     } finally {
       setLoading(false);
@@ -85,7 +112,7 @@ export default function AdminLiveMap() {
     };
   }, []);
 
-  // Supabase Realtime Kanalı: Şoförlerin gerçek canlı GPS konumlarını dinle
+  // Supabase Realtime Kanalı: Şoförlerin gerçek canlı GPS konumlarını dinle (Boşta veya Görevde)
   useEffect(() => {
     const channel = supabase
       .channel(GPS_REALTIME_CHANNEL, {
@@ -111,14 +138,32 @@ export default function AdminLiveMap() {
       })
       .subscribe((status) => {
         setChannelStatus(status === 'SUBSCRIBED' ? 'connected' : status);
+        if (status === 'SUBSCRIBED') {
+          // Açılışta tüm bağlı şoför cihazlarından anlık GPS iste
+          channel.send({
+            type: 'broadcast',
+            event: 'request-driver-locations',
+            payload: {}
+          }).catch(() => {});
+        }
       });
 
+    // Her 15 saniyede bir şoförlerin konumlarını yokla (Ping)
+    const interval = setInterval(() => {
+      channel.send({
+        type: 'broadcast',
+        event: 'request-driver-locations',
+        payload: {}
+      }).catch(() => {});
+    }, 15000);
+
     return () => {
+      clearInterval(interval);
       supabase.removeChannel(channel);
     };
   }, []);
 
-  // Leaflet Harita Başlatma (Filigransız Temiz OpenStreetMap)
+  // Leaflet Harita Başlatma
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -187,7 +232,7 @@ export default function AdminLiveMap() {
     });
   }, [transfers, showRoutes]);
 
-  // Canlı Şoför GPS İşaretçilerini Haritada Güncelleme
+  // Canlı Şoför GPS İşaretçilerini Haritada Güncelleme (Boşta veya Görevde)
   useEffect(() => {
     if (!mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
@@ -202,16 +247,23 @@ export default function AdminLiveMap() {
       }
     });
 
-    // Her gerçek canlı şoför için hareketli VIP Araç Marker'ı
+    // Her canlı şoför için hareketli VIP Araç Marker'ı (Rotada olsun veya olmasın)
     Object.values(liveDrivers).forEach((driver) => {
       const latLng = [driver.lat, driver.lng];
       const isSelected = selectedDriverId === driver.driver_id;
+      const assignedTask = findAssignedTransfer(driver, transfers);
+      const isOnRoute = !!assignedTask;
+
+      const markerColor = isOnRoute ? '#0284c7' : '#059669';
+      const statusBadge = isOnRoute 
+        ? `<span style="color:#60a5fa;">🔵 ${assignedTask.code}</span>` 
+        : `<span style="color:#34d399;">🟢 Boşta / Hazır</span>`;
 
       const carHtml = `
         <div class="live-driver-radar-marker ${isSelected ? 'selected' : ''}">
-          <div class="radar-ping-wave"></div>
-          <div class="driver-car-icon">🚘</div>
-          <div class="driver-name-tag">
+          <div class="radar-ping-wave" style="border-color:${markerColor};"></div>
+          <div class="driver-car-icon" style="background:${markerColor};">🚘</div>
+          <div class="driver-name-tag" style="background:rgba(15,23,42,0.94);">
             <strong>${driver.driver_name?.split(' ')[0]}</strong>
             <small>${driver.speed || 0} km/s</small>
           </div>
@@ -226,7 +278,7 @@ export default function AdminLiveMap() {
       });
 
       const popupContent = `
-        <div style="font-family: Inter, sans-serif; min-width: 190px; padding: 4px;">
+        <div style="font-family: Inter, sans-serif; min-width: 200px; padding: 4px;">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
             <span style="font-size:18px;">👨‍✈️</span>
             <div>
@@ -234,10 +286,12 @@ export default function AdminLiveMap() {
               <span style="font-size:11px;color:#475569;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-weight:700;">${driver.vehicle_plate || '34 VIP 770'}</span>
             </div>
           </div>
-          <div style="font-size:12px;color:#334155;display:flex;flex-direction:column;gap:3px;border-top:1px solid #e2e8f0;padding-top:6px;">
+          <div style="font-size:12px;color:#334155;display:flex;flex-direction:column;gap:4px;border-top:1px solid #e2e8f0;padding-top:6px;">
+            <div>📌 <b>Durum:</b> ${statusBadge}</div>
+            ${assignedTask ? `<div>👤 <b>Yolcu:</b> ${assignedTask.passenger_name}</div>` : ''}
             <div>⚡ <b>Anlık Hız:</b> ${driver.speed || 0} km/s</div>
             <div>📡 <b>GPS Doğruluk:</b> ±${driver.accuracy || 5} m</div>
-            <div>🕒 <b>Son Sinyal:</b> ${new Date(driver.updated_at).toLocaleTimeString('tr-TR')}</div>
+            <div>🕒 <b>Son Sinyal:</b> ${new Date(driver.updated_at || Date.now()).toLocaleTimeString('tr-TR')}</div>
           </div>
         </div>
       `;
@@ -257,10 +311,9 @@ export default function AdminLiveMap() {
         });
 
         driverMarkersRef.current.set(driver.driver_id, marker);
-        map.flyTo(latLng, 14, { duration: 1 });
       }
     });
-  }, [liveDrivers, selectedDriverId]);
+  }, [liveDrivers, selectedDriverId, transfers]);
 
   const activeDriverList = useMemo(() => Object.values(liveDrivers), [liveDrivers]);
 
@@ -300,7 +353,7 @@ export default function AdminLiveMap() {
             </span>
           </div>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '4px 0 0' }}>
-            Mobil uygulamadan giriş yapan şoförlerin gerçek zamanlı GPS koordinatları ve transfer rotaları.
+            Mobil uygulamadan giriş yapan tüm şoförlerin anlık GPS koordinatları (rotada veya boşta).
           </p>
         </div>
 
@@ -342,7 +395,7 @@ export default function AdminLiveMap() {
       </div>
 
       {/* Main Grid: Map & Live Driver Sidebar */}
-      <div style={{ display: 'grid', gridTemplateColumns: activeDriverList.length > 0 ? '1fr 300px' : '1fr', gap: '16px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: activeDriverList.length > 0 ? '1fr 320px' : '1fr', gap: '16px', alignItems: 'start' }}>
         {/* Map Container */}
         <div className="admin-table-container" style={{ height: '620px', position: 'relative', overflow: 'hidden' }}>
           <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
@@ -365,31 +418,30 @@ export default function AdminLiveMap() {
             boxShadow: '0 4px 16px rgba(0,0,0,0.08)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#059669' }} />
+              <span>🟢 Boşta / Hazır</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#0284c7' }} />
-              <span>Kalkış</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
-              <span>Varış</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#059669', border: '2px solid #fff' }} />
-              <span><b>Gerçek VIP Araç (Canlı GPS)</b></span>
+              <span>🔵 Görevde / Rotada</span>
             </div>
           </div>
         </div>
 
-        {/* Live Driver Side Panel (Visible when drivers are online) */}
+        {/* Live Driver Side Panel */}
         {activeDriverList.length > 0 && (
           <aside style={{ background: '#ffffff', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '620px', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>Canlıdaki Şoförler</h3>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{lastSignalTime ? `Son Sinyal: ${lastSignalTime.toLocaleTimeString()}` : ''}</span>
+              <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>Canlıdaki Şoförler ({activeDriverList.length})</h3>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{lastSignalTime ? `${lastSignalTime.toLocaleTimeString()}` : ''}</span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {activeDriverList.map((driver) => {
                 const isSelected = selectedDriverId === driver.driver_id;
+                const assignedTask = findAssignedTransfer(driver, transfers);
+                const isOnRoute = !!assignedTask;
+
                 return (
                   <div
                     key={driver.driver_id}
@@ -404,15 +456,25 @@ export default function AdminLiveMap() {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <strong style={{ fontSize: '13px', color: '#0f172a' }}>{driver.driver_name}</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <strong style={{ fontSize: '13.5px', color: '#0f172a' }}>{driver.driver_name}</strong>
+                      </div>
                       <span style={{ fontSize: '11px', fontWeight: 700, background: '#ecfdf5', color: '#059669', padding: '1px 6px', borderRadius: '4px' }}>
                         {driver.speed || 0} km/s
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: '#64748b' }}>
-                      <span>Plaka: <b>{driver.vehicle_plate || '34 VIP 770'}</b></span>
-                      <span style={{ color: '#0284c7', fontWeight: 600 }}>📍 Odaklan</span>
+                    <div style={{ fontSize: '11.5px', color: '#475569', marginBottom: '6px' }}>
+                      Plaka: <b>{driver.vehicle_plate || '34 VIP 770'}</b>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', borderTop: '1px solid #e2e8f0', paddingTop: '6px' }}>
+                      {isOnRoute ? (
+                        <span style={{ color: '#0284c7', fontWeight: 600 }}>🔵 Görevde: {assignedTask.code}</span>
+                      ) : (
+                        <span style={{ color: '#059669', fontWeight: 600 }}>🟢 Boşta / Görev Bekliyor</span>
+                      )}
+                      <span style={{ color: '#2563eb', fontWeight: 600 }}>📍 Odaklan</span>
                     </div>
                   </div>
                 );

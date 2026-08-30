@@ -81,6 +81,18 @@ export async function startDriverLocationTracking(driver, onLocationUpdate) {
     broadcastChannel = supabase.channel(GPS_REALTIME_CHANNEL, {
       config: { broadcast: { self: true } }
     });
+    
+    // Yönetici haritayı açtığında gelen anlık konum isteğine cevap ver
+    broadcastChannel.on('broadcast', { event: 'request-driver-locations' }, () => {
+      if (lastKnownLocation && broadcastChannel) {
+        broadcastChannel.send({
+          type: 'broadcast',
+          event: 'location-update',
+          payload: lastKnownLocation
+        }).catch(() => {});
+      }
+    });
+
     broadcastChannel.subscribe((status) => {
       console.log('[Location] Realtime kanal durumu:', status);
     });

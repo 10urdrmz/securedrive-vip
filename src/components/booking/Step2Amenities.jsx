@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
 import { BOOKING_WIZARD_PATHS } from '../../lib/bookingWizard';
-import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function Step2Amenities() {
   const navigate = useNavigate();
@@ -15,62 +15,56 @@ export default function Step2Amenities() {
   } = useBooking();
 
   return (
-    <div>
-      <div style={{ marginBottom: '14px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Araç ve Donanım Özellik Seçimleri</h2>
-        <p style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>
-          İstediğiniz ek özellikleri ekleyin; aracınız bu konfigürasyonda adınıza tahsis edilir.
+    <div className="sky-step-root">
+      <div className="sky-step-header-box">
+        <h2 className="sky-step-title">VIP Donanım & Ekstra Hizmetler</h2>
+        <p className="sky-step-sub">
+          İstediğiniz özellikleri seçin; aracınız bu özel donanımlarla adınıza hazırlanır.
         </p>
       </div>
 
-      {/* Grid of Amenities */}
-      <div className="amenities-container-grid">
-        {amenitiesList.map(am => {
+      {/* Grid of Amenities Cards */}
+      <div className="sky-amenities-grid">
+        {amenitiesList.map((am) => {
           const current = selectedAmenities[am.id] || { selected: false, count: 0 };
           const isChecked = current.selected || am.checkedByDefault;
 
           return (
-            <div 
+            <div
               key={am.id}
-              className={`amenity-minimal-row ${isChecked ? 'checked' : ''}`}
+              className={`sky-amenity-card ${isChecked ? 'active' : ''}`}
               onClick={() => toggleAmenity(am.id)}
             >
-              <div className="amenity-checkbox-dot">
-                {isChecked && <Check size={11} strokeWidth={3} />}
+              <div className="sky-amenity-checkbox">
+                {isChecked && <Check size={13} strokeWidth={3} />}
               </div>
 
-              <div className="amenity-body">
-                <div className="amenity-head">
-                  <strong>{am.title}</strong>
+              <div className="sky-amenity-info">
+                <div className="sky-amenity-title-row">
+                  <strong className="sky-amenity-title">{am.title}</strong>
                   {am.isFree ? (
-                    <span className="amenity-badge free">Dahil</span>
+                    <span className="sky-amenity-tag free">Dahil</span>
                   ) : (
-                    <span className="amenity-badge mono">+{formatMoney(am.priceTRY)}</span>
+                    <span className="sky-amenity-tag price">+{formatMoney(am.priceTRY)}</span>
                   )}
                 </div>
 
-                <p>{am.subtitle}</p>
+                <p className="sky-amenity-desc">{am.subtitle}</p>
 
                 {am.hasCount && (
-                  <div 
-                    style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '6px' }}
+                  <div
+                    className="sky-counter-wrap"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <button 
-                      type="button" 
-                      className="chip-btn" 
-                      style={{ padding: '1px 6px' }}
+                    <button
+                      type="button"
                       onClick={() => updateAmenityCount(am.id, (current.count || 0) - 1)}
                     >
                       -
                     </button>
-                    <span className="mono" style={{ fontSize: '11px', fontWeight: 700, padding: '0 4px' }}>
-                      {current.count || 1} Adet
-                    </span>
-                    <button 
-                      type="button" 
-                      className="chip-btn" 
-                      style={{ padding: '1px 6px' }}
+                    <b>{current.count || 1} Adet</b>
+                    <button
+                      type="button"
                       onClick={() => updateAmenityCount(am.id, (current.count || 0) + 1)}
                     >
                       +
@@ -83,25 +77,24 @@ export default function Step2Amenities() {
         })}
       </div>
 
-      {/* Navigation Bar */}
-      <div className="step-nav-bar">
-        <button 
-          type="button" 
-          className="btn-ghost"
+      {/* Navigation Footer */}
+      <div className="sky-step-actions-bar">
+        <button
+          type="button"
+          className="sky-btn-back"
           onClick={() => navigate(BOOKING_WIZARD_PATHS.vehicle)}
         >
-          <ArrowLeft size={12} />
-          <span>Araç Seçimine Dön</span>
+          <ArrowLeft size={16} />
+          <span>Araç Değiştir</span>
         </button>
 
-        <button 
-          type="button" 
-          className="btn-action-primary"
-          id="btn-proceed-to-passenger"
+        <button
+          type="button"
+          className="sky-btn-next"
           onClick={() => navigate(BOOKING_WIZARD_PATHS.passenger)}
         >
-          <span>Yolcu & Ödeme Bilgileri</span>
-          <ArrowRight size={12} />
+          <span>Yolcu Bilgilerine Geç</span>
+          <ArrowRight size={16} />
         </button>
       </div>
     </div>

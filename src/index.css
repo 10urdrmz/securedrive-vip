@@ -232,7 +232,8 @@ a {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background-color: #fcfcfd;
+  background-color: #02122c;
+  color: #ffffff;
 }
 
 .client-main-content {
@@ -243,7 +244,7 @@ a {
 }
 
 /* ==============================================================================
-   PREMIUM SITE HEADER / NAVBAR
+   PREMIUM SITE HEADER / NAVBAR (SKYSCANNER DARK VIP)
    ============================================================================== */
 .site-header {
   position: fixed;
@@ -251,11 +252,11 @@ a {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(2, 18, 44, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid #eef2f6;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   padding-top: var(--sat);
 }
 
@@ -284,71 +285,85 @@ a {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #0f172a;
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+  background: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
 }
 
 .header-logo-text {
   font-size: 18px;
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
   letter-spacing: -0.03em;
   white-space: nowrap;
 }
 
 .header-logo-text span {
   font-weight: 500;
-  color: #64748b;
+  color: #38bdf8;
 }
 
 .header-vip-tag {
   font-size: 10px;
   font-weight: 800;
-  background: #eff6ff;
-  color: #2563eb;
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
   padding: 2px 7px;
   border-radius: 6px;
   letter-spacing: 0.05em;
-  border: 1px solid #dbeafe;
+  border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
 /* Desktop Navigation */
 .header-nav-desktop {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 16px;
   margin: 0 auto;
 }
 
 .header-nav-link {
   font-size: 13.5px;
-  font-weight: 500;
-  color: #475569;
+  font-weight: 600;
+  color: #cbd5e1;
   text-decoration: none;
-  padding: 8px 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
   position: relative;
-  transition: color 0.15s ease;
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .header-nav-link:hover {
-  color: #0f172a;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .header-nav-link.active {
-  color: #0f172a;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
   font-weight: 700;
 }
 
-.header-nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: #0f172a;
-  border-radius: 2px;
+.header-currency-select {
+  background: #11274f;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+}
+
+.header-tracking-btn {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 /* Desktop Actions */
@@ -4670,5 +4685,759 @@ textarea.input-field-box {
   justify-content: center;
   font-size: 10px;
   font-weight: 800;
+}
+
+/* ==============================================================================
+   SKYSCANNER BOOKING WIZARD & GLOBAL DARK VIP FLOW
+   ============================================================================== */
+.sky-wizard-section {
+  background: #02122c;
+  color: #ffffff;
+  min-height: 100vh;
+  padding: 16px 0 100px;
+}
+
+.sky-wizard-container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Top Sticky Bar */
+.sky-wizard-topbar {
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.sky-wizard-topbar__main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sky-wizard-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.sky-wizard-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sky-wizard-route-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.sky-wizard-arrow {
+  color: #38bdf8;
+  font-size: 13px;
+}
+
+.sky-wizard-route-meta {
+  font-size: 12px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.sky-wizard-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sky-wizard-step-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.sky-wizard-step-pill.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+.sky-wizard-step-pill.completed {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.sky-step-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+/* Grid Layout */
+.sky-wizard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .sky-wizard-grid {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+/* Filter Chips in Step 1 */
+.sky-filter-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.sky-filter-chip {
+  padding: 7px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #11274f;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.sky-filter-chip.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+/* Vehicle Result Cards */
+.sky-vehicle-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sky-vehicle-card {
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.sky-vehicle-card:hover,
+.sky-vehicle-card.selected {
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.2);
+}
+
+.sky-vehicle-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sky-vehicle-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sky-vehicle-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.sky-vehicle-class-tag {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: #cbd5e1;
+}
+
+.sky-badge-special {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.sky-vehicle-card__body {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 500px) {
+  .sky-vehicle-card__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sky-vehicle-image-wrap {
+  height: 95px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b1c3b;
+}
+
+.sky-vehicle-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sky-vehicle-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0 0 10px;
+  line-height: 1.35;
+}
+
+.sky-vehicle-specs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sky-spec-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.sky-vehicle-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+
+.sky-price-label {
+  font-size: 10.5px;
+  color: #94a3b8;
+  display: block;
+}
+
+.sky-price-val {
+  font-size: 19px;
+  font-weight: 900;
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.sky-select-btn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.sky-select-btn:hover,
+.sky-select-btn.selected {
+  background: #0369a1;
+}
+
+/* Step 2 Amenities */
+.sky-step-header-box {
+  margin-bottom: 18px;
+}
+
+.sky-step-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.sky-step-sub {
+  font-size: 12.5px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.sky-amenities-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sky-amenity-card {
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sky-amenity-card.active {
+  border-color: #38bdf8;
+  background: #133063;
+}
+
+.sky-amenity-checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.sky-amenity-card.active .sky-amenity-checkbox {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+.sky-amenity-info {
+  flex: 1;
+}
+
+.sky-amenity-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.sky-amenity-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.sky-amenity-tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.sky-amenity-tag.free {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.sky-amenity-tag.price {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.sky-amenity-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.sky-counter-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.sky-counter-wrap button {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sky-step-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sky-btn-back {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.sky-btn-next {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+/* Step 3 Passenger Form */
+.sky-passenger-card {
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sky-auth-sync-banner {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.sky-auth-sync-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #e2e8f0;
+}
+
+.sky-auth-sync-btn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.sky-passenger-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sky-form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .sky-form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sky-input-box-dark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #081736;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 11px 14px;
+}
+
+.sky-input-box-dark input,
+.sky-input-box-dark textarea {
+  background: transparent;
+  border: none;
+  width: 100%;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  outline: none;
+  font-family: inherit;
+}
+
+.sky-payment-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.sky-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #081736;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sky-payment-option.active {
+  border-color: #38bdf8;
+  background: #0f2757;
+}
+
+.sky-payment-option strong {
+  display: block;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.sky-payment-option small {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Sidebar Box */
+.sky-sidebar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sky-sidebar-box {
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.sky-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.sky-sidebar-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.sky-map-container {
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.sky-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sky-stat-cell {
+  background: #081736;
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.sky-stat-label {
+  font-size: 10.5px;
+  color: #94a3b8;
+  display: block;
+}
+
+.sky-stat-val {
+  font-size: 13.5px;
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.sky-sidebar-vehicle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #081736;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+.sky-sidebar-vehicle-row img {
+  width: 50px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.sky-sidebar-vehicle-tag {
+  font-size: 10px;
+  color: #94a3b8;
+  display: block;
+}
+
+.sky-sidebar-vehicle-name {
+  font-size: 12px;
+  color: #ffffff;
+  display: block;
+}
+
+.sky-price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+
+.sky-price-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbd5e1;
+  font-family: monospace;
+}
+
+.sky-price-breakdown-row.discount {
+  color: #34d399;
+}
+
+.sky-price-breakdown-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.sky-grand-price {
+  font-size: 18px;
+  font-weight: 900;
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.sky-sidebar-support {
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sky-support-label {
+  font-size: 10.5px;
+  color: #94a3b8;
+  display: block;
+}
+
+.sky-support-phone {
+  font-size: 13px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-decoration: none;
 }
 

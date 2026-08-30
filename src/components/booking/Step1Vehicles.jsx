@@ -1,123 +1,147 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
-import { formatRouteChipLabel } from '../../lib/routeLocation';
 import { BOOKING_WIZARD_PATHS } from '../../lib/bookingWizard';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { 
+  Users, 
+  Briefcase, 
+  ShieldCheck, 
+  Wifi, 
+  Tv, 
+  Check, 
+  ChevronRight, 
+  Sparkles, 
+  Zap 
+} from 'lucide-react';
 
 export default function Step1Vehicles() {
   const navigate = useNavigate();
   const {
     fleet,
-    popularRoutes,
-    activeRoute,
     selectedVehicleId,
     setSelectedVehicleId,
     distanceKm,
-    durationMin,
     tripType,
-    formatMoney,
-    handleSelectRoutePreset
+    formatMoney
   } = useBooking();
 
+  const [activeCategory, setActiveCategory] = useState('ALL');
+
+  const categories = [
+    { id: 'ALL', label: 'Tüm VIP Araçlar' },
+    { id: 'MINIVAN', label: 'VIP Minivan (Vito)' },
+    { id: 'SEDAN', label: 'Lüks Sedan (Maybach / S-Class)' },
+    { id: 'SPRINTER', label: 'VIP Sprinter (Grup)' }
+  ];
+
+  const filteredFleet = fleet.filter((v) => {
+    if (activeCategory === 'ALL') return true;
+    if (activeCategory === 'MINIVAN') return (v.class || '').toLowerCase().includes('vito') || (v.class || '').toLowerCase().includes('minivan') || (v.name || '').toLowerCase().includes('vito');
+    if (activeCategory === 'SEDAN') return (v.class || '').toLowerCase().includes('sedan') || (v.name || '').toLowerCase().includes('maybach') || (v.name || '').toLowerCase().includes('s-class') || (v.name || '').toLowerCase().includes('e-class');
+    if (activeCategory === 'SPRINTER') return (v.class || '').toLowerCase().includes('sprinter') || (v.name || '').toLowerCase().includes('sprinter');
+    return true;
+  });
+
+  const handleSelectVehicle = (vehicleId) => {
+    setSelectedVehicleId(vehicleId);
+    navigate(BOOKING_WIZARD_PATHS.amenities);
+  };
+
   return (
-    <div>
-      <div style={{ marginBottom: '14px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Tahsis Edilecek VIP Aracınızı Belirleyin</h2>
-        <span className="preset-chip" style={{ color: 'var(--accent-green)' }}>
-          {activeRoute ? `${activeRoute.distanceKm} km · ~${activeRoute.durationMin} dk` : 'Canlı DB Filosu'}
-        </span>
+    <div className="sky-step-root">
+      {/* Category Filter Pills (Skyscanner Style) */}
+      <div className="sky-filter-chips">
+        {categories.map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            className={`sky-filter-chip ${activeCategory === cat.id ? 'active' : ''}`}
+            onClick={() => setActiveCategory(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
       </div>
 
-      {popularRoutes.length > 0 && (
-        <div className="quick-preset-bar" style={{ marginBottom: '14px' }}>
-          <span className="quick-label">Popüler Rotalar:</span>
-          {popularRoutes.map((route) => (
-            <button
-              key={route.id}
-              type="button"
-              className="preset-chip"
-              onClick={() => handleSelectRoutePreset(route, navigate)}
-              style={activeRoute?.id === route.id ? {
-                borderColor: 'var(--accent-green)',
-                color: 'var(--accent-green)',
-                background: 'var(--accent-green-bg)'
-              } : undefined}
-            >
-              {formatRouteChipLabel(route)}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Vehicle Cards List */}
-      <div className="vehicle-cards-list">
-        {fleet.map(vehicle => {
+      {/* Vehicle Result Cards List */}
+      <div className="sky-vehicle-cards">
+        {filteredFleet.map((vehicle) => {
           const isSelected = vehicle.id === selectedVehicleId;
           const baseFare = vehicle.baseOpeningRate + (distanceKm * vehicle.baseRateKm);
           const fareFormatted = formatMoney(tripType === 'roundtrip' ? baseFare * 1.85 : baseFare);
 
           return (
-            <div 
+            <div
               key={vehicle.id}
-              className={`vehicle-minimal-card ${isSelected ? 'selected' : ''}`}
-              onClick={() => {
-                setSelectedVehicleId(vehicle.id);
-                if (window.innerWidth <= 768) {
-                  setTimeout(() => navigate(BOOKING_WIZARD_PATHS.amenities), 400);
-                }
-              }}
+              className={`sky-vehicle-card ${isSelected ? 'selected' : ''}`}
+              onClick={() => handleSelectVehicle(vehicle.id)}
             >
-              <div className="vehicle-thumb">
-                <img src={vehicle.image} alt={vehicle.name} loading="lazy" />
-              </div>
-
-              <div className="vehicle-meta">
-                <h3>
-                  {vehicle.name} 
-                  <span className="spec-chip" style={{ marginLeft: '6px' }}>{vehicle.class}</span>
-                </h3>
-                <p>{vehicle.description}</p>
-                
-                <div className="specs-strip">
-                  <span className="spec-chip">{vehicle.seats} Yolcu</span>
-                  <span className="spec-chip">{vehicle.luggage} Valiz</span>
-                  <span className="spec-chip">{vehicle.transmission}</span>
-                  <span className="spec-chip">Wi-Fi & Multimedya</span>
+              {/* Top Row: Class & Highlights */}
+              <div className="sky-vehicle-card__top">
+                <div className="sky-vehicle-title-wrap">
+                  <h3 className="sky-vehicle-name">{vehicle.name}</h3>
+                  <span className="sky-vehicle-class-tag">{vehicle.class || 'VIP Class'}</span>
                 </div>
-              </div>
-
-              <div className="vehicle-right-action">
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>
-                    Sabit Fiyat
+                {vehicle.name.includes('Maybach') && (
+                  <span className="sky-badge-special">
+                    <Sparkles size={11} />
+                    <span>Özel Seri</span>
                   </span>
-                  <div className="vehicle-rate mono">{fareFormatted}</div>
+                )}
+              </div>
+
+              {/* Middle Grid: Photo & Specs */}
+              <div className="sky-vehicle-card__body">
+                <div className="sky-vehicle-image-wrap">
+                  <img src={vehicle.image} alt={vehicle.name} loading="lazy" />
                 </div>
-                <button type="button" className="btn-select-chip">
-                  {isSelected ? 'Seçildi' : 'Tahsis Et'}
+
+                <div className="sky-vehicle-details">
+                  <p className="sky-vehicle-desc">{vehicle.description}</p>
+
+                  <div className="sky-vehicle-specs-grid">
+                    <div className="sky-spec-item">
+                      <Users size={13} />
+                      <span>{vehicle.seats} Yolcu</span>
+                    </div>
+                    <div className="sky-spec-item">
+                      <Briefcase size={13} />
+                      <span>{vehicle.luggage} Valiz</span>
+                    </div>
+                    <div className="sky-spec-item">
+                      <Wifi size={13} />
+                      <span>5G Wi-Fi</span>
+                    </div>
+                    <div className="sky-spec-item">
+                      <Zap size={13} />
+                      <span>Deri Koltuk</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Row: Fixed Price & CTA */}
+              <div className="sky-vehicle-card__footer">
+                <div>
+                  <span className="sky-price-label">Sabit Her Şey Dahil Fiyat</span>
+                  <div className="sky-price-val">{fareFormatted}</div>
+                </div>
+
+                <button
+                  type="button"
+                  className={`sky-select-btn ${isSelected ? 'selected' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectVehicle(vehicle.id);
+                  }}
+                >
+                  <span>{isSelected ? 'Seçildi' : 'Aracı Seç'}</span>
+                  <ChevronRight size={16} />
                 </button>
               </div>
             </div>
           );
         })}
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="step-nav-bar">
-        <Link to="/?booking=search" className="btn-ghost" style={{ textDecoration: 'none' }}>
-          <ArrowLeft size={12} />
-          <span>Rotaları Düzenle</span>
-        </Link>
-        <button 
-          type="button" 
-          className="btn-action-primary"
-          id="btn-proceed-to-amenities"
-          onClick={() => navigate(BOOKING_WIZARD_PATHS.amenities)}
-        >
-          <span>Konfor Özelliklerini Seç</span>
-          <ArrowRight size={12} />
-        </button>
       </div>
     </div>
   );

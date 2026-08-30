@@ -165,6 +165,95 @@ export default function HeroBookingWidget() {
     setModalStep('AMENITIES');
   };
 
+  // Multi-Wave Grand Celebration Fireworks & Confetti Explosion
+  const triggerCelebrationExplosion = () => {
+    try {
+      const count = 200;
+      const defaults = {
+        origin: { y: 0.6 },
+        zIndex: 9999999,
+        colors: ['#144c7f', '#2563eb', '#f59e0b', '#10b981', '#ffffff', '#ffd700', '#ec4899']
+      };
+
+      function fire(particleRatio, opts) {
+        confetti({
+          ...defaults,
+          ...opts,
+          particleCount: Math.floor(count * particleRatio)
+        });
+      }
+
+      // Wave 1: Immediate massive center burst
+      fire(0.25, {
+        spread: 26,
+        startVelocity: 55,
+      });
+      fire(0.2, {
+        spread: 60,
+      });
+      fire(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8
+      });
+      fire(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2
+      });
+      fire(0.1, {
+        spread: 120,
+        startVelocity: 45,
+      });
+
+      // Wave 2: Left & Right Stage Cannons
+      setTimeout(() => {
+        confetti({
+          particleCount: 90,
+          angle: 60,
+          spread: 80,
+          origin: { x: 0.1, y: 0.7 },
+          zIndex: 9999999,
+          colors: ['#144c7f', '#ffd700', '#10b981', '#3b82f6']
+        });
+        confetti({
+          particleCount: 90,
+          angle: 120,
+          spread: 80,
+          origin: { x: 0.9, y: 0.7 },
+          zIndex: 9999999,
+          colors: ['#144c7f', '#ffd700', '#10b981', '#3b82f6']
+        });
+      }, 250);
+
+      // Wave 3: Luxury gold & diamond sparkles shower
+      const end = Date.now() + 2.5 * 1000;
+      const interval = setInterval(() => {
+        if (Date.now() > end) {
+          return clearInterval(interval);
+        }
+        confetti({
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          origin: { x: Math.random(), y: Math.random() - 0.2 },
+          zIndex: 9999999,
+          colors: ['#144c7f', '#f59e0b', '#10b981', '#38bdf8', '#fbbf24']
+        });
+      }, 200);
+    } catch (err) {
+      console.warn('Confetti notice:', err);
+    }
+  };
+
+  // Trigger celebration whenever confirmation step is mounted
+  useEffect(() => {
+    if (modalStep === 'CONFIRMATION') {
+      triggerCelebrationExplosion();
+    }
+  }, [modalStep]);
+
   const handleConfirmReservation = async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -182,15 +271,8 @@ export default function HeroBookingWidget() {
         return;
       }
 
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.5 }
-        });
-      } catch {}
-
       setModalStep('CONFIRMATION');
+      triggerCelebrationExplosion();
     } catch (err) {
       console.error(err);
       alert('İşlem sırasında bir hata oluştu.');

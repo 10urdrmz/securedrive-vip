@@ -8091,304 +8091,468 @@ textarea.input-field-box {
   background: #0e375e;
 }
 
-/* Modal Styles */
+/* ==============================================================================
+   NATIVE iOS & MOBILE-FIRST STREAMLINED BOOKING MODAL
+   ============================================================================== */
 .car-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(17, 18, 21, 0.65);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 100000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  padding: 0;
 }
 
 @media (min-width: 768px) {
   .car-modal-backdrop {
     align-items: center;
-    padding: 20px;
+    padding: 24px;
   }
 }
 
 .car-modal-box {
   background: #ffffff;
   width: 100%;
-  max-width: 580px;
-  max-height: 90vh;
-  max-height: 90dvh;
-  border-radius: 20px 20px 0 0;
-  overflow-y: auto;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  max-width: 560px;
+  height: 92vh;
+  height: 92dvh;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -8px 36px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 @media (min-width: 768px) {
   .car-modal-box {
     border-radius: 20px;
+    height: auto;
+    max-height: 88vh;
+    max-height: 88dvh;
+    animation: fadeInModal 0.2s ease forwards;
+  }
+  
+  @keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
+
+/* iOS Top Drag Indicator Bar */
+.car-modal-drag-handle {
+  width: 36px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 999px;
+  margin: 8px auto 0;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .car-modal-drag-handle {
+    display: none;
   }
 }
 
 .car-modal-header {
-  position: sticky;
-  top: 0;
   background: #ffffff;
-  border-bottom: 1px solid #ededed;
-  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 10px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 10;
+  flex-shrink: 0;
+}
+
+.car-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .car-modal-title {
   font-family: var(--font-heading);
-  font-size: 16.5px;
+  font-size: 16px;
   font-weight: 800;
-  color: #24272c;
+  color: #0f172a;
   margin: 0;
+}
+
+.car-modal-step-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.step-dot {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.step-dot.active {
+  background: #144c7f;
 }
 
 .car-modal-close,
 .car-modal-back-btn {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: #f8f9fa;
-  border: none;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
-.car-modal-body {
-  padding: 20px;
+.car-modal-close:hover,
+.car-modal-back-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
+/* Scrollable Container with iOS Momentum Scroll */
+.car-modal-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 16px 20px 16px;
+}
+
+/* Route Pill */
 .car-modal-route-pill {
-  background: #f8f9fa;
-  border: 1px solid #ededed;
-  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   padding: 8px 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #144c7f;
 }
 
+.car-route-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.route-endpoints {
+  font-size: 12px;
+  font-weight: 700;
+  color: #144c7f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 75%;
+}
+
+.route-guarantee-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #198754;
+  background: #ecfdf5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------------------
+   STEP 1: VEHICLE CARDS (iOS Native Touch Cards)
+   ------------------------------------------------------------------------------ */
 .car-modal-vehicle-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.car-modal-vehicle-card {
+.car-ios-vehicle-card {
   background: #ffffff;
-  border: 1.5px solid #ededed;
-  border-radius: 14px;
-  padding: 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.car-modal-vehicle-card:hover,
-.car-modal-vehicle-card.selected {
+.car-ios-vehicle-card:active {
+  transform: scale(0.985);
+}
+
+.car-ios-vehicle-card.selected {
   border-color: #144c7f;
-  background: #eff6ff;
+  background: #f0f7ff;
+  box-shadow: 0 4px 16px rgba(20, 76, 127, 0.12);
 }
 
-.car-modal-vehicle-img {
-  width: 90px;
-  height: 55px;
-  border-radius: 8px;
+.car-ios-vehicle-img {
+  width: 100px;
+  height: 64px;
+  border-radius: 10px;
   overflow: hidden;
   background: #f1f5f9;
   flex-shrink: 0;
+  position: relative;
 }
 
-.car-modal-vehicle-img img {
+.car-ios-vehicle-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.car-modal-vehicle-info {
-  flex: 1;
-}
-
-.car-modal-vehicle-info h4 {
-  font-size: 14px;
-  font-weight: 800;
-  color: #24272c;
-  margin: 0 0 2px;
-}
-
-.car-class-badge {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #144c7f;
-}
-
-.car-modal-specs {
-  display: flex;
-  gap: 8px;
-  font-size: 11px;
-  color: #696665;
-  margin-top: 4px;
-}
-
-.car-modal-vehicle-price {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.car-modal-vehicle-price strong {
-  font-size: 15px;
-  font-weight: 800;
-  color: #24272c;
-  font-family: monospace;
-}
-
-.car-select-sm-btn {
+.car-ios-selected-check {
+  position: absolute;
+  top: 4px;
+  left: 4px;
   background: #144c7f;
   color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 3px 10px;
-  font-size: 11.5px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Amenities List */
-.car-amenities-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.car-amenity-row {
-  background: #ffffff;
-  border: 1.5px solid #ededed;
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  gap: 12px;
-  cursor: pointer;
-}
-
-.car-amenity-row.active {
-  border-color: #144c7f;
-  background: #eff6ff;
-}
-
-.car-amenity-checkbox {
   width: 20px;
   height: 20px;
-  border-radius: 6px;
-  border: 1.5px solid #cbd5e1;
-  background: #ffffff;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
 
-.car-amenity-row.active .car-amenity-checkbox {
-  background: #144c7f;
-  border-color: #144c7f;
-}
-
-.car-amenity-info {
+.car-ios-vehicle-details {
   flex: 1;
+  min-width: 0;
 }
 
-.car-amenity-head {
+.car-ios-title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2px;
 }
 
-.car-amenity-head strong {
-  font-size: 13.5px;
-  color: #24272c;
+.car-ios-name {
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.car-tag-free {
-  font-size: 11px;
-  font-weight: 700;
-  color: #198754;
-  background: #ecfdf5;
-  padding: 2px 6px;
-  border-radius: 4px;
+.car-ios-specs-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
-.car-tag-price {
-  font-size: 11px;
-  font-weight: 700;
+.car-ios-class-tag {
+  font-size: 10px;
+  font-weight: 800;
   color: #144c7f;
   background: #eff6ff;
-  padding: 2px 6px;
+  padding: 1px 6px;
   border-radius: 4px;
 }
 
-.car-amenity-info p {
-  font-size: 12px;
-  color: #696665;
-  margin: 0;
+.car-ios-spec-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
 }
 
-.car-modal-footer-bar {
+.car-ios-bottom-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #ededed;
-  padding-top: 14px;
 }
 
-.car-footer-sub {
-  font-size: 11px;
-  color: #696665;
-  display: block;
-}
-
-.car-footer-price {
-  font-size: 18px;
+.car-ios-price {
+  font-size: 16px;
   font-weight: 900;
   color: #144c7f;
   font-family: monospace;
 }
 
-.car-primary-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #144c7f;
-  color: #ffffff;
+.car-ios-select-btn {
   border: none;
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-size: 13.5px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11.5px;
   font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-/* Passenger Form */
-.car-passenger-form {
+.car-ios-vehicle-card.selected .car-ios-select-btn {
+  background: #144c7f;
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------------------------
+   STEP 2: AMENITIES & EXTRAS (Compact Categorized Layout)
+   ------------------------------------------------------------------------------ */
+.car-amenities-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.car-section-subhead {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.car-free-perks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.car-free-perk-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.car-free-perk-item strong {
+  display: block;
+  font-size: 12.5px;
+  color: #0f172a;
+}
+
+.car-free-perk-item p {
+  font-size: 11px;
+  color: #64748b;
+  margin: 0;
+}
+
+.car-paid-amenities-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 500px) {
+  .car-paid-amenities-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.car-paid-amenity-tile {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.car-paid-amenity-tile.active {
+  border-color: #144c7f;
+  background: #f0f7ff;
+}
+
+.car-amenity-tile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.car-amenity-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.car-paid-amenity-tile.active .car-amenity-checkbox {
+  background: #144c7f;
+  border-color: #144c7f;
+}
+
+.car-amenity-tile-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.car-amenity-tile-sub {
+  font-size: 11px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ------------------------------------------------------------------------------
+   STEP 3: PASSENGER & CHECKOUT FORM
+   ------------------------------------------------------------------------------ */
+.car-ios-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.car-form-group-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.car-form-group-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 2px;
 }
 
 .car-form-row-2 {
@@ -8397,64 +8561,162 @@ textarea.input-field-box {
   gap: 10px;
 }
 
+@media (max-width: 480px) {
+  .car-form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .car-field label {
   display: block;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
-  color: #696665;
+  color: #64748b;
   margin-bottom: 4px;
+  letter-spacing: 0.04em;
 }
 
 .car-field input {
   width: 100%;
-  background: #f8f9fa;
-  border: 1.5px solid #ededed;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 13.5px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 15px; /* iOS Safari Friendly */
   font-weight: 600;
-  color: #24272c;
+  color: #0f172a;
   outline: none;
+  transition: border-color 0.15s ease;
 }
 
 .car-field input:focus {
   border-color: #144c7f;
-  background: #ffffff;
 }
 
-.car-payment-options {
+.car-payment-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
-.car-payment-opt {
+@media (min-width: 480px) {
+  .car-payment-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.car-ios-pay-tile {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: #f8f9fa;
-  border: 1.5px solid #ededed;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #24272c;
+  gap: 10px;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.car-payment-opt.active {
+.car-ios-pay-tile input {
+  display: none;
+}
+
+.car-ios-pay-tile.active {
   border-color: #144c7f;
-  background: #eff6ff;
+  background: #f0f7ff;
 }
 
-.car-submit-btn {
+.car-pay-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.car-ios-pay-tile strong {
+  display: block;
+  font-size: 12px;
+  color: #0f172a;
+}
+
+.car-ios-pay-tile small {
+  font-size: 10.5px;
+  color: #64748b;
+}
+
+/* ------------------------------------------------------------------------------
+   FIXED STICKY BOTTOM BAR (iOS Safe-Area Friendly)
+   ------------------------------------------------------------------------------ */
+.car-modal-ios-sticky-bar {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 12px 18px max(12px, env(safe-area-inset-bottom)) 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.car-sticky-price-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.car-sticky-price-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.car-sticky-price-value {
+  font-size: 19px;
+  font-weight: 900;
+  color: #144c7f;
+  font-family: monospace;
+}
+
+.car-ios-sticky-action-btn {
+  background: #144c7f;
+  color: #ffffff;
+  border: none;
+  height: 44px;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(20, 76, 127, 0.25);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.car-ios-sticky-action-btn:hover {
+  background: #0e375e;
+}
+
+.car-ios-sticky-action-btn:active {
+  transform: scale(0.97);
+}
+
+.car-ios-sticky-submit-btn {
   width: 100%;
   background: #144c7f;
   color: #ffffff;
   border: none;
+  height: 48px;
   border-radius: 12px;
-  padding: 14px;
-  font-size: 14.5px;
+  font-size: 15px;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -8462,12 +8724,12 @@ textarea.input-field-box {
   gap: 8px;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(20, 76, 127, 0.3);
-  margin-top: 6px;
 }
 
-.car-submit-btn:hover {
+.car-ios-sticky-submit-btn:hover {
   background: #0e375e;
 }
+
 
 
 

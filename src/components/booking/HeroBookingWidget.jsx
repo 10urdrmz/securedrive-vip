@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
 import { useAuth } from '../../context/AuthContext';
 import { buildRouteDestinationOptions, buildRoutePickupOptions } from '../../lib/routeLocation';
@@ -24,16 +24,12 @@ import {
   Lock,
   CreditCard,
   Banknote,
-  User,
-  Mail,
-  Phone,
-  FileText,
+  Baby,
+  Wine,
+  Languages,
   Clock,
-  Award,
-  Fuel,
-  Gauge,
-  SlidersHorizontal,
-  RotateCcw
+  CheckCircle2,
+  Gauge
 } from 'lucide-react';
 
 export default function HeroBookingWidget() {
@@ -49,15 +45,12 @@ export default function HeroBookingWidget() {
     amenitiesList,
     selectedAmenities,
     toggleAmenity,
-    updateAmenityCount,
     passenger,
     setPassenger,
     completeReservation,
     confirmedBooking,
     calculatePrices,
     formatMoney,
-    distanceKm,
-    durationMin,
     serviceType,
     setServiceType,
     tripType,
@@ -67,14 +60,10 @@ export default function HeroBookingWidget() {
     destination,
     setDestination,
     datetime,
-    setDatetime,
-    pax,
-    setPax,
-    luggage,
-    setLuggage
+    setDatetime
   } = useBooking();
 
-  // In-place booking modal step: 'SEARCH' | 'VEHICLES' | 'AMENITIES' | 'PASSENGER' | 'CONFIRMATION'
+  // In-place booking modal step: 'VEHICLES' | 'AMENITIES' | 'PASSENGER' | 'CONFIRMATION'
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [modalStep, setModalStep] = useState('VEHICLES');
   const [vehicleFilter, setVehicleFilter] = useState('ALL');
@@ -131,22 +120,24 @@ export default function HeroBookingWidget() {
     (d.district && d.district.toLowerCase().includes(destQuery.toLowerCase()))
   );
 
-  const filteredFleet = fleet.filter((v) => {
+  // Filter out any invalid / broken entries and apply category filter
+  const validFleet = fleet.filter((v) => v && v.id && v.name);
+  const filteredFleet = validFleet.filter((v) => {
     if (vehicleFilter === 'ALL') return true;
     if (vehicleFilter === 'MINIVAN') return (v.class || '').toLowerCase().includes('vito') || (v.class || '').toLowerCase().includes('minivan');
     if (vehicleFilter === 'SEDAN') return (v.class || '').toLowerCase().includes('sedan') || (v.name || '').toLowerCase().includes('maybach') || (v.name || '').toLowerCase().includes('s-class');
-    if (vehicleFilter === 'SPRINTER') return (v.class || '').toLowerCase().includes('sprinter') || (v.name || '').toLowerCase().includes('sprinter');
+    if (vehicleFilter === 'SPRINTER') return (v.class || '').toLowerCase().includes('sprinter') || (v.name || '').toLowerCase().includes('heyet');
     return true;
   });
 
-  const selectedVehicleObj = fleet.find((v) => v.id === selectedVehicleId) || fleet[0] || {
+  const selectedVehicleObj = validFleet.find((v) => v.id === selectedVehicleId) || validFleet[0] || {
     id: 'vito-vip',
     name: 'Mercedes-Benz Vito VIP Lounge',
     class: 'VIP Minivan',
     seats: 6,
     luggage: 6,
-    image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=600&q=80',
-    baseOpeningRate: 850,
+    image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80',
+    baseOpeningRate: 1200,
     baseRateKm: 32
   };
 
@@ -158,7 +149,7 @@ export default function HeroBookingWidget() {
       setPickupQuery(defaultP.name);
     }
     if (!destination) {
-      const defaultD = availableDestinations[0] || { id: 'BESIKTAS', name: 'Beşiktaş / Boğaz Otelleri' };
+      const defaultD = availableDestinations[0] || { id: 'CIRAGAN', name: 'Çırağan Palace Kempinski' };
       setDestination(defaultD);
       setDestQuery(defaultD.name);
     }
@@ -170,6 +161,7 @@ export default function HeroBookingWidget() {
 
   const handleSelectVehicle = (vId) => {
     setSelectedVehicleId(vId);
+    // Smoothly progress to extras
     setModalStep('AMENITIES');
   };
 
@@ -207,11 +199,30 @@ export default function HeroBookingWidget() {
     }
   };
 
+  // Safe fallback vehicle images
+  const getVehicleImg = (v) => {
+    if (v.image && v.image.startsWith('http')) return v.image;
+    if (v.image && v.image.startsWith('/')) return v.image;
+    if ((v.name || '').toLowerCase().includes('vito')) return 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80';
+    if ((v.name || '').toLowerCase().includes('maybach') || (v.name || '').toLowerCase().includes('v-class')) return 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=800&q=80';
+    if ((v.name || '').toLowerCase().includes('s-class')) return 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80';
+    if ((v.name || '').toLowerCase().includes('sprinter')) return 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=80';
+    return 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80';
+  };
+
+  // Separate free included perks vs paid optional add-ons
+  const freePerks = [
+    { title: 'Canlı Radar Uçuş Takibi', desc: 'Erken iniş veya rötarda 60 dk ücretsiz bekleme' },
+    { title: 'Sınırsız 5G Wi-Fi & Medya', desc: 'Apple TV, Netflix ve hızlı internet erişimi' },
+    { title: 'İsimli Tabletle VIP Karşılama', desc: 'Gümrük kapısında karşılama ve bagaj asistanlığı' }
+  ];
+
+  const paidAmenities = amenitiesList.filter((a) => !a.isFree);
+
   return (
     <div className="car-theme-root">
       {/* Hero Section */}
       <section className="car-hero-section">
-        {/* Background Image with Dark Overlay */}
         <div className="car-hero-bg">
           <div className="car-hero-overlay"></div>
         </div>
@@ -426,14 +437,15 @@ export default function HeroBookingWidget() {
           {/* Cars Grid */}
           <div className="car-grid-3">
             {filteredFleet.map((car) => {
-              const baseFare = car.baseOpeningRate + (35 * car.baseRateKm);
+              const baseFare = (car.baseOpeningRate || 1200) + (35 * (car.baseRateKm || 32));
               const fareFormatted = formatMoney(baseFare);
+              const carImg = getVehicleImg(car);
 
               return (
                 <div key={car.id} className="car-card-box">
                   {/* Top Image & Badges */}
                   <div className="car-card-img-wrap">
-                    <img src={car.image} alt={car.name} loading="lazy" />
+                    <img src={carImg} alt={car.name} loading="lazy" />
                     <div className="car-badge-overlay">
                       <span className="flag-tag flag-tag-orange">VIP Tahsis</span>
                       <span className="flag-tag flag-tag-dark">{car.class}</span>
@@ -489,14 +501,17 @@ export default function HeroBookingWidget() {
       </section>
 
       {/* =========================================================================
-          SIMPLIFIED & STREAMLINED IN-PLACE BOOKING MODAL
+          NATIVE iOS & MOBILE-OPTIMIZED IN-PLACE BOOKING MODAL
          ========================================================================= */}
       {bookingModalOpen && (
         <div className="car-modal-backdrop" onClick={() => setBookingModalOpen(false)}>
           <div className="car-modal-box" onClick={(e) => e.stopPropagation()}>
+            {/* iOS Mobile Drag Handle Indicator */}
+            <div className="car-modal-drag-handle"></div>
+
             {/* Modal Header */}
             <div className="car-modal-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="car-modal-header-left">
                 {modalStep !== 'VEHICLES' && modalStep !== 'CONFIRMATION' && (
                   <button
                     type="button"
@@ -505,60 +520,89 @@ export default function HeroBookingWidget() {
                       if (modalStep === 'AMENITIES') setModalStep('VEHICLES');
                       else if (modalStep === 'PASSENGER') setModalStep('AMENITIES');
                     }}
+                    aria-label="Geri"
                   >
                     <ChevronLeft size={20} />
                   </button>
                 )}
-                <h3 className="car-modal-title">
-                  {modalStep === 'VEHICLES' && 'Araç Seçimi (1/3)'}
-                  {modalStep === 'AMENITIES' && 'Donanım & Ekstralar (2/3)'}
-                  {modalStep === 'PASSENGER' && 'Yolcu Bilgileri & Ödeme (3/3)'}
-                  {modalStep === 'CONFIRMATION' && 'Rezervasyon Onaylandı'}
-                </h3>
+                <div>
+                  <h3 className="car-modal-title">
+                    {modalStep === 'VEHICLES' && 'Araç Seçimi (1/3)'}
+                    {modalStep === 'AMENITIES' && 'Donanım & Ekstralar (2/3)'}
+                    {modalStep === 'PASSENGER' && 'Yolcu & Ödeme (3/3)'}
+                    {modalStep === 'CONFIRMATION' && 'Rezervasyon Onayı'}
+                  </h3>
+                  {modalStep !== 'CONFIRMATION' && (
+                    <div className="car-modal-step-dots">
+                      <span className={`step-dot ${modalStep === 'VEHICLES' || modalStep === 'AMENITIES' || modalStep === 'PASSENGER' ? 'active' : ''}`} />
+                      <span className={`step-dot ${modalStep === 'AMENITIES' || modalStep === 'PASSENGER' ? 'active' : ''}`} />
+                      <span className={`step-dot ${modalStep === 'PASSENGER' ? 'active' : ''}`} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <button
                 type="button"
                 className="car-modal-close"
                 onClick={() => setBookingModalOpen(false)}
+                aria-label="Kapat"
               >
                 <X size={18} />
               </button>
             </div>
 
-            {/* STEP 1: VEHICLE SELECTION */}
+            {/* STEP 1: VEHICLE SELECTION (Streamlined iOS Cards) */}
             {modalStep === 'VEHICLES' && (
-              <div className="car-modal-body">
+              <div className="car-modal-scrollable-content">
                 <div className="car-modal-route-pill">
-                  <span>{pickup?.name?.split('(')[0]?.trim()} ➔ {destination?.name?.split('(')[0]?.trim()}</span>
-                  <small>Sabit Fiyat Garantisi</small>
+                  <div className="car-route-info-row">
+                    <span className="route-endpoints">{pickup?.name?.split('(')[0]?.trim()} ➔ {destination?.name?.split('(')[0]?.trim()}</span>
+                    <span className="route-guarantee-badge">Sabit Fiyat</span>
+                  </div>
                 </div>
 
                 <div className="car-modal-vehicle-list">
-                  {fleet.map((v) => {
+                  {validFleet.map((v) => {
                     const isSelected = v.id === selectedVehicleId;
-                    const fare = v.baseOpeningRate + (35 * v.baseRateKm);
+                    const fare = (v.baseOpeningRate || 1200) + (35 * (v.baseRateKm || 32));
+                    const imgUrl = getVehicleImg(v);
 
                     return (
                       <div
                         key={v.id}
-                        className={`car-modal-vehicle-card ${isSelected ? 'selected' : ''}`}
+                        className={`car-ios-vehicle-card ${isSelected ? 'selected' : ''}`}
                         onClick={() => handleSelectVehicle(v.id)}
                       >
-                        <div className="car-modal-vehicle-img">
-                          <img src={v.image} alt={v.name} />
+                        <div className="car-ios-vehicle-img">
+                          <img src={imgUrl} alt={v.name} />
+                          {isSelected && (
+                            <div className="car-ios-selected-check">
+                              <Check size={14} strokeWidth={3} />
+                            </div>
+                          )}
                         </div>
-                        <div className="car-modal-vehicle-info">
-                          <h4>{v.name}</h4>
-                          <span className="car-class-badge">{v.class}</span>
-                          <div className="car-modal-specs">
-                            <span><Users size={12} /> {v.seats} Kişi</span>
-                            <span><Briefcase size={12} /> {v.luggage} Bagaj</span>
+
+                        <div className="car-ios-vehicle-details">
+                          <div className="car-ios-title-row">
+                            <h4 className="car-ios-name">{v.name}</h4>
                           </div>
-                        </div>
-                        <div className="car-modal-vehicle-price">
-                          <strong>{formatMoney(fare)}</strong>
-                          <button type="button" className="car-select-sm-btn">Seç</button>
+
+                          <div className="car-ios-specs-line">
+                            <span className="car-ios-class-tag">{v.class}</span>
+                            <span className="car-ios-spec-item"><Users size={12} /> {v.seats}</span>
+                            <span className="car-ios-spec-item"><Briefcase size={12} /> {v.luggage}</span>
+                          </div>
+
+                          <div className="car-ios-bottom-row">
+                            <span className="car-ios-price">{formatMoney(fare)}</span>
+                            <button
+                              type="button"
+                              className={`car-ios-select-btn ${isSelected ? 'active' : ''}`}
+                            >
+                              {isSelected ? 'Seçildi' : 'Seç'}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
@@ -567,124 +611,130 @@ export default function HeroBookingWidget() {
               </div>
             )}
 
-            {/* STEP 2: AMENITIES & EXTRAS */}
+            {/* STEP 2: AMENITIES & EXTRAS (Compact iOS Categorized Layout) */}
             {modalStep === 'AMENITIES' && (
-              <div className="car-modal-body">
+              <div className="car-modal-scrollable-content">
                 <div className="car-modal-route-pill">
-                  <span>Seçilen Araç: <strong>{selectedVehicleObj.name}</strong></span>
+                  <span className="route-endpoints">Seçilen: <strong>{selectedVehicleObj.name}</strong></span>
+                  <span className="route-guarantee-badge">Ücretsiz Hizmetler Dahil</span>
                 </div>
 
-                <div className="car-amenities-list">
-                  {amenitiesList.map((am) => {
-                    const current = selectedAmenities[am.id] || { selected: false, count: 0 };
-                    const isChecked = current.selected || am.checkedByDefault;
-
-                    return (
-                      <div
-                        key={am.id}
-                        className={`car-amenity-row ${isChecked ? 'active' : ''}`}
-                        onClick={() => toggleAmenity(am.id)}
-                      >
-                        <div className="car-amenity-checkbox">
-                          {isChecked && <Check size={14} strokeWidth={3} />}
+                {/* Section 1: Standard Free Included Perks (Neat Badges) */}
+                <div className="car-amenities-section">
+                  <h5 className="car-section-subhead">STANDART DAHİL OLANLAR</h5>
+                  <div className="car-free-perks-grid">
+                    {freePerks.map((p, idx) => (
+                      <div key={idx} className="car-free-perk-item">
+                        <CheckCircle2 size={16} color="#198754" />
+                        <div>
+                          <strong>{p.title}</strong>
+                          <p>{p.desc}</p>
                         </div>
-                        <div className="car-amenity-info">
-                          <div className="car-amenity-head">
-                            <strong>{am.title}</strong>
-                            {am.isFree ? (
-                              <span className="car-tag-free">Dahil</span>
-                            ) : (
-                              <span className="car-tag-price">+{formatMoney(am.priceTRY)}</span>
-                            )}
-                          </div>
-                          <p>{am.subtitle}</p>
-                        </div>
+                        <span className="car-tag-free">Dahil</span>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
 
-                <div className="car-modal-footer-bar">
-                  <div>
-                    <span className="car-footer-sub">Toplam Tutar:</span>
-                    <strong className="car-footer-price">{formatMoney(prices.grandTotalTRY || prices.total)}</strong>
+                {/* Section 2: Optional VIP Add-ons (Touch-Friendly Option Tiles) */}
+                <div className="car-amenities-section" style={{ marginTop: '16px' }}>
+                  <h5 className="car-section-subhead">ÖZEL İLAVE SEÇENEKLER (OPSİYONEL)</h5>
+                  <div className="car-paid-amenities-grid">
+                    {paidAmenities.map((am) => {
+                      const current = selectedAmenities[am.id] || { selected: false, count: 0 };
+                      const isChecked = current.selected || am.checkedByDefault;
+
+                      return (
+                        <div
+                          key={am.id}
+                          className={`car-paid-amenity-tile ${isChecked ? 'active' : ''}`}
+                          onClick={() => toggleAmenity(am.id)}
+                        >
+                          <div className="car-amenity-tile-top">
+                            <div className="car-amenity-checkbox">
+                              {isChecked && <Check size={14} strokeWidth={3} />}
+                            </div>
+                            <span className="car-tag-price">+{formatMoney(am.priceTRY)}</span>
+                          </div>
+
+                          <strong className="car-amenity-tile-title">{am.title}</strong>
+                          <p className="car-amenity-tile-sub">{am.subtitle}</p>
+                        </div>
+                      );
+                    })}
                   </div>
-                  <button
-                    type="button"
-                    className="car-primary-action-btn"
-                    onClick={() => setModalStep('PASSENGER')}
-                  >
-                    <span>Yolcu Bilgilerine Geç</span>
-                    <ChevronRight size={16} />
-                  </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: PASSENGER & CHECKOUT */}
+            {/* STEP 3: PASSENGER & CHECKOUT (iOS Clean Form) */}
             {modalStep === 'PASSENGER' && (
-              <div className="car-modal-body">
-                <form onSubmit={handleConfirmReservation} className="car-passenger-form">
-                  <div className="car-form-row-2">
+              <div className="car-modal-scrollable-content">
+                <form onSubmit={handleConfirmReservation} className="car-ios-form" id="passenger-form">
+                  <div className="car-form-group-card">
+                    <h5 className="car-form-group-title">Yolcu İletişim Bilgileri</h5>
+
+                    <div className="car-form-row-2">
+                      <div className="car-field">
+                        <label>ADINIZ *</label>
+                        <input
+                          type="text"
+                          required
+                          value={passenger.name}
+                          onChange={(e) => setPassenger({ ...passenger, name: e.target.value })}
+                          placeholder="Adınız"
+                        />
+                      </div>
+                      <div className="car-field">
+                        <label>SOYADINIZ *</label>
+                        <input
+                          type="text"
+                          required
+                          value={passenger.surname}
+                          onChange={(e) => setPassenger({ ...passenger, surname: e.target.value })}
+                          placeholder="Soyadınız"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="car-form-row-2">
+                      <div className="car-field">
+                        <label>E-POSTA ADRESİ *</label>
+                        <input
+                          type="email"
+                          required
+                          value={passenger.email}
+                          onChange={(e) => setPassenger({ ...passenger, email: e.target.value })}
+                          placeholder="ornek@email.com"
+                        />
+                      </div>
+                      <div className="car-field">
+                        <label>TELEFON (WHATSAPP) *</label>
+                        <input
+                          type="tel"
+                          required
+                          value={passenger.phone}
+                          onChange={(e) => setPassenger({ ...passenger, phone: e.target.value })}
+                          placeholder="+90 532 000 00 00"
+                        />
+                      </div>
+                    </div>
+
                     <div className="car-field">
-                      <label>ADINIZ *</label>
+                      <label>UÇUŞ KODU (CANLI RADAR İÇİN)</label>
                       <input
                         type="text"
-                        required
-                        value={passenger.name}
-                        onChange={(e) => setPassenger({ ...passenger, name: e.target.value })}
-                        placeholder="Adınız"
-                      />
-                    </div>
-                    <div className="car-field">
-                      <label>SOYADINIZ *</label>
-                      <input
-                        type="text"
-                        required
-                        value={passenger.surname}
-                        onChange={(e) => setPassenger({ ...passenger, surname: e.target.value })}
-                        placeholder="Soyadınız"
+                        value={passenger.flightNumber || ''}
+                        onChange={(e) => setPassenger({ ...passenger, flightNumber: e.target.value })}
+                        placeholder="Örn: TK 1980 (Opsiyonel)"
                       />
                     </div>
                   </div>
 
-                  <div className="car-form-row-2">
-                    <div className="car-field">
-                      <label>E-POSTA ADRESİ *</label>
-                      <input
-                        type="email"
-                        required
-                        value={passenger.email}
-                        onChange={(e) => setPassenger({ ...passenger, email: e.target.value })}
-                        placeholder="ornek@email.com"
-                      />
-                    </div>
-                    <div className="car-field">
-                      <label>TELEFON (WHATSAPP) *</label>
-                      <input
-                        type="tel"
-                        required
-                        value={passenger.phone}
-                        onChange={(e) => setPassenger({ ...passenger, phone: e.target.value })}
-                        placeholder="+90 532 000 00 00"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="car-field">
-                    <label>UÇUŞ KODU (OPSİYONEL - CANLI RADAR TAKİBİ)</label>
-                    <input
-                      type="text"
-                      value={passenger.flightNumber || ''}
-                      onChange={(e) => setPassenger({ ...passenger, flightNumber: e.target.value })}
-                      placeholder="Örn: TK 1980"
-                    />
-                  </div>
-
-                  <div className="car-field">
-                    <label>ÖDEME TÜRÜ</label>
-                    <div className="car-payment-options">
-                      <label className={`car-payment-opt ${passenger.paymentMethod === 'cash' ? 'active' : ''}`}>
+                  <div className="car-form-group-card">
+                    <h5 className="car-form-group-title">Ödeme Yöntemi</h5>
+                    <div className="car-payment-grid">
+                      <label className={`car-ios-pay-tile ${passenger.paymentMethod === 'cash' ? 'active' : ''}`}>
                         <input
                           type="radio"
                           name="paym"
@@ -692,11 +742,16 @@ export default function HeroBookingWidget() {
                           checked={passenger.paymentMethod === 'cash'}
                           onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
                         />
-                        <Banknote size={16} color="#198754" />
-                        <span>Araçta Nakit / Kredi Kartı</span>
+                        <div className="car-pay-icon-box">
+                          <Banknote size={20} color="#198754" />
+                        </div>
+                        <div>
+                          <strong>Araçta Nakit / Kredi Kartı</strong>
+                          <small>Yolculuk sonunda şoföre ödeme</small>
+                        </div>
                       </label>
 
-                      <label className={`car-payment-opt ${passenger.paymentMethod === 'online' ? 'active' : ''}`}>
+                      <label className={`car-ios-pay-tile ${passenger.paymentMethod === 'online' ? 'active' : ''}`}>
                         <input
                           type="radio"
                           name="paym"
@@ -704,46 +759,42 @@ export default function HeroBookingWidget() {
                           checked={passenger.paymentMethod === 'online'}
                           onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
                         />
-                        <CreditCard size={16} color="#144c7f" />
-                        <span>Online Güvenli Ödeme</span>
+                        <div className="car-pay-icon-box">
+                          <CreditCard size={20} color="#144c7f" />
+                        </div>
+                        <div>
+                          <strong>Online Güvenli Ödeme</strong>
+                          <small>3D Secure Kredi Kartı</small>
+                        </div>
                       </label>
                     </div>
                   </div>
-
-                  <button
-                    type="submit"
-                    className="car-submit-btn"
-                    disabled={submitting}
-                  >
-                    <Lock size={16} />
-                    <span>{submitting ? 'Oluşturuluyor...' : `VIP Rezervasyonu Onayla (${formatMoney(prices.grandTotalTRY || prices.total)})`}</span>
-                  </button>
                 </form>
               </div>
             )}
 
-            {/* STEP 4: CONFIRMATION */}
+            {/* STEP 4: CONFIRMATION (Clean Success Screen) */}
             {modalStep === 'CONFIRMATION' && (
-              <div className="car-modal-body" style={{ textAlign: 'center', padding: '24px 16px' }}>
-                <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#ecfdf5', color: '#198754', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                  <Check size={32} strokeWidth={3} />
+              <div className="car-modal-scrollable-content" style={{ textAlign: 'center', padding: '24px 16px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#ecfdf5', color: '#198754', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Check size={36} strokeWidth={3} />
                 </div>
 
                 <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#24272c', margin: '0 0 6px' }}>
                   Rezervasyonunuz Başarıyla Onaylandı!
                 </h3>
                 <p style={{ fontSize: '13.5px', color: '#696665', margin: '0 0 20px' }}>
-                  VIP aracınız adınıza tahsis edildi. Kupon detayları SMS ve WhatsApp ile iletilmiştir.
+                  VIP aracınız adınıza tahsis edildi. Detaylar SMS ve WhatsApp ile iletilmiştir.
                 </p>
 
                 <div style={{ background: '#f8f9fa', border: '1.5px dashed #ededed', borderRadius: '16px', padding: '16px', textAlign: 'left', marginBottom: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: '#696665' }}>REZERVASYON KODU</span>
-                    <strong style={{ fontSize: '16px', color: '#144c7f', fontFamily: 'monospace' }}>
+                    <strong style={{ fontSize: '17px', color: '#144c7f', fontFamily: 'monospace' }}>
                       {confirmedBooking?.code || 'SDRV-VIP'}
                     </strong>
                   </div>
-                  <div style={{ fontSize: '13px', color: '#24272c', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <div style={{ fontSize: '13.5px', color: '#24272c', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     <div>🛫 <b>Kalkış:</b> {pickup?.name}</div>
                     <div>🏨 <b>Varış:</b> {destination?.name}</div>
                     <div>🚘 <b>Araç:</b> {selectedVehicleObj.name}</div>
@@ -754,7 +805,7 @@ export default function HeroBookingWidget() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <button
                     type="button"
-                    className="car-submit-btn"
+                    className="car-ios-sticky-submit-btn"
                     onClick={() => {
                       setBookingModalOpen(false);
                       navigate('/takip');
@@ -768,11 +819,57 @@ export default function HeroBookingWidget() {
                     type="button"
                     className="btn-ghost"
                     onClick={() => setBookingModalOpen(false)}
-                    style={{ padding: '10px', color: '#696665' }}
+                    style={{ padding: '12px', color: '#696665', fontWeight: 600 }}
                   >
                     Kapat
                   </button>
                 </div>
+              </div>
+            )}
+
+            {/* FIXED STICKY BOTTOM BAR (Native iOS Feel) */}
+            {modalStep !== 'CONFIRMATION' && (
+              <div className="car-modal-ios-sticky-bar">
+                <div className="car-sticky-price-group">
+                  <span className="car-sticky-price-label">Toplam Tutar:</span>
+                  <strong className="car-sticky-price-value">
+                    {formatMoney(prices.grandTotalTRY || prices.total)}
+                  </strong>
+                </div>
+
+                {modalStep === 'VEHICLES' && (
+                  <button
+                    type="button"
+                    className="car-ios-sticky-action-btn"
+                    onClick={() => setModalStep('AMENITIES')}
+                  >
+                    <span>Donanımlara Geç</span>
+                    <ChevronRight size={16} />
+                  </button>
+                )}
+
+                {modalStep === 'AMENITIES' && (
+                  <button
+                    type="button"
+                    className="car-ios-sticky-action-btn"
+                    onClick={() => setModalStep('PASSENGER')}
+                  >
+                    <span>Yolcu Bilgileri</span>
+                    <ChevronRight size={16} />
+                  </button>
+                )}
+
+                {modalStep === 'PASSENGER' && (
+                  <button
+                    type="submit"
+                    form="passenger-form"
+                    className="car-ios-sticky-action-btn"
+                    disabled={submitting}
+                  >
+                    <Lock size={15} />
+                    <span>{submitting ? 'Oluşturuluyor...' : 'Rezervasyonu Tamamla'}</span>
+                  </button>
+                )}
               </div>
             )}
           </div>

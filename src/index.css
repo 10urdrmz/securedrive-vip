@@ -6446,4 +6446,1128 @@ textarea.input-field-box {
   color: #ffffff;
 }
 
+/* ==============================================================================
+   TURNA EXACT 4-SCREEN MOBILE & WEB DESIGN SYSTEM
+   ============================================================================== */
+.turna-app-wrapper {
+  min-height: 100vh;
+  background-color: #f5f7fc;
+  font-family: var(--font-sans);
+  color: #0f172a;
+  padding-bottom: 80px;
+}
+
+/* ------------------------------------------------------------------------------
+   SCREEN 1: TURNA SEARCH & HERO
+   ------------------------------------------------------------------------------ */
+.turna-search-screen {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+
+@media (min-width: 1024px) {
+  .turna-search-screen {
+    max-width: 680px;
+    padding: 30px 20px;
+  }
+}
+
+.turna-road-banner {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(245,247,252,0.95) 100%),
+              url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80') center center / cover no-repeat;
+  padding: 16px 16px 20px;
+  margin-bottom: -16px;
+  min-height: 140px;
+}
+
+.turna-road-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.turna-round-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.turna-vehicle-type-pill {
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.turna-main-heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Turna White Form Card */
+.turna-form-card {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.turna-form-row {
+  padding: 12px 4px;
+  border-bottom: 1px solid #f1f3f7;
+  cursor: pointer;
+}
+
+.turna-row-label {
+  font-size: 13.5px;
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.turna-row-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Split Row (2 Columns) */
+.turna-form-split-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid #f1f3f7;
+  padding: 12px 4px;
+}
+
+.turna-split-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.turna-split-col.right-col {
+  border-left: 1px solid #f1f3f7;
+  padding-left: 16px;
+}
+
+.turna-field-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.turna-field-main {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.turna-field-main.with-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Age / Pax Row */
+.turna-age-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: none;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.turna-age-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.turna-age-left strong {
+  font-weight: 800;
+}
+
+.turna-pax-mini-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.turna-pax-counter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.turna-counter-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.turna-counter-btns button {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Big Cobalt Deep Navy Button */
+.turna-cobalt-btn {
+  width: 100%;
+  background: #000080;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 128, 0.25);
+  transition: all 0.15s ease;
+  margin-top: 6px;
+}
+
+.turna-cobalt-btn:hover {
+  background: #000066;
+  transform: translateY(-1px);
+}
+
+.turna-btn-arrows {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+/* Switch Toggle Row */
+.turna-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.turna-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.turna-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.turna-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #cbd5e1;
+  transition: .2s;
+  border-radius: 24px;
+}
+
+.turna-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+.turna-switch input:checked + .turna-slider {
+  background-color: #000080;
+}
+
+.turna-switch input:checked + .turna-slider:before {
+  transform: translateX(20px);
+}
+
+.turna-toggle-label {
+  font-size: 13px;
+  color: #475569;
+}
+
+/* Secondary Card: Rezervasyon Sorgula */
+.turna-secondary-card {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  text-decoration: none;
+  margin-bottom: 24px;
+}
+
+.turna-monitor-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f5f3ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.turna-sec-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Bottom Trust Strip */
+.turna-bottom-trust-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.turna-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* ------------------------------------------------------------------------------
+   SCREEN 2: TURNA LOADING TRANSIT SCREEN
+   ------------------------------------------------------------------------------ */
+.turna-loading-screen {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #ffffff;
+}
+
+.turna-loading-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.turna-brand-logo-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 30px;
+}
+
+.turna-logo-chevrons {
+  font-size: 26px;
+  font-weight: 900;
+  color: #000080;
+}
+
+.turna-logo-word {
+  font-size: 32px;
+  font-weight: 900;
+  color: #000080;
+  letter-spacing: -0.04em;
+}
+
+.turna-logo-sub-tag {
+  background: #eff6ff;
+  color: #000080;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.turna-loading-summary-card {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.turna-loading-loc-head strong {
+  display: block;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.turna-loading-loc-head small {
+  font-size: 12.5px;
+  color: #64748b;
+}
+
+.turna-loading-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  margin-top: 10px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.turna-loading-pulse-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #000080;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 10px rgba(0, 0, 128, 0.1);
+  animation: turnaPulse 1.5s infinite ease-in-out;
+  margin-bottom: 12px;
+}
+
+@keyframes turnaPulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 0, 128, 0.3); transform: scale(0.96); }
+  70% { box-shadow: 0 0 0 16px rgba(0, 0, 128, 0); transform: scale(1.04); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 0, 128, 0); transform: scale(0.96); }
+}
+
+.turna-circle-chevrons {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.turna-loading-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ------------------------------------------------------------------------------
+   SCREEN 3: TURNA VEHICLE RESULTS
+   ------------------------------------------------------------------------------ */
+.turna-results-screen {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 10px 16px;
+}
+
+@media (min-width: 1024px) {
+  .turna-results-screen {
+    max-width: 760px;
+    padding: 24px 20px;
+  }
+}
+
+.turna-results-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.turna-top-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.turna-top-route-box {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 6px 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.turna-top-route-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.turna-top-route-sub {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.turna-top-action-icons {
+  display: flex;
+  gap: 6px;
+}
+
+.turna-icon-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #334155;
+}
+
+/* Filter Chips Strip */
+.turna-filter-chips-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.turna-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Coupon Banner */
+.turna-coupon-banner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.turna-coupon-card {
+  background: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.turna-coupon-card.active {
+  border-color: #8b5cf6;
+  background: #fbf8ff;
+}
+
+.turna-coupon-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.turna-coupon-left strong {
+  font-size: 13.5px;
+  color: #000080;
+}
+
+.turna-coupon-left span {
+  font-size: 11px;
+  color: #475569;
+}
+
+.turna-coupon-brand {
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #000080;
+}
+
+.turna-coupon-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+/* Vehicle List Cards (Screenshot 3) */
+.turna-results-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.turna-car-card {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.turna-car-card:hover {
+  border-color: #000080;
+  box-shadow: 0 6px 18px rgba(0, 0, 128, 0.1);
+}
+
+.turna-car-card.selected {
+  border-color: #000080;
+  box-shadow: 0 0 0 2px #000080;
+}
+
+.turna-car-card-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.turna-car-img-box {
+  width: 120px;
+  height: 80px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.turna-car-img-box img {
+  width: 100%;
+  height: 60px;
+  object-fit: contain;
+}
+
+.turna-provider-logo {
+  font-size: 14px;
+  font-weight: 900;
+  color: #dc2626;
+  letter-spacing: -0.02em;
+}
+
+.turna-car-info-box {
+  flex: 1;
+}
+
+.turna-car-name {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.turna-car-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.turna-car-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  font-size: 12px;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.turna-car-deposit {
+  font-size: 12px;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.turna-car-cancellation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.turna-car-card-footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 10px;
+}
+
+.turna-car-rate-calc {
+  font-size: 12.5px;
+  color: #64748b;
+}
+
+.turna-car-total-bold {
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
+  font-family: monospace;
+}
+
+/* ------------------------------------------------------------------------------
+   SCREEN 4: TURNA PASSENGER / CHECKOUT
+   ------------------------------------------------------------------------------ */
+.turna-passenger-screen {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 10px 16px 90px;
+}
+
+@media (min-width: 1024px) {
+  .turna-passenger-screen {
+    max-width: 680px;
+    padding: 24px 20px 100px;
+  }
+}
+
+.turna-passenger-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.turna-passenger-top-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.turna-passenger-scroll-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.turna-accordion-card {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.turna-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.turna-acc-car-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.turna-acc-car-preview img {
+  width: 50px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.turna-acc-car-preview strong {
+  display: block;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.turna-acc-car-preview small {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.turna-accordion-content {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.turna-acc-specs-row {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.turna-white-form-box {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.turna-box-heading {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.turna-clean-input-group {
+  width: 100%;
+}
+
+.turna-clean-input-group input {
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  outline: none;
+}
+
+.turna-clean-input-group input:focus {
+  border-color: #000080;
+  box-shadow: 0 0 0 3px rgba(0, 0, 128, 0.1);
+}
+
+.turna-tc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.turna-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Sticky Bottom Checkout Bar (Screenshot 4) */
+.turna-sticky-checkout-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 12px 20px max(12px, env(safe-area-inset-bottom, 12px));
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10000;
+}
+
+@media (min-width: 1024px) {
+  .turna-sticky-checkout-bar {
+    max-width: 680px;
+    margin: 0 auto;
+    border-radius: 16px 16px 0 0;
+    border: 1px solid #e2e8f0;
+    border-bottom: none;
+  }
+}
+
+.turna-sticky-price-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.turna-sticky-price-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.turna-sticky-price-val {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.turna-sticky-price-val strong {
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f172a;
+  font-family: monospace;
+}
+
+.turna-checkout-cobalt-btn {
+  background: #000080;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 14.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 128, 0.25);
+  transition: all 0.15s ease;
+}
+
+.turna-checkout-cobalt-btn:hover {
+  background: #000066;
+}
+
+/* ------------------------------------------------------------------------------
+   SCREEN 5: CONFIRMATION / BOARDING PASS
+   ------------------------------------------------------------------------------ */
+.turna-confirmation-screen {
+  max-width: 520px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.turna-confirm-card {
+  background: #ffffff;
+  border: 1px solid #e9ecf2;
+  border-radius: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.turna-confirm-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.turna-confirm-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+}
+
+.turna-confirm-desc {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 20px;
+}
+
+.turna-voucher-box {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.turna-voucher-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.turna-voucher-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.turna-voucher-code {
+  font-size: 17px;
+  color: #000080;
+  font-family: monospace;
+}
+
+.turna-voucher-details {
+  font-size: 13px;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.turna-return-home-btn {
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+/* Location Dropdown Modal Styles */
+.turna-dropdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .turna-dropdown-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.turna-dropdown-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 520px;
+  max-height: 80vh;
+  border-radius: 20px 20px 0 0;
+  overflow-y: auto;
+  padding: 18px;
+}
+
+@media (min-width: 768px) {
+  .turna-dropdown-box {
+    border-radius: 20px;
+  }
+}
+
+.turna-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.turna-dropdown-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.turna-dropdown-header button {
+  background: #f1f5f9;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.turna-dropdown-search-input {
+  width: 100%;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+.turna-dropdown-search-input:focus {
+  border-color: #000080;
+}
+
+.turna-dropdown-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.turna-dropdown-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.turna-dropdown-row:hover {
+  background: #f1f5f9;
+}
+
+.turna-dropdown-row strong {
+  display: block;
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.turna-dropdown-row small {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+
 

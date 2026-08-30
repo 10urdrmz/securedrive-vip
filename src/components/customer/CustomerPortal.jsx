@@ -10,6 +10,7 @@ import {
 } from '../../lib/bookingStorage';
 import BoardingPassModal from '../modals/BoardingPassModal';
 import DriverReviewForm from './DriverReviewForm';
+import PassengerLiveTracking from '../common/PassengerLiveTracking';
 import BookingCodeLink from '../common/BookingCodeLink';
 import { isBookingCompleted, fetchReviewsForBookingCodes } from '../../lib/reviewService';
 import { 
@@ -367,6 +368,11 @@ export default function CustomerPortal() {
                     </div>
                   </div>
                 </div>
+
+                {/* Canlı Şoför & VIP Radar Haritası */}
+                {!isBookingCompleted(b) && (
+                  <PassengerLiveTracking booking={b} />
+                )}
 
                 {/* Action Row */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: '16px', flexWrap: 'wrap', gap: '10px' }}>

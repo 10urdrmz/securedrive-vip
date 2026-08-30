@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import { Navigation, Compass, MapPin, Gauge, Maximize2, Minimize2, ExternalLink, X } from 'lucide-react';
+import { Navigation, Compass, MapPin, Gauge, Maximize2, Minimize2, ExternalLink, User, Phone, MessageCircle } from 'lucide-react';
 import { addLocationListener, removeLocationListener, getLastKnownLocation } from '../../lib/locationService';
 
 const COORDS = {
@@ -26,6 +26,19 @@ function resolveTaskLocations(task) {
   if (destText.includes('taksim')) dest = [41.0370, 28.9850];
 
   return { pickup, dest };
+}
+
+function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+  const R = 6371;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10;
 }
 
 export default function DriverLiveMap({ activeTask }) {
@@ -71,7 +84,6 @@ export default function DriverLiveMap({ activeTask }) {
       }).addTo(mapInstanceRef.current);
     }
 
-    // Harita boyutu değişiminde invalidateSize tetikle
     const timer = setTimeout(() => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.invalidateSize();
@@ -110,7 +122,7 @@ export default function DriverLiveMap({ activeTask }) {
     }
   }, [location]);
 
-  // Aktif Görev Varsa Rota Çiz
+  // Aktif Görev & Yolcu Konumunu Çiz
   useEffect(() => {
     if (!mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
@@ -123,13 +135,26 @@ export default function DriverLiveMap({ activeTask }) {
     const taskCoords = resolveTaskLocations(activeTask);
     if (!taskCoords) return;
 
+    // Yolcu Karşılama Noktası İkonu
+    const passengerHtml = `
+      <div class="passenger-pin-badge">
+        <div class="passenger-pulse-ring"></div>
+        <div class="passenger-icon">👤</div>
+        <div class="passenger-tag">
+          <strong>Yolcu</strong>
+          <small>${activeTask.passenger_name?.split(' ')[0] || 'VIP Yolcu'}</small>
+        </div>
+      </div>
+    `;
+
     const pIcon = L.divIcon({
-      className: 'custom-map-pin',
-      html: '<div style="background:#0284c7;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-size:11px;">🛫</div>',
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
+      className: 'custom-passenger-map-pin',
+      html: passengerHtml,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18]
     });
 
+    // Varış Otel/Adres İkonu
     const dIcon = L.divIcon({
       className: 'custom-map-pin',
       html: '<div style="background:#10b981;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-size:11px;">🏨</div>',
@@ -137,8 +162,12 @@ export default function DriverLiveMap({ activeTask }) {
       iconAnchor: [13, 13]
     });
 
-    const pMarker = L.marker(taskCoords.pickup, { icon: pIcon }).addTo(map);
-    const dMarker = L.marker(taskCoords.dest, { icon: dIcon }).addTo(map);
+    const pMarker = L.marker(taskCoords.pickup, { icon: pIcon })
+      .addTo(map)
+      .bindPopup(`<b>VIP Yolcu:</b> ${activeTask.passenger_name}<br><b>Biniş:</b> ${activeTask.pickup_location}`);
+    const dMarker = L.marker(taskCoords.dest, { icon: dIcon })
+      .addTo(map)
+      .bindPopup(`<b>Varış:</b> ${activeTask.destination_location}`);
 
     const points = location?.lat && location?.lng 
       ? [[location.lat, location.lng], taskCoords.pickup, taskCoords.dest]
@@ -153,6 +182,11 @@ export default function DriverLiveMap({ activeTask }) {
 
     taskLayersRef.current.push(pMarker, dMarker, polyline);
   }, [activeTask, location]);
+
+  const taskCoords = resolveTaskLocations(activeTask);
+  const distanceToPassenger = (location?.lat && taskCoords?.pickup)
+    ? calculateDistanceKm(location.lat, location.lng, taskCoords.pickup[0], taskCoords.pickup[1])
+    : null;
 
   const handleCenterMyLocation = () => {
     if (mapInstanceRef.current && location?.lat && location?.lng) {
@@ -173,7 +207,7 @@ export default function DriverLiveMap({ activeTask }) {
       <div className="driver-live-map-header">
         <div className="driver-live-map-title">
           <Navigation size={15} color="#059669" className="pulse-icon" />
-          <strong>Canlı GPS Radarı</strong>
+          <strong>Canlı GPS & Yolcu Radarı</strong>
         </div>
 
         <div className="driver-live-map-controls">
@@ -214,22 +248,30 @@ export default function DriverLiveMap({ activeTask }) {
       <div className="driver-live-map-footer">
         <div className="driver-map-stat">
           <span className="driver-map-stat-dot" />
-          <span>
-            {location 
-              ? `GPS Aktif (±${location.accuracy || 5}m) · ${new Date(location.updated_at).toLocaleTimeString('tr-TR')}` 
-              : 'GPS aranıyor...'}
-          </span>
+          {activeTask ? (
+            <span>
+              👤 <b>{activeTask.passenger_name}</b> {distanceToPassenger !== null ? `· Yolcuya ${distanceToPassenger} km` : ''}
+            </span>
+          ) : (
+            <span>
+              {location 
+                ? `GPS Aktif (±${location.accuracy || 5}m) · ${new Date(location.updated_at).toLocaleTimeString('tr-TR')}` 
+                : 'GPS aranıyor...'}
+            </span>
+          )}
         </div>
 
         {activeTask && (
-          <button
-            type="button"
-            className="driver-map-nav-btn"
-            onClick={openNativeNavigation}
-          >
-            <ExternalLink size={12} />
-            <span>Navigasyon Başlat</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button
+              type="button"
+              className="driver-map-nav-btn"
+              onClick={openNativeNavigation}
+            >
+              <ExternalLink size={12} />
+              <span>Yolcuya Git</span>
+            </button>
+          </div>
         )}
       </div>
     </div>

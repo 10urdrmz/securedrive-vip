@@ -39,6 +39,7 @@ import {
 import { getBookingAccess, verifyGuestAccess } from '../../lib/bookingAccess';
 import BoardingPassModal from '../modals/BoardingPassModal';
 import DriverReviewForm from '../customer/DriverReviewForm';
+import PassengerLiveTracking from '../common/PassengerLiveTracking';
 import { isBookingCompleted, fetchReviewsForBookingCodes, isComplaintReview } from '../../lib/reviewService';
 
 function feedbackLabel(type, rating) {
@@ -617,6 +618,11 @@ export default function BookingDetailPage({ backPath, backLabel }) {
             </p>
           )}
         </div>
+
+        {/* Canlı VIP Şoför & Yolcu Radarı */}
+        {currentStep < 6 && (
+          <PassengerLiveTracking booking={booking} />
+        )}
 
         {(isAdmin || access.level === 'driver') && review && (
           <CustomerReviewPanel review={review} forAdmin={isAdmin} />

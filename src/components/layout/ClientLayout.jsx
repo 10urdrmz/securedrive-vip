@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import MobileBottomNav from './MobileBottomNav';
 import LiveTrackerModal from '../modals/LiveTrackerModal';
 import VehicleModal from '../modals/VehicleModal';
 
@@ -13,6 +14,9 @@ export default function ClientLayout() {
         <Outlet />
       </main>
       <Footer />
+
+      {/* Skyscanner-style Mobile Bottom Navigation */}
+      <MobileBottomNav />
 
       {/* Global Modals */}
       <LiveTrackerModal />

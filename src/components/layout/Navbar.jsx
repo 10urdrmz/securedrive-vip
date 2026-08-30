@@ -39,10 +39,11 @@ export default function Navbar() {
         
         {/* Left: Brand Logo */}
         <Link to="/" className="header-brand">
-          <div className="header-logo-icon"></div>
-          <span className="header-logo-text">
-            Secure<span>Drive</span>
-          </span>
+          <img 
+            src="/logo.png" 
+            alt="Secure drive" 
+            className="header-logo-image" 
+          />
           <span className="header-vip-tag">VIP</span>
         </Link>
 

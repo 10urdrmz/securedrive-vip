@@ -49,8 +49,11 @@ export default function Footer() {
           {/* Col 1: Brand & License Details */}
           <div className="light-footer-col brand-col">
             <Link to="/" className="light-footer-brand">
-              <div className="header-logo-icon"></div>
-              <span className="light-logo-text">Secure<span>Drive</span></span>
+              <img 
+                src="/logo.png" 
+                alt="Secure drive" 
+                className="footer-logo-image" 
+              />
               <span className="light-vip-tag">VIP</span>
             </Link>
 

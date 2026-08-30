@@ -61,14 +61,16 @@ export default function AdminSidebar({ isCollapsed, adminUser }) {
   return (
     <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="admin-sidebar-inner">
-        <div className="admin-sidebar-header">
+        <div className="admin-brand-card">
           <Link to="/admin" className="admin-brand-link">
-            <div className="admin-brand-dot" />
-            {!isCollapsed && (
-              <div>
-                <div className="admin-brand-title">SecureDrive</div>
-                <div className="admin-brand-sub">Operasyon Paneli</div>
-              </div>
+            {!isCollapsed ? (
+              <img 
+                src="/logo.png" 
+                alt="Secure drive" 
+                className="admin-logo-image" 
+              />
+            ) : (
+              <div className="admin-brand-dot" />
             )}
           </Link>
         </div>

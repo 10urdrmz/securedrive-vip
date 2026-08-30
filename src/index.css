@@ -270,6 +270,39 @@ a {
   flex-shrink: 0;
 }
 
+.header-logo-image {
+  height: 38px;
+  width: auto;
+  max-width: 170px;
+  object-fit: contain;
+  display: block;
+}
+
+.footer-logo-image {
+  height: 34px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  display: block;
+}
+
+.auth-logo-image {
+  height: 48px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+  display: block;
+}
+
+.admin-logo-image {
+  height: 30px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+}
+
 .header-logo-icon {
   width: 10px;
   height: 10px;

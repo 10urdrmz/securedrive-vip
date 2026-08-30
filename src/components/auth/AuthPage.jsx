@@ -120,9 +120,12 @@ export default function AuthPage() {
 
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <Link to="/" className="brand-logo" style={{ textDecoration: 'none', display: 'inline-flex', marginBottom: '8px' }}>
-            <div className="logo-dot"></div>
-            <div className="logo-text">Secure<span>Drive</span> VIP</div>
+          <Link to="/" style={{ textDecoration: 'none', display: 'inline-block', marginBottom: '8px' }}>
+            <img 
+              src="/logo.png" 
+              alt="Secure drive" 
+              className="auth-logo-image" 
+            />
           </Link>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
             Yönetici, VIP Şoför ve Yolcu Tek Giriş Portalı

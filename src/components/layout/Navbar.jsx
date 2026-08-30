@@ -3,7 +3,7 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
 import { useAuth } from '../../context/AuthContext';
 import { normalizeRole } from '../../lib/auth';
-import { Radar, CalendarCheck, User, LogOut, Menu, X } from 'lucide-react';
+import { User, LogOut, Menu, X } from 'lucide-react';
 import NotificationBell from '../common/NotificationBell';
 
 export default function Navbar() {
@@ -84,12 +84,6 @@ export default function Navbar() {
             <option value="GBP">GBP £</option>
           </select>
 
-          {/* Radar Tracking Button */}
-          <Link to="/takip" className="header-tracking-btn">
-            <Radar size={13} className="radar-pulse" />
-            <span>Kupon Sorgula</span>
-          </Link>
-
           {/* User Auth Portal Chip */}
           {!booting && user && <NotificationBell variant="light" />}
 
@@ -114,12 +108,6 @@ export default function Navbar() {
               <span>Giriş Yap</span>
             </Link>
           ))}
-
-          {/* Primary Action Button */}
-          <Link to="/#wizard-section" className="header-cta-primary">
-            <CalendarCheck size={13} />
-            <span>Hemen Ayır</span>
-          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -154,9 +142,6 @@ export default function Navbar() {
           </NavLink>
           <NavLink to="/sss" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Sıkça Sorulan Sorular
-          </NavLink>
-          <NavLink to="/takip" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-            Canlı Kupon Sorgulama
           </NavLink>
 
           <div style={{ padding: '14px 0', borderTop: '1px solid #edf2f7', display: 'flex', gap: '8px' }}>

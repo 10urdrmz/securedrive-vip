@@ -271,17 +271,17 @@ a {
 }
 
 .header-logo-image {
-  height: 38px;
+  height: 42px;
   width: auto;
-  max-width: 170px;
+  max-width: 220px;
   object-fit: contain;
   display: block;
 }
 
 .footer-logo-image {
-  height: 34px;
+  height: 38px;
   width: auto;
-  max-width: 160px;
+  max-width: 200px;
   object-fit: contain;
   display: block;
 }

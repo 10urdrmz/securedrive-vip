@@ -7,45 +7,56 @@
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
 
-  /* Transitions.dev Pure Color System */
-  --bg: #fdfdfd;
-  --bg-stage: #f9f9f9;
-  --bg-surface: #ffffff;
-  --bg-chip: #f4f4f4;
-  --bg-chip-hover: #eeeeee;
-  --bg-input: #f8f8f9;
+  /* Official Skyscanner Design System Tokens (skyscanner.com.tr) */
+  --bg: #02122c;                 /* Skyscanner Midnight Navy Canvas */
+  --bg-stage: #05203c;           /* Skyscanner Navy Layer */
+  --bg-surface: #11274f;         /* Skyscanner Surface Card */
+  --bg-surface-light: #ffffff;   /* Skyscanner Modal & Light Card */
+  --bg-chip: #163266;
+  --bg-chip-hover: #1e4284;
+  --bg-input: #081736;
 
-  --text: #0d0d0d;
-  --text-muted: #6c6c6c;
-  --text-subtle: #8a8a8a;
-  --text-faint: #b0b0b0;
+  --text: #ffffff;
+  --text-dark: #05203c;
+  --text-muted: #94a3b8;
+  --text-subtle: #cbd5e1;
+  --text-faint: #64748b;
 
-  --border: rgba(0, 0, 0, 0.08);
-  --border-subtle: rgba(0, 0, 0, 0.04);
-  --border-strong: rgba(0, 0, 0, 0.15);
-  --border-focus: #0d0d0d;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-light: #dcdde5;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --border-focus: #0062e3;
 
-  --accent-black: #0d0d0d;
-  --accent-green: #10b981;
-  --accent-green-bg: #ecfdf5;
-  --accent-green-border: #a7f3d0;
+  /* Skyscanner Brand Accents */
+  --accent-black: #02122c;
+  --accent-primary: #0062e3;       /* Skyscanner Electric Blue */
+  --accent-primary-hover: #0052be;
+  --accent-blue: #0062e3;
+  --accent-blue-bg: #e8f4fd;
+  --accent-cyan: #38bdf8;
+  --accent-cyan-light: #b2e3ff;
 
-  --accent-amber: #d97706;
+  --accent-green: #00a698;         /* Skyscanner Eco & Price Green */
+  --accent-green-bg: #e2f6f4;
+  --accent-green-border: #a3e9e2;
+
+  --accent-coral: #ff7b59;         /* Skyscanner Deal Coral */
+  --accent-coral-bg: #ffeae3;
+
+  --accent-amber: #f59e0b;
   --accent-amber-bg: #fffbeb;
   --accent-amber-border: #fde68a;
-
-  --accent-blue: #2563eb;
-  --accent-blue-bg: #eff6ff;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px var(--border);
-  --shadow-card-hover: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border-strong);
-  --shadow-dropdown: 0 16px 36px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border);
-  --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.16), 0 0 0 1px var(--border);
+  /* Skyscanner Premium Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--border);
+  --shadow-card-hover: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border-strong);
+  --shadow-dropdown: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
+  --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border);
 
   /* Radii */
   --radius-xs: 6px;
@@ -491,29 +502,29 @@ a {
 }
 
 .header-login-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
 }
 
 .header-cta-primary {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #0f172a;
+  background: #0062e3;
   color: #ffffff;
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   text-decoration: none;
   transition: all 0.15s ease;
   white-space: nowrap;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 98, 227, 0.35);
 }
 
 .header-cta-primary:hover {
-  background: #1e293b;
+  background: #0052be;
   transform: translateY(-1px);
 }
 
@@ -521,7 +532,7 @@ a {
   display: none;
   background: none;
   border: none;
-  color: #0f172a;
+  color: #ffffff;
   cursor: pointer;
   padding: 6px;
 }
@@ -530,22 +541,22 @@ a {
   display: flex;
   flex-direction: column;
   padding: 16px 20px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background: #05203c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   gap: 10px;
 }
 
 .mobile-nav-link {
   font-size: 14px;
-  font-weight: 500;
-  color: #334155;
+  font-weight: 600;
+  color: #cbd5e1;
   padding: 8px 0;
   text-decoration: none;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .mobile-nav-link.active {
-  color: #2563eb;
+  color: #38bdf8;
   font-weight: 700;
 }
 
@@ -565,13 +576,13 @@ a {
 }
 
 /* ==============================================================================
-   WHITE / LIGHT THEME LUXURY FOOTER
+   SKYSCANNER DEEP MIDNIGHT NAVY FOOTER
    ============================================================================== */
 .light-footer {
-  background: #ffffff;
-  color: #334155;
+  background: #02122c;
+  color: #94a3b8;
   margin-top: 60px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .light-footer-container {
@@ -581,10 +592,10 @@ a {
   padding: 0 24px;
 }
 
-/* Pre-footer Trust Strip (Light) */
+/* Pre-footer Trust Strip */
 .light-footer-trust-strip {
-  background: #f8fafc;
-  border-bottom: 1px solid #edf2f7;
+  background: #05203c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding: 24px 0;
 }
 
@@ -603,31 +614,31 @@ a {
 .light-trust-icon-box {
   width: 42px;
   height: 42px;
-  border-radius: 10px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #11274f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .light-trust-item strong {
   display: block;
   font-size: 13.5px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   margin-bottom: 2px;
 }
 
 .light-trust-item p {
   font-size: 12px;
-  color: #64748b;
+  color: #94a3b8;
   line-height: 1.4;
 }
 
-/* Main 4-Column Light Footer */
+/* Main 4-Column Footer */
 .light-footer-main {
   padding: 50px 24px 40px 24px;
 }
@@ -747,12 +758,12 @@ a {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  color: #334155;
+  color: #cbd5e1;
   text-decoration: none;
 }
 
 .light-contact-icon {
-  color: #2563eb;
+  color: #38bdf8;
   flex-shrink: 0;
   margin-top: 3px;
 }
@@ -769,20 +780,20 @@ a {
 .light-contact-item strong {
   font-size: 13.5px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .light-contact-item p {
   font-size: 12px;
-  color: #64748b;
+  color: #94a3b8;
   line-height: 1.4;
 }
 
-/* Bottom Bar (Light) */
+/* Bottom Bar */
 .light-footer-bottom {
-  border-top: 1px solid #edf2f7;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 20px 0;
-  background: #f8fafc;
+  background: #05203c;
 }
 
 .light-bottom-inner {
@@ -795,11 +806,11 @@ a {
 
 .light-copyright {
   font-size: 12px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .light-copyright strong {
-  color: #334155;
+  color: #ffffff;
 }
 
 .light-legal-links {
@@ -811,13 +822,13 @@ a {
 }
 
 .light-legal-link {
-  color: #64748b;
+  color: #94a3b8;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .light-legal-link:hover {
-  color: #0f172a;
+  color: #38bdf8;
 }
 
 @media (max-width: 980px) {
@@ -963,7 +974,8 @@ a {
 }
 
 .chip-btn.active {
-  background: var(--text);
+  background: #0062e3;
+  border-color: #0062e3;
   color: #ffffff;
 }
 
@@ -1110,13 +1122,13 @@ textarea.input-field-box {
 }
 
 .btn-submit-search {
-  background: var(--accent-black);
+  background: #0062e3;
   color: #ffffff;
   border: none;
   border-radius: var(--radius-md);
   padding: 0 20px;
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 700;
   height: 42px;
   display: flex;
   align-items: center;
@@ -1124,11 +1136,12 @@ textarea.input-field-box {
   gap: 6px;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 98, 227, 0.35);
   transition: all var(--duration-fast) var(--ease-spring);
 }
 
 .btn-submit-search:hover {
-  background: #262626;
+  background: #0052be;
   transform: translateY(-1px);
 }
 
@@ -1554,9 +1567,9 @@ textarea.input-field-box {
 }
 
 .vehicle-minimal-card.selected .btn-select-chip {
-  background: var(--accent-black);
+  background: #0062e3;
   color: #ffffff;
-  border-color: var(--accent-black);
+  border-color: #0062e3;
 }
 
 /* Step 2: Amenities */
@@ -1585,9 +1598,9 @@ textarea.input-field-box {
 }
 
 .amenity-minimal-row.checked {
-  border-color: var(--accent-black);
-  background: #ffffff;
-  box-shadow: 0 0 0 2px var(--accent-black);
+  border-color: #0062e3;
+  background: #11274f;
+  box-shadow: 0 0 0 2px #0062e3;
 }
 
 .amenity-checkbox-dot {
@@ -1606,8 +1619,8 @@ textarea.input-field-box {
 }
 
 .amenity-minimal-row.checked .amenity-checkbox-dot {
-  background: var(--accent-black);
-  border-color: var(--accent-black);
+  background: #0062e3;
+  border-color: #0062e3;
 }
 
 .amenity-body {

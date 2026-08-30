@@ -7,42 +7,41 @@
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
 
-  /* Official Skyscanner Design System Tokens (skyscanner.com.tr) */
-  --bg: #02122c;                 /* Skyscanner Midnight Navy Canvas */
-  --bg-stage: #05203c;           /* Skyscanner Navy Layer */
-  --bg-surface: #11274f;         /* Skyscanner Surface Card */
-  --bg-surface-light: #ffffff;   /* Skyscanner Modal & Light Card */
-  --bg-chip: #163266;
-  --bg-chip-hover: #1e4284;
-  --bg-input: #081736;
+  /* Turna.com Inspired Clean, Bright & High-Legibility Design System */
+  --bg: #f4f6fa;                 /* Crisp Light Background */
+  --bg-stage: #ffffff;           /* Clean Pure White Canvas */
+  --bg-surface: #ffffff;         /* Pure White Card Surface */
+  --bg-surface-subtle: #f8fafc;  /* Soft Grey-Blue Layer */
+  --bg-chip: #f0f4ff;            /* Soft Blue Chip */
+  --bg-chip-hover: #e0e7ff;
+  --bg-input: #f8fafc;
 
-  --text: #ffffff;
-  --text-dark: #05203c;
-  --text-muted: #94a3b8;
-  --text-subtle: #cbd5e1;
-  --text-faint: #64748b;
+  --text: #0f172a;               /* High-Contrast Charcoal Black */
+  --text-dark: #0f172a;
+  --text-muted: #64748b;         /* Readable Slate Grey */
+  --text-subtle: #475569;
+  --text-faint: #94a3b8;
 
-  --border: rgba(255, 255, 255, 0.1);
-  --border-light: #dcdde5;
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --border-focus: #0062e3;
+  --border: #e2e8f0;             /* Crisp Clean Border */
+  --border-light: #f1f5f9;
+  --border-subtle: #f8fafc;
+  --border-strong: #cbd5e1;
+  --border-focus: #0b4de0;
 
-  /* Skyscanner Brand Accents */
-  --accent-black: #02122c;
-  --accent-primary: #0062e3;       /* Skyscanner Electric Blue */
-  --accent-primary-hover: #0052be;
-  --accent-blue: #0062e3;
-  --accent-blue-bg: #e8f4fd;
-  --accent-cyan: #38bdf8;
-  --accent-cyan-light: #b2e3ff;
+  /* Turna Brand Accents */
+  --accent-black: #0f172a;
+  --accent-primary: #0b4de0;       /* Turna Royal Blue */
+  --accent-primary-hover: #083ab3;
+  --accent-blue: #0b4de0;
+  --accent-blue-bg: #eff6ff;
+  --accent-cyan: #0284c7;
 
-  --accent-green: #00a698;         /* Skyscanner Eco & Price Green */
-  --accent-green-bg: #e2f6f4;
-  --accent-green-border: #a3e9e2;
+  --accent-green: #059669;         /* Eco / Deal Green */
+  --accent-green-bg: #ecfdf5;
+  --accent-green-border: #a7f3d0;
 
-  --accent-coral: #ff7b59;         /* Skyscanner Deal Coral */
-  --accent-coral-bg: #ffeae3;
+  --accent-coral: #ff4757;         /* Turna Deal Red/Coral */
+  --accent-coral-bg: #fff1f2;
 
   --accent-amber: #f59e0b;
   --accent-amber-bg: #fffbeb;
@@ -51,12 +50,12 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Skyscanner Premium Shadows */
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
-  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--border);
-  --shadow-card-hover: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border-strong);
-  --shadow-dropdown: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
-  --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border);
+  /* Turna Clean Crisp Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.05), 0 0 0 1px var(--border);
+  --shadow-card-hover: 0 12px 28px rgba(11, 77, 224, 0.1), 0 0 0 1px #cbd5e1;
+  --shadow-dropdown: 0 16px 36px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border);
+  --shadow-modal: 0 24px 48px rgba(0, 0, 0, 0.16), 0 0 0 1px var(--border);
 
   /* Radii */
   --radius-xs: 6px;
@@ -110,7 +109,7 @@ textarea {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.025em;
   color: var(--text);
 }
@@ -136,7 +135,7 @@ a {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--accent-black);
+  background: var(--accent-primary);
   flex-shrink: 0;
 }
 
@@ -162,7 +161,7 @@ a {
   border: 1px solid var(--border);
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--accent-primary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -212,7 +211,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background-color: #f4f6fa;
   padding: 40px 20px;
 }
 
@@ -243,8 +242,8 @@ a {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background-color: #02122c;
-  color: #ffffff;
+  background-color: #f4f6fa;
+  color: #0f172a;
 }
 
 .client-main-content {
@@ -255,7 +254,7 @@ a {
 }
 
 /* ==============================================================================
-   PREMIUM SITE HEADER / NAVBAR (SKYSCANNER DARK VIP)
+   TURNA.COM CLEAN LIGHT SITE HEADER / NAVBAR
    ============================================================================== */
 .site-header {
   position: fixed;
@@ -263,11 +262,11 @@ a {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(2, 18, 44, 0.94);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.04);
   padding-top: var(--sat);
 }
 
@@ -296,32 +295,32 @@ a {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+  background: #0b4de0;
+  box-shadow: 0 0 0 3px rgba(11, 77, 224, 0.2);
 }
 
 .header-logo-text {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: -0.03em;
   white-space: nowrap;
 }
 
 .header-logo-text span {
-  font-weight: 500;
-  color: #38bdf8;
+  font-weight: 600;
+  color: #0b4de0;
 }
 
 .header-vip-tag {
   font-size: 10px;
   font-weight: 800;
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: #eff6ff;
+  color: #0b4de0;
   padding: 2px 7px;
   border-radius: 6px;
   letter-spacing: 0.05em;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  border: 1px solid #dbeafe;
 }
 
 /* Desktop Navigation */
@@ -335,7 +334,7 @@ a {
 .header-nav-link {
   font-size: 13.5px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #475569;
   text-decoration: none;
   padding: 6px 12px;
   border-radius: 8px;
@@ -345,8 +344,39 @@ a {
 }
 
 .header-nav-link:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  color: #0b4de0;
+  background: #f8fafc;
+}
+
+.header-nav-link.active {
+  color: #0b4de0;
+  background: #eff6ff;
+  font-weight: 700;
+}
+
+.header-currency-select {
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+}
+
+.header-tracking-btn {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #0b4de0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .header-nav-link.active {
@@ -4696,16 +4726,16 @@ textarea.input-field-box {
 
 .mobile-bottom-nav__pill {
   pointer-events: auto;
-  background: rgba(11, 28, 59, 0.85);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #cbd5e1;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
 .mobile-nav-item {
@@ -4715,7 +4745,7 @@ textarea.input-field-box {
   gap: 3px;
   padding: 6px 12px;
   border-radius: 9999px;
-  color: #94a3b8;
+  color: #64748b;
   text-decoration: none;
   font-size: 10.5px;
   font-weight: 700;
@@ -4723,8 +4753,8 @@ textarea.input-field-box {
 }
 
 .mobile-nav-item.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: #38bdf8;
+  background: #eff6ff;
+  color: #0b4de0;
 }
 
 .mobile-nav-avatar {
@@ -5493,4 +5523,927 @@ textarea.input-field-box {
   color: #38bdf8;
   text-decoration: none;
 }
+
+/* ==============================================================================
+   TURNA.COM CLEAN LIGHT DESIGN SYSTEM STYLES (HERO, SEARCH & BOOKING)
+   ============================================================================== */
+.turna-hero-root {
+  background: linear-gradient(180deg, #edf2fc 0%, #f4f6fa 100%);
+  padding: 30px 0 50px;
+  color: #0f172a;
+}
+
+.turna-hero-container {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.turna-hero-header {
+  margin-bottom: 24px;
+}
+
+.turna-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #0b4de0;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  margin-bottom: 12px;
+}
+
+.turna-hero-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+}
+
+.turna-hero-title span {
+  color: #0b4de0;
+}
+
+.turna-hero-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Turna Service Category Tabs */
+.turna-service-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.turna-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.turna-tab-btn:hover {
+  border-color: #0b4de0;
+  color: #0b4de0;
+  transform: translateY(-1px);
+}
+
+.turna-tab-btn.active {
+  background: #0b4de0;
+  border-color: #0b4de0;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(11, 77, 224, 0.3);
+}
+
+/* Turna Quick Search Card */
+.turna-search-card {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(11, 77, 224, 0.08);
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.turna-search-card:hover {
+  border-color: #0b4de0;
+  box-shadow: 0 8px 30px rgba(11, 77, 224, 0.14);
+  transform: translateY(-2px);
+}
+
+.turna-search-card__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.turna-search-icon-box {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.turna-search-label {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.turna-search-value {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.turna-search-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0b4de0;
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(11, 77, 224, 0.35);
+  transition: all 0.15s ease;
+}
+
+.turna-search-action-btn:hover {
+  background: #083ab3;
+  transform: translateY(-1px);
+}
+
+/* 2 Promo Cards */
+.turna-promo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.turna-promo-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+}
+
+.turna-promo-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.turna-promo-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.turna-promo-card h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px;
+}
+
+.turna-promo-card p {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Turna In-place Drawer / Modal */
+.turna-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.turna-drawer {
+  background: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  border-radius: 24px 24px 0 0;
+  overflow-y: auto;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: turnaSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  .turna-drawer-backdrop {
+    align-items: center;
+    padding: 20px;
+  }
+  .turna-drawer {
+    border-radius: 24px;
+    max-height: 85vh;
+  }
+}
+
+@keyframes turnaSlideUp {
+  from { transform: translateY(100%); opacity: 0.8; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.turna-drawer-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.turna-drawer-back-btn,
+.turna-drawer-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.turna-drawer-body {
+  padding: 20px;
+}
+
+.turna-trip-type-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.turna-type-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+}
+
+.turna-type-btn.active {
+  background: #0b4de0;
+  border-color: #0b4de0;
+  color: #ffffff;
+}
+
+.turna-drawer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.turna-form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.turna-input-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 11px 14px;
+}
+
+.turna-input-box:focus-within {
+  border-color: #0b4de0;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(11, 77, 224, 0.12);
+}
+
+.turna-input-box input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  outline: none;
+}
+
+.turna-dropdown-menu {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.turna-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.turna-dropdown-item:hover {
+  background: #eff6ff;
+}
+
+.turna-dropdown-item strong {
+  display: block;
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.turna-dropdown-item small {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.turna-pax-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.turna-counter-box {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.turna-counter-box span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.turna-counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.turna-counter button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.turna-primary-btn {
+  background: #0b4de0;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 14.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 16px rgba(11, 77, 224, 0.35);
+  transition: all 0.15s ease;
+}
+
+.turna-primary-btn:hover {
+  background: #083ab3;
+  transform: translateY(-1px);
+}
+
+/* Turna In-place Vehicle Step */
+.turna-route-pill-summary {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0b4de0;
+}
+
+.turna-filter-chips {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+
+.turna-chip {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.turna-chip.active {
+  background: #0b4de0;
+  border-color: #0b4de0;
+  color: #ffffff;
+}
+
+.turna-vehicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.turna-vehicle-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+}
+
+.turna-vehicle-card:hover {
+  border-color: #0b4de0;
+  box-shadow: 0 8px 20px rgba(11, 77, 224, 0.1);
+  transform: translateY(-1px);
+}
+
+.turna-vehicle-card.selected {
+  border-color: #0b4de0;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px #0b4de0;
+}
+
+.turna-vehicle-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.turna-vehicle-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.turna-vehicle-class {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0b4de0;
+  background: #dbeafe;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.turna-vehicle-price {
+  font-size: 16px;
+  font-weight: 900;
+  color: #0b4de0;
+  font-family: monospace;
+}
+
+.turna-vehicle-card__body {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.turna-vehicle-img-wrap {
+  width: 110px;
+  height: 65px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f1f5f9;
+  flex-shrink: 0;
+}
+
+.turna-vehicle-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.turna-vehicle-meta {
+  flex: 1;
+}
+
+.turna-specs-wrap {
+  display: flex;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.turna-select-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  background: #0b4de0;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Turna Amenities */
+.turna-amenities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.turna-amenity-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.turna-amenity-card.active {
+  border-color: #0b4de0;
+  background: #eff6ff;
+}
+
+.turna-amenity-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.turna-amenity-card.active .turna-amenity-checkbox {
+  background: #0b4de0;
+  border-color: #0b4de0;
+}
+
+.turna-amenity-info {
+  flex: 1;
+}
+
+.turna-amenity-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.turna-amenity-head strong {
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.turna-tag.free {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.turna-tag.price {
+  background: #eff6ff;
+  color: #0b4de0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.turna-amenity-info p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 6px;
+}
+
+.turna-counter-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+.turna-counter-inline button {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: #f1f5f9;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.turna-footer-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.turna-price-sub {
+  font-size: 11px;
+  color: #64748b;
+  display: block;
+}
+
+.turna-price-main {
+  font-size: 19px;
+  font-weight: 900;
+  color: #0b4de0;
+  font-family: monospace;
+}
+
+/* Turna Passenger Form */
+.turna-form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.turna-payment-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.turna-payment-card {
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.turna-payment-card.active {
+  border-color: #0b4de0;
+  background: #eff6ff;
+}
+
+.turna-payment-card input {
+  margin-top: 3px;
+}
+
+.turna-payment-card strong {
+  display: block;
+  font-size: 12.5px;
+  color: #0f172a;
+}
+
+.turna-payment-card small {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* Turna Popüler Rotalar (Deals) */
+.turna-deals-section {
+  padding: 40px 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+}
+
+.turna-section-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ff4757;
+  background: #fff1f2;
+  border: 1px solid #ffe4e6;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.turna-deals-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.turna-deals-sub {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 20px;
+}
+
+.turna-deals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .turna-deals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .turna-deals-grid {
+    grid-template-columns: 1fr;
+  }
+  .turna-promo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.turna-deal-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.turna-deal-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 24px rgba(11, 77, 224, 0.12);
+  transform: translateY(-2px);
+}
+
+.turna-deal-img-wrap {
+  position: relative;
+  height: 140px;
+  width: 100%;
+}
+
+.turna-deal-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.turna-deal-drop-pill {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(255, 71, 87, 0.95);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.turna-deal-body {
+  padding: 14px;
+}
+
+.turna-deal-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+  line-height: 1.35;
+}
+
+.turna-deal-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  margin: 0 0 10px;
+}
+
+.turna-deal-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 8px;
+}
+
+.turna-deal-old {
+  font-size: 12px;
+  color: #94a3b8;
+  text-decoration: line-through;
+  display: block;
+}
+
+.turna-deal-new {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0b4de0;
+  font-family: monospace;
+}
+
+.turna-deal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #0b4de0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.turna-deal-btn:hover {
+  background: #0b4de0;
+  color: #ffffff;
+}
+
 

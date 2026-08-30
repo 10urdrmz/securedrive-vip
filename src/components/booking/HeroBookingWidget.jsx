@@ -33,7 +33,8 @@ import {
   Mail,
   Phone,
   FileText,
-  QrCode
+  Clock,
+  Award
 } from 'lucide-react';
 
 const DROPS_ROUTES = [
@@ -129,8 +130,7 @@ export default function HeroBookingWidget() {
     setLuggage
   } = useBooking();
 
-  // In-place multi-step drawer state: 'SEARCH' | 'VEHICLES' | 'AMENITIES' | 'PASSENGER' | 'CONFIRMATION'
-  const [drawerStep, setDrawerStep] = useState('SEARCH');
+  const [drawerStep, setDrawerStep] = useState('SEARCH'); // 'SEARCH' | 'VEHICLES' | 'AMENITIES' | 'PASSENGER' | 'CONFIRMATION'
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('flights');
   const [whyModalOpen, setWhyModalOpen] = useState(false);
@@ -206,7 +206,6 @@ export default function HeroBookingWidget() {
     }
 
     clearSubmittedBooking();
-    // Seamless in-place transition to VEHICLES step inside same drawer
     setDrawerStep('VEHICLES');
   };
 
@@ -277,25 +276,28 @@ export default function HeroBookingWidget() {
   };
 
   return (
-    <section className="sky-hero-root" id="hero">
-      {/* Top Header Logo */}
-      <div className="sky-hero-container">
-        <header className="sky-brand-bar">
-          <Link to="/" className="sky-brand-logo">
-            <div className="sky-sun-icon">
-              <Sparkles size={22} color="#ffffff" />
-            </div>
-            <span className="sky-brand-name">
-              Secure<span>Drive</span>
-            </span>
-          </Link>
-        </header>
+    <section className="turna-hero-root" id="hero">
+      <div className="turna-hero-container">
+        
+        {/* Main Headline & Value Props */}
+        <div className="turna-hero-header">
+          <div className="turna-trust-badge">
+            <ShieldCheck size={14} color="#0b4de0" />
+            <span>T.C. Ulaştırma Bakanlığı D2 Lisanslı VIP Taşımacılık</span>
+          </div>
+          <h1 className="turna-hero-title">
+            Türkiye'nin Lider <span>VIP Transfer</span> Platformu
+          </h1>
+          <p className="turna-hero-subtitle">
+            Havalimanı VIP karşılama, sabit fiyat garantisi ve 7/24 tahsisli protokol şoförü hizmeti.
+          </p>
+        </div>
 
-        {/* 3 Circular Service Action Circles (Skyscanner Style) */}
-        <div className="sky-service-circles">
+        {/* Turna Service Category Tabs */}
+        <div className="turna-service-tabs">
           <button
             type="button"
-            className={`sky-circle-btn ${activeTab === 'flights' ? 'active' : ''}`}
+            className={`turna-tab-btn ${activeTab === 'flights' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('flights');
               setServiceType('transfer');
@@ -303,15 +305,13 @@ export default function HeroBookingWidget() {
               setSearchDrawerOpen(true);
             }}
           >
-            <div className="sky-circle-icon">
-              <Plane size={24} />
-            </div>
-            <span>Uçuşlar</span>
+            <Plane size={18} />
+            <span>Havalimanı VIP Transfer</span>
           </button>
 
           <button
             type="button"
-            className={`sky-circle-btn ${activeTab === 'hotels' ? 'active' : ''}`}
+            className={`turna-tab-btn ${activeTab === 'hotels' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('hotels');
               setServiceType('transfer');
@@ -319,15 +319,13 @@ export default function HeroBookingWidget() {
               setSearchDrawerOpen(true);
             }}
           >
-            <div className="sky-circle-icon">
-              <Hotel size={24} />
-            </div>
-            <span>Konaklama yerleri</span>
+            <Hotel size={18} />
+            <span>Otel & Şehir İçi</span>
           </button>
 
           <button
             type="button"
-            className={`sky-circle-btn ${activeTab === 'cars' ? 'active' : ''}`}
+            className={`turna-tab-btn ${activeTab === 'cars' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('cars');
               setServiceType('chauffeur');
@@ -335,82 +333,97 @@ export default function HeroBookingWidget() {
               setSearchDrawerOpen(true);
             }}
           >
-            <div className="sky-circle-icon">
-              <Car size={24} />
-            </div>
-            <span>Araçlar</span>
+            <Car size={18} />
+            <span>Özel Şoför & Tahsis</span>
           </button>
+
+          <Link to="/takip" className="turna-tab-btn">
+            <Radar size={18} />
+            <span>Canlı Radar Takibi</span>
+          </Link>
         </div>
 
-        {/* 2 Feature Promo Cards Grid */}
-        <div className="sky-promo-grid">
-          <div 
-            className="sky-promo-card"
-            onClick={() => {
-              setDrawerStep('VEHICLES');
-              setSearchDrawerOpen(true);
-            }}
-            style={{ cursor: 'pointer' }}
-          >
-            <h3>Tüm VIP filoyu keşfedin</h3>
-            <p>Mercedes Maybach, S-Class, Vito Lounge</p>
-          </div>
-
-          <div
-            className="sky-promo-card"
-            onClick={() => setWhyModalOpen(true)}
-            style={{ cursor: 'pointer' }}
-          >
-            <h3>Neden SecureDrive?</h3>
-            <p>D2 Belgeli, Protokol Şoförü, Sabit Fiyat</p>
-          </div>
-        </div>
-
-        {/* Main Quick-Search Trigger Bar (Skyscanner Search Pill) */}
+        {/* Turna Clean White Quick-Search Card */}
         <div
-          className="sky-search-trigger"
+          className="turna-search-card"
           onClick={() => {
             setDrawerStep('SEARCH');
             setSearchDrawerOpen(true);
           }}
         >
-          <div className="sky-search-trigger__left">
-            <div className="sky-search-badge-icon">
-              <Plane size={18} />
+          <div className="turna-search-card__left">
+            <div className="turna-search-icon-box">
+              <Plane size={22} color="#0b4de0" />
             </div>
             <div>
-              <div className="sky-search-title">
-                {pickup ? pickup.name : 'Nereden kalkış yapacağınızı seçin'}
+              <div className="turna-search-label">
+                {pickup ? pickup.name : 'Nereden transfer istiyorsunuz?'}
               </div>
-              <div className="sky-search-sub">
-                {destination ? `➔ ${destination.name}` : 'İstanbul (Herhangi biri: IST, SAW ➔ Otel veya Adres)'}
+              <div className="turna-search-value">
+                {destination ? `➔ ${destination.name}` : 'İstanbul (IST, SAW) ➔ Otel, Marina veya Adres Seçin'}
               </div>
             </div>
           </div>
-          <ChevronRight size={18} className="sky-search-chevron" />
+
+          <button type="button" className="turna-search-action-btn">
+            <span>Fiyatları Gör</span>
+            <ChevronRight size={18} />
+          </button>
+        </div>
+
+        {/* 2 Feature Promo Cards */}
+        <div className="turna-promo-grid">
+          <div 
+            className="turna-promo-card"
+            onClick={() => {
+              setDrawerStep('VEHICLES');
+              setSearchDrawerOpen(true);
+            }}
+          >
+            <div className="turna-promo-icon-wrap" style={{ background: '#eef2ff', color: '#0b4de0' }}>
+              <Car size={22} />
+            </div>
+            <div>
+              <h3>Tüm VIP Filoyu Keşfedin</h3>
+              <p>Mercedes-Benz Maybach, S-Class ve Vito VIP Lounge filosu</p>
+            </div>
+          </div>
+
+          <div
+            className="turna-promo-card"
+            onClick={() => setWhyModalOpen(true)}
+          >
+            <div className="turna-promo-icon-wrap" style={{ background: '#ecfdf5', color: '#059669' }}>
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <h3>Neden SecureDrive?</h3>
+              <p>D2 Yetki Belgesi, Protokol Şoförleri, %100 Sabit Fiyat Güvencesi</p>
+            </div>
+          </div>
         </div>
 
         {/* =========================================================================
-            IN-PLACE MULTI-STEP SKYSCANNER BOOKING DRAWER (NO PAGE NAVIGATION)
+            IN-PLACE MULTI-STEP TURNA BOOKING DRAWER (NO PAGE NAVIGATION)
            ========================================================================= */}
         {searchDrawerOpen && (
-          <div className="sky-search-drawer-backdrop" onClick={() => setSearchDrawerOpen(false)}>
-            <div className="sky-search-drawer in-place-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="turna-drawer-backdrop" onClick={() => setSearchDrawerOpen(false)}>
+            <div className="turna-drawer" onClick={(e) => e.stopPropagation()}>
               
-              {/* Drawer Top Navigation Bar with Back & Close */}
-              <div className="sky-drawer-header">
+              {/* Drawer Header */}
+              <div className="turna-drawer-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   {drawerStep !== 'SEARCH' && drawerStep !== 'CONFIRMATION' && (
                     <button
                       type="button"
-                      className="sky-drawer-back-btn"
+                      className="turna-drawer-back-btn"
                       onClick={handleDrawerBack}
                       title="Geri"
                     >
                       <ChevronLeft size={20} />
                     </button>
                   )}
-                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800 }}>
+                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>
                     {drawerStep === 'SEARCH' && 'VIP Transfer Rezervasyonu'}
                     {drawerStep === 'VEHICLES' && 'Araç Seçimi (1/4)'}
                     {drawerStep === 'AMENITIES' && 'Donanım & Ekstralar (2/4)'}
@@ -421,46 +434,44 @@ export default function HeroBookingWidget() {
 
                 <button
                   type="button"
-                  className="sky-drawer-close"
+                  className="turna-drawer-close"
                   onClick={() => setSearchDrawerOpen(false)}
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              {/* -------------------------------------------------------------
-                  STEP 0: SEARCH & ROUTE
-                 ------------------------------------------------------------- */}
+              {/* STEP 0: SEARCH & ROUTE */}
               {drawerStep === 'SEARCH' && (
-                <div className="sky-drawer-body">
-                  <div className="sky-drawer-trip-types">
+                <div className="turna-drawer-body">
+                  <div className="turna-trip-type-row">
                     <button
                       type="button"
-                      className={`sky-trip-type-btn ${tripType === 'oneway' ? 'active' : ''}`}
+                      className={`turna-type-btn ${tripType === 'oneway' ? 'active' : ''}`}
                       onClick={() => setTripType('oneway')}
                     >
                       Tek Yön
                     </button>
                     <button
                       type="button"
-                      className={`sky-trip-type-btn ${tripType === 'roundtrip' ? 'active' : ''}`}
+                      className={`turna-type-btn ${tripType === 'roundtrip' ? 'active' : ''}`}
                       onClick={() => setTripType('roundtrip')}
                     >
-                      Gidiş - Dönüş
+                      Gidiş - Dönüş (%15 İndirimli)
                     </button>
                   </div>
 
-                  <div className="sky-drawer-form">
-                    <div className="sky-form-group">
+                  <div className="turna-drawer-form">
+                    <div className="turna-form-group">
                       <label>KALKIŞ NOKTASI / HAVALİMANI</label>
                       <div
-                        className="sky-input-box"
+                        className="turna-input-box"
                         onClick={() => {
                           setPickupOpen(true);
                           setDestOpen(false);
                         }}
                       >
-                        <Plane size={16} color="#0284c7" />
+                        <Plane size={18} color="#0b4de0" />
                         <input
                           type="text"
                           value={pickupQuery}
@@ -473,11 +484,11 @@ export default function HeroBookingWidget() {
                       </div>
 
                       {pickupOpen && (
-                        <div className="sky-dropdown-menu">
+                        <div className="turna-dropdown-menu">
                           {filteredAirports.map((a) => (
                             <div
                               key={a.id}
-                              className="sky-dropdown-item"
+                              className="turna-dropdown-item"
                               onClick={() => {
                                 setPickup(a);
                                 setPickupQuery(a.name);
@@ -485,7 +496,7 @@ export default function HeroBookingWidget() {
                                 setDestOpen(true);
                               }}
                             >
-                              <Plane size={14} color="#0284c7" />
+                              <Plane size={16} color="#0b4de0" />
                               <div>
                                 <strong>{a.name}</strong>
                                 <small>{a.city} · VIP Terminal</small>
@@ -496,16 +507,16 @@ export default function HeroBookingWidget() {
                       )}
                     </div>
 
-                    <div className="sky-form-group">
+                    <div className="turna-form-group">
                       <label>VARIŞ NOKTASI / OTEL / ADRES</label>
                       <div
-                        className="sky-input-box"
+                        className="turna-input-box"
                         onClick={() => {
                           setDestOpen(true);
                           setPickupOpen(false);
                         }}
                       >
-                        <Hotel size={16} color="#10b981" />
+                        <Hotel size={18} color="#059669" />
                         <input
                           type="text"
                           value={destQuery}
@@ -518,18 +529,18 @@ export default function HeroBookingWidget() {
                       </div>
 
                       {destOpen && (
-                        <div className="sky-dropdown-menu">
+                        <div className="turna-dropdown-menu">
                           {filteredDestinations.map((d) => (
                             <div
                               key={d.id}
-                              className="sky-dropdown-item"
+                              className="turna-dropdown-item"
                               onClick={() => {
                                 setDestination(d);
                                 setDestQuery(d.name);
                                 setDestOpen(false);
                               }}
                             >
-                              <Hotel size={14} color="#10b981" />
+                              <Hotel size={16} color="#059669" />
                               <div>
                                 <strong>{d.name}</strong>
                                 <small>{d.district ? `${d.district}, ${d.city}` : d.city}</small>
@@ -540,10 +551,10 @@ export default function HeroBookingWidget() {
                       )}
                     </div>
 
-                    <div className="sky-form-group">
+                    <div className="turna-form-group">
                       <label>TRANSFER TARİHİ VE SAATİ</label>
-                      <div className="sky-input-box">
-                        <Calendar size={16} color="#f59e0b" />
+                      <div className="turna-input-box">
+                        <Calendar size={18} color="#f59e0b" />
                         <input
                           type="datetime-local"
                           value={datetime}
@@ -553,43 +564,23 @@ export default function HeroBookingWidget() {
                       </div>
                     </div>
 
-                    <div className="sky-form-group">
-                      <label>YOLCU VE BAGAJ KAPASİTESİ</label>
-                      <div className="sky-pax-row">
-                        <div className="sky-pax-box">
-                          <span>Yolcu:</span>
-                          <div className="sky-counter">
-                            <button
-                              type="button"
-                              onClick={() => setPax(Math.max(1, pax - 1))}
-                            >
-                              -
-                            </button>
+                    <div className="turna-form-group">
+                      <label>YOLCU VE BAGAJ SAYISI</label>
+                      <div className="turna-pax-grid">
+                        <div className="turna-counter-box">
+                          <span>Yolcu Sayısı:</span>
+                          <div className="turna-counter">
+                            <button type="button" onClick={() => setPax(Math.max(1, pax - 1))}>-</button>
                             <b>{pax}</b>
-                            <button
-                              type="button"
-                              onClick={() => setPax(Math.min(16, pax + 1))}
-                            >
-                              +
-                            </button>
+                            <button type="button" onClick={() => setPax(Math.min(16, pax + 1))}>+</button>
                           </div>
                         </div>
-                        <div className="sky-pax-box">
-                          <span>Bagaj:</span>
-                          <div className="sky-counter">
-                            <button
-                              type="button"
-                              onClick={() => setLuggage(Math.max(0, luggage - 1))}
-                            >
-                              -
-                            </button>
+                        <div className="turna-counter-box">
+                          <span>Bagaj Sayısı:</span>
+                          <div className="turna-counter">
+                            <button type="button" onClick={() => setLuggage(Math.max(0, luggage - 1))}>-</button>
                             <b>{luggage}</b>
-                            <button
-                              type="button"
-                              onClick={() => setLuggage(Math.min(16, luggage + 1))}
-                            >
-                              +
-                            </button>
+                            <button type="button" onClick={() => setLuggage(Math.min(16, luggage + 1))}>+</button>
                           </div>
                         </div>
                       </div>
@@ -597,7 +588,7 @@ export default function HeroBookingWidget() {
 
                     <button
                       type="button"
-                      className="sky-submit-btn"
+                      className="turna-primary-btn"
                       onClick={handleStartBooking}
                     >
                       <span>VIP Araçları ve Fiyatları Gör</span>
@@ -607,19 +598,15 @@ export default function HeroBookingWidget() {
                 </div>
               )}
 
-              {/* -------------------------------------------------------------
-                  STEP 1: VEHICLE SELECTION (IN-PLACE)
-                 ------------------------------------------------------------- */}
+              {/* STEP 1: VEHICLE SELECTION */}
               {drawerStep === 'VEHICLES' && (
-                <div className="sky-drawer-body">
-                  {/* Route Summary Tag */}
-                  <div className="sky-in-sheet-route-tag">
+                <div className="turna-drawer-body">
+                  <div className="turna-route-pill-summary">
                     <span>{pickup?.name?.split('(')[0]?.trim()} ➔ {destination?.name?.split('(')[0]?.trim()}</span>
                     <small>~{durationMin} dk · {distanceKm} km</small>
                   </div>
 
-                  {/* Filter Pills */}
-                  <div className="sky-filter-chips" style={{ marginBottom: '12px' }}>
+                  <div className="turna-filter-chips">
                     {[
                       { id: 'ALL', label: 'Tümü' },
                       { id: 'MINIVAN', label: 'VIP Minivan' },
@@ -629,7 +616,7 @@ export default function HeroBookingWidget() {
                       <button
                         key={c.id}
                         type="button"
-                        className={`sky-filter-chip ${vehicleFilter === c.id ? 'active' : ''}`}
+                        className={`turna-chip ${vehicleFilter === c.id ? 'active' : ''}`}
                         onClick={() => setVehicleFilter(c.id)}
                       >
                         {c.label}
@@ -637,8 +624,7 @@ export default function HeroBookingWidget() {
                     ))}
                   </div>
 
-                  {/* Vehicles List */}
-                  <div className="sky-vehicle-cards">
+                  <div className="turna-vehicle-list">
                     {filteredFleet.map((v) => {
                       const isSelected = v.id === selectedVehicleId;
                       const baseFare = v.baseOpeningRate + (distanceKm * v.baseRateKm);
@@ -647,34 +633,30 @@ export default function HeroBookingWidget() {
                       return (
                         <div
                           key={v.id}
-                          className={`sky-vehicle-card ${isSelected ? 'selected' : ''}`}
+                          className={`turna-vehicle-card ${isSelected ? 'selected' : ''}`}
                           onClick={() => handleSelectVehicle(v.id)}
                         >
-                          <div className="sky-vehicle-card__top">
-                            <div className="sky-vehicle-title-wrap">
-                              <h4 className="sky-vehicle-name">{v.name}</h4>
-                              <span className="sky-vehicle-class-tag">{v.class}</span>
+                          <div className="turna-vehicle-card__top">
+                            <div>
+                              <h4 className="turna-vehicle-name">{v.name}</h4>
+                              <span className="turna-vehicle-class">{v.class}</span>
                             </div>
-                            <span className="sky-price-val">{fareFormatted}</span>
+                            <span className="turna-vehicle-price">{fareFormatted}</span>
                           </div>
 
-                          <div className="sky-vehicle-card__body">
-                            <div className="sky-vehicle-image-wrap">
+                          <div className="turna-vehicle-card__body">
+                            <div className="turna-vehicle-img-wrap">
                               <img src={v.image} alt={v.name} loading="lazy" />
                             </div>
-                            <div className="sky-vehicle-details">
-                              <div className="sky-vehicle-specs-grid">
-                                <span className="sky-spec-item"><Users size={12} /> {v.seats} Kişi</span>
-                                <span className="sky-spec-item"><Briefcase size={12} /> {v.luggage} Valiz</span>
-                                <span className="sky-spec-item"><Wifi size={12} /> Wi-Fi</span>
+                            <div className="turna-vehicle-meta">
+                              <div className="turna-specs-wrap">
+                                <span><Users size={13} /> {v.seats} Kişi</span>
+                                <span><Briefcase size={13} /> {v.luggage} Valiz</span>
+                                <span><Wifi size={13} /> Wi-Fi</span>
                               </div>
-                              <button
-                                type="button"
-                                className="sky-select-btn"
-                                style={{ width: '100%', marginTop: '8px', justifyContent: 'center' }}
-                              >
+                              <button type="button" className="turna-select-btn">
                                 <span>Bu Aracı Seç</span>
-                                <ChevronRight size={15} />
+                                <ChevronRight size={16} />
                               </button>
                             </div>
                           </div>
@@ -685,16 +667,14 @@ export default function HeroBookingWidget() {
                 </div>
               )}
 
-              {/* -------------------------------------------------------------
-                  STEP 2: AMENITIES & EXTRAS (IN-PLACE)
-                 ------------------------------------------------------------- */}
+              {/* STEP 2: AMENITIES */}
               {drawerStep === 'AMENITIES' && (
-                <div className="sky-drawer-body">
-                  <div className="sky-in-sheet-route-tag">
+                <div className="turna-drawer-body">
+                  <div className="turna-route-pill-summary">
                     <span>Tahsis Aracı: <strong>{selectedVehicleObj.name}</strong></span>
                   </div>
 
-                  <div className="sky-amenities-grid">
+                  <div className="turna-amenities-list">
                     {amenitiesList.map((am) => {
                       const current = selectedAmenities[am.id] || { selected: false, count: 0 };
                       const isChecked = current.selected || am.checkedByDefault;
@@ -702,42 +682,29 @@ export default function HeroBookingWidget() {
                       return (
                         <div
                           key={am.id}
-                          className={`sky-amenity-card ${isChecked ? 'active' : ''}`}
+                          className={`turna-amenity-card ${isChecked ? 'active' : ''}`}
                           onClick={() => toggleAmenity(am.id)}
                         >
-                          <div className="sky-amenity-checkbox">
-                            {isChecked && <Check size={13} strokeWidth={3} />}
+                          <div className="turna-amenity-checkbox">
+                            {isChecked && <Check size={14} strokeWidth={3} />}
                           </div>
 
-                          <div className="sky-amenity-info">
-                            <div className="sky-amenity-title-row">
-                              <strong className="sky-amenity-title">{am.title}</strong>
+                          <div className="turna-amenity-info">
+                            <div className="turna-amenity-head">
+                              <strong>{am.title}</strong>
                               {am.isFree ? (
-                                <span className="sky-amenity-tag free">Dahil</span>
+                                <span className="turna-tag free">Dahil</span>
                               ) : (
-                                <span className="sky-amenity-tag price">+{formatMoney(am.priceTRY)}</span>
+                                <span className="turna-tag price">+{formatMoney(am.priceTRY)}</span>
                               )}
                             </div>
-                            <p className="sky-amenity-desc">{am.subtitle}</p>
+                            <p>{am.subtitle}</p>
 
                             {am.hasCount && (
-                              <div
-                                className="sky-counter-wrap"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <button
-                                  type="button"
-                                  onClick={() => updateAmenityCount(am.id, (current.count || 0) - 1)}
-                                >
-                                  -
-                                </button>
+                              <div className="turna-counter-inline" onClick={(e) => e.stopPropagation()}>
+                                <button type="button" onClick={() => updateAmenityCount(am.id, (current.count || 0) - 1)}>-</button>
                                 <b>{current.count || 1} Adet</b>
-                                <button
-                                  type="button"
-                                  onClick={() => updateAmenityCount(am.id, (current.count || 0) + 1)}
-                                >
-                                  +
-                                </button>
+                                <button type="button" onClick={() => updateAmenityCount(am.id, (current.count || 0) + 1)}>+</button>
                               </div>
                             )}
                           </div>
@@ -746,36 +713,33 @@ export default function HeroBookingWidget() {
                     })}
                   </div>
 
-                  {/* Bottom Price Summary & Next Button */}
-                  <div className="sky-drawer-footer-actions">
+                  <div className="turna-footer-action-row">
                     <div>
-                      <span className="sky-price-label">Her Şey Dahil Tutar</span>
-                      <strong className="sky-grand-price">{formatMoney(prices.grandTotalTRY || prices.total)}</strong>
+                      <span className="turna-price-sub">Toplam Tutar:</span>
+                      <strong className="turna-price-main">{formatMoney(prices.grandTotalTRY || prices.total)}</strong>
                     </div>
                     <button
                       type="button"
-                      className="sky-submit-btn"
-                      style={{ margin: 0, padding: '12px 20px' }}
+                      className="turna-primary-btn"
+                      style={{ width: 'auto', padding: '12px 24px' }}
                       onClick={() => setDrawerStep('PASSENGER')}
                     >
                       <span>Yolcu Bilgilerine Geç</span>
-                      <ChevronRight size={16} />
+                      <ChevronRight size={18} />
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* -------------------------------------------------------------
-                  STEP 3: PASSENGER & PAYMENT (IN-PLACE)
-                 ------------------------------------------------------------- */}
+              {/* STEP 3: PASSENGER */}
               {drawerStep === 'PASSENGER' && (
-                <div className="sky-drawer-body">
-                  <form onSubmit={handleConfirmReservation} className="sky-passenger-form">
-                    <div className="sky-form-row-2">
-                      <div className="sky-form-group">
+                <div className="turna-drawer-body">
+                  <form onSubmit={handleConfirmReservation} className="turna-passenger-form">
+                    <div className="turna-form-row-2">
+                      <div className="turna-form-group">
                         <label>ADINIZ *</label>
-                        <div className="sky-input-box">
-                          <User size={15} color="#64748b" />
+                        <div className="turna-input-box">
+                          <User size={16} color="#64748b" />
                           <input
                             type="text"
                             required
@@ -785,10 +749,10 @@ export default function HeroBookingWidget() {
                           />
                         </div>
                       </div>
-                      <div className="sky-form-group">
+                      <div className="turna-form-group">
                         <label>SOYADINIZ *</label>
-                        <div className="sky-input-box">
-                          <User size={15} color="#64748b" />
+                        <div className="turna-input-box">
+                          <User size={16} color="#64748b" />
                           <input
                             type="text"
                             required
@@ -800,11 +764,11 @@ export default function HeroBookingWidget() {
                       </div>
                     </div>
 
-                    <div className="sky-form-row-2">
-                      <div className="sky-form-group">
+                    <div className="turna-form-row-2">
+                      <div className="turna-form-group">
                         <label>E-POSTA ADRESİ *</label>
-                        <div className="sky-input-box">
-                          <Mail size={15} color="#64748b" />
+                        <div className="turna-input-box">
+                          <Mail size={16} color="#64748b" />
                           <input
                             type="email"
                             required
@@ -814,10 +778,10 @@ export default function HeroBookingWidget() {
                           />
                         </div>
                       </div>
-                      <div className="sky-form-group">
+                      <div className="turna-form-group">
                         <label>TELEFON / WHATSAPP *</label>
-                        <div className="sky-input-box">
-                          <Phone size={15} color="#64748b" />
+                        <div className="turna-input-box">
+                          <Phone size={16} color="#64748b" />
                           <input
                             type="tel"
                             required
@@ -829,47 +793,46 @@ export default function HeroBookingWidget() {
                       </div>
                     </div>
 
-                    <div className="sky-form-group">
-                      <label>UÇUŞ KODU (CANLI RADAR İÇİN / OPSİYONEL)</label>
-                      <div className="sky-input-box">
-                        <FileText size={15} color="#64748b" />
+                    <div className="turna-form-group">
+                      <label>UÇUŞ NUMARASI (CANLI RADAR İÇİN / OPSİYONEL)</label>
+                      <div className="turna-input-box">
+                        <FileText size={16} color="#64748b" />
                         <input
                           type="text"
                           value={passenger.flightNumber || ''}
                           onChange={(e) => setPassenger({ ...passenger, flightNumber: e.target.value })}
-                          placeholder="Örn: TK 1980"
+                          placeholder="Örn: TK 1980 veya PC 2210"
                         />
                       </div>
                     </div>
 
-                    {/* Payment Types */}
-                    <div className="sky-form-group">
-                      <label>ÖDEME ŞEKLİ</label>
-                      <div className="sky-payment-grid">
-                        <label className={`sky-payment-option ${passenger.paymentMethod === 'cash' ? 'active' : ''}`}>
+                    <div className="turna-form-group">
+                      <label>ÖDEME TÜRÜ</label>
+                      <div className="turna-payment-row">
+                        <label className={`turna-payment-card ${passenger.paymentMethod === 'cash' ? 'active' : ''}`}>
                           <input
                             type="radio"
-                            name="paym"
+                            name="pm"
                             value="cash"
                             checked={passenger.paymentMethod === 'cash'}
                             onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
                           />
-                          <Banknote size={16} />
+                          <Banknote size={18} color="#059669" />
                           <div>
                             <strong>Araçta Nakit / Kredi Kartı</strong>
                             <small>Şoföre seyahat sonunda ödeme</small>
                           </div>
                         </label>
 
-                        <label className={`sky-payment-option ${passenger.paymentMethod === 'online' ? 'active' : ''}`}>
+                        <label className={`turna-payment-card ${passenger.paymentMethod === 'online' ? 'active' : ''}`}>
                           <input
                             type="radio"
-                            name="paym"
+                            name="pm"
                             value="online"
                             checked={passenger.paymentMethod === 'online'}
                             onChange={(e) => setPassenger({ ...passenger, paymentMethod: e.target.value })}
                           />
-                          <CreditCard size={16} />
+                          <CreditCard size={18} color="#0b4de0" />
                           <div>
                             <strong>Online Güvenli Ödeme</strong>
                             <small>3D Secure / Masterpass</small>
@@ -880,7 +843,7 @@ export default function HeroBookingWidget() {
 
                     <button
                       type="submit"
-                      className="sky-submit-btn"
+                      className="turna-primary-btn"
                       disabled={submitting}
                     >
                       <Lock size={16} />
@@ -890,31 +853,29 @@ export default function HeroBookingWidget() {
                 </div>
               )}
 
-              {/* -------------------------------------------------------------
-                  STEP 4: CONFIRMATION & DIGITAL BOARDING PASS (IN-PLACE)
-                 ------------------------------------------------------------- */}
+              {/* STEP 4: CONFIRMATION */}
               {drawerStep === 'CONFIRMATION' && (
-                <div className="sky-drawer-body" style={{ textAlign: 'center', padding: '16px 8px' }}>
+                <div className="turna-drawer-body" style={{ textAlign: 'center', padding: '16px 8px' }}>
                   <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#ecfdf5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
                     <Check size={32} strokeWidth={3} />
                   </div>
 
-                  <h3 style={{ fontSize: '19px', fontWeight: 800, margin: '0 0 6px', color: '#0f172a' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 6px', color: '#0f172a' }}>
                     Rezervasyonunuz Başarıyla Alındı!
                   </h3>
-                  <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 18px' }}>
-                    VIP aracınız adınıza tahsis edildi. Detaylar SMS ve WhatsApp ile iletilmiştir.
+                  <p style={{ fontSize: '13.5px', color: '#64748b', margin: '0 0 18px' }}>
+                    VIP aracınız adınıza tahsis edildi. Kupon detayları SMS ve WhatsApp ile iletilmiştir.
                   </p>
 
                   <div style={{ background: '#f8fafc', border: '1.5px dashed #cbd5e1', borderRadius: '16px', padding: '16px', marginBottom: '18px', textAlign: 'left' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                       <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 700 }}>REZERVASYON KODU</span>
-                      <strong style={{ fontSize: '16px', color: '#0284c7', fontFamily: 'monospace' }}>
+                      <strong style={{ fontSize: '17px', color: '#0b4de0', fontFamily: 'monospace' }}>
                         {confirmedBooking?.code || 'SDRV-VIP'}
                       </strong>
                     </div>
 
-                    <div style={{ fontSize: '13px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ fontSize: '13.5px', color: '#334155', display: 'flex', flexDirection: 'column', gap: '5px' }}>
                       <div>🛫 <b>Kalkış:</b> {pickup?.name}</div>
                       <div>🏨 <b>Varış:</b> {destination?.name}</div>
                       <div>🚘 <b>Araç:</b> {selectedVehicleObj.name}</div>
@@ -925,7 +886,7 @@ export default function HeroBookingWidget() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <button
                       type="button"
-                      className="sky-submit-btn"
+                      className="turna-primary-btn"
                       onClick={() => {
                         setSearchDrawerOpen(false);
                         navigate('/takip');
@@ -953,38 +914,40 @@ export default function HeroBookingWidget() {
 
         {/* Why SecureDrive Modal */}
         {whyModalOpen && (
-          <div className="sky-search-drawer-backdrop" onClick={() => setWhyModalOpen(false)}>
-            <div className="sky-why-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="sky-drawer-header">
-                <h3>Neden SecureDrive VIP?</h3>
+          <div className="turna-drawer-backdrop" onClick={() => setWhyModalOpen(false)}>
+            <div className="turna-drawer" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
+              <div className="turna-drawer-header">
+                <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>Neden SecureDrive VIP?</h3>
                 <button
                   type="button"
-                  className="sky-drawer-close"
+                  className="turna-drawer-close"
                   onClick={() => setWhyModalOpen(false)}
                 >
                   <X size={18} />
                 </button>
               </div>
-              <div className="sky-why-content">
-                <div className="sky-why-item">
-                  <ShieldCheck size={24} color="#0284c7" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '16px 0' }}>
+                <div style={{ display: 'flex', gap: '12px', background: '#f8fafc', padding: '12px', borderRadius: '12px' }}>
+                  <ShieldCheck size={24} color="#0b4de0" />
                   <div>
-                    <strong>T.C. Ulaştırma Bakanlığı D2 Yetki Belgesi</strong>
-                    <p>Tüm filomuz ve şoförlerimiz resmi lisanslı, ticari ve protokol taşımacılığına tam yetkilidir.</p>
+                    <strong style={{ display: 'block', fontSize: '14px', color: '#0f172a', marginBottom: '2px' }}>T.C. Ulaştırma Bakanlığı D2 Belgesi</strong>
+                    <p style={{ margin: 0, fontSize: '12.5px', color: '#64748b', lineHeight: 1.4 }}>Tüm araçlarımız ve şoförlerimiz resmi lisanslı, ticari ve protokol taşımacılığına tam yetkilidir.</p>
                   </div>
                 </div>
-                <div className="sky-why-item">
+
+                <div style={{ display: 'flex', gap: '12px', background: '#f8fafc', padding: '12px', borderRadius: '12px' }}>
                   <Sparkles size={24} color="#f59e0b" />
                   <div>
-                    <strong>Sıfır Sürpriz Sabit Fiyat Garantisi</strong>
-                    <p>Köprü, otoyol, tünel, yakıt ve KDV dahil net fiyat. Ekstra hiçbir gizli ücret ödemezsiniz.</p>
+                    <strong style={{ display: 'block', fontSize: '14px', color: '#0f172a', marginBottom: '2px' }}>Sıfır Sürpriz Sabit Fiyat Garantisi</strong>
+                    <p style={{ margin: 0, fontSize: '12.5px', color: '#64748b', lineHeight: 1.4 }}>Köprü, otoyol, tünel, yakıt ve KDV dahil net fiyat. Ekstra hiçbir gizli ücret ödemezsiniz.</p>
                   </div>
                 </div>
-                <div className="sky-why-item">
-                  <Radar size={24} color="#10b981" />
+
+                <div style={{ display: 'flex', gap: '12px', background: '#f8fafc', padding: '12px', borderRadius: '12px' }}>
+                  <Clock size={24} color="#059669" />
                   <div>
-                    <strong>Canlı Radar & 60 Dk Ücretsiz Bekleme</strong>
-                    <p>Uçağınız erken inse veya rötar yapsa da şoförünüz canlı radarla takip eder ve sizi kapıda bekler.</p>
+                    <strong style={{ display: 'block', fontSize: '14px', color: '#0f172a', marginBottom: '2px' }}>60 Dk Ücretsiz Uçuş Rötar Bekleme</strong>
+                    <p style={{ margin: 0, fontSize: '12.5px', color: '#64748b', lineHeight: 1.4 }}>Uçağınız erken inse veya rötar yapsa da şoförünüz canlı radarla takip eder ve sizi kapıda bekler.</p>
                   </div>
                 </div>
               </div>
@@ -993,59 +956,46 @@ export default function HeroBookingWidget() {
         )}
       </div>
 
-      {/* DROPS SECTION */}
-      <section className="sky-drops-section" id="drops-section">
-        <div className="sky-hero-container">
-          <div className="sky-drops-head">
+      {/* POPÜLER VIP ROTALAR (DROPS) */}
+      <section className="turna-deals-section" id="drops-section">
+        <div className="turna-hero-container">
+          <div className="turna-deals-head">
             <div>
-              <div className="sky-drops-badge-row">
-                <h2 className="sky-drops-title">DROPS</h2>
-                <button
-                  type="button"
-                  className="sky-drops-arrow-btn"
-                  onClick={() => {
-                    setDrawerStep('VEHICLES');
-                    setSearchDrawerOpen(true);
-                  }}
-                  title="Tüm Rotaları Gör"
-                >
-                  <ArrowRight size={16} />
-                </button>
+              <div className="turna-badge-row">
+                <span className="turna-section-badge">GÜNÜN FIRSATLARI</span>
               </div>
-              <h3 className="sky-drops-headline">
-                En az %20 oranında avantajlı VIP transfer fiyatları
-              </h3>
-              <p className="sky-drops-sub">Bugünün tercihlerine göz atalım.</p>
+              <h2 className="turna-deals-title">En Popüler Avantajlı VIP Rotalar</h2>
+              <p className="turna-deals-sub">%20'ye varan indirimli sabit fiyatlı VIP havalimanı ve şehirlerarası transferler.</p>
             </div>
           </div>
 
-          <div className="sky-drops-carousel">
+          <div className="turna-deals-grid">
             {DROPS_ROUTES.map((drop) => (
               <div
                 key={drop.id}
-                className="sky-drop-card"
+                className="turna-deal-card"
                 onClick={() => handleSelectDrop(drop)}
               >
-                <div className="sky-drop-card__img-wrap">
+                <div className="turna-deal-img-wrap">
                   <img src={drop.image} alt={drop.title} loading="lazy" />
-                  <div className="sky-drop-pill">
+                  <div className="turna-deal-drop-pill">
                     <TrendingDown size={13} />
                     <span>{drop.dropAmount} TL indirim</span>
                   </div>
                 </div>
 
-                <div className="sky-drop-card__body">
-                  <h4 className="sky-drop-card__title">{drop.title}</h4>
-                  <p className="sky-drop-card__sub">{drop.subtitle}</p>
+                <div className="turna-deal-body">
+                  <h4 className="turna-deal-title">{drop.title}</h4>
+                  <p className="turna-deal-sub">{drop.subtitle}</p>
 
-                  <div className="sky-drop-card__price-row">
+                  <div className="turna-deal-price-row">
                     <div>
-                      <span className="sky-drop-old-price">{drop.originalPrice} ₺</span>
-                      <strong className="sky-drop-new-price">{drop.dropPrice} ₺</strong>
+                      <span className="turna-deal-old">{drop.originalPrice} ₺</span>
+                      <strong className="turna-deal-new">{drop.dropPrice} ₺</strong>
                     </div>
-                    <button type="button" className="sky-drop-select-btn">
+                    <button type="button" className="turna-deal-btn">
                       <span>Seç</span>
-                      <ChevronRight size={14} />
+                      <ChevronRight size={15} />
                     </button>
                   </div>
                 </div>

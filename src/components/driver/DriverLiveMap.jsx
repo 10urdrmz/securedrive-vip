@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import { Navigation, Compass, MapPin, Gauge, Maximize2, Minimize2, ExternalLink, User, Phone, MessageCircle } from 'lucide-react';
-import { addLocationListener, removeLocationListener, getLastKnownLocation } from '../../lib/locationService';
+import { Navigation, Compass, MapPin, Gauge, Maximize2, Minimize2, ExternalLink, User, Phone, MessageCircle, Radio } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { addLocationListener, removeLocationListener, getLastKnownLocation, GPS_REALTIME_CHANNEL } from '../../lib/locationService';
 
 const COORDS = {
   IST: { pickup: [41.2753, 28.7519], label: 'İstanbul Havalimanı (IST)' },
@@ -48,9 +49,10 @@ export default function DriverLiveMap({ activeTask }) {
   const taskLayersRef = useRef([]);
 
   const [location, setLocation] = useState(() => getLastKnownLocation());
+  const [passengerLiveLocation, setPassengerLiveLocation] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Canlı GPS konumunu dinle
+  // 1. Şoförün kendi canlı GPS konumunu dinle
   useEffect(() => {
     const handleUpdate = (loc) => {
       if (loc && loc.lat && loc.lng) {
@@ -64,7 +66,53 @@ export default function DriverLiveMap({ activeTask }) {
     };
   }, []);
 
-  // Haritayı başlat
+  // 2. Supabase Realtime: Atanmış yolcunun gerçek zamanlı GPS konumunu dinle
+  useEffect(() => {
+    if (!activeTask) return;
+
+    const channel = supabase
+      .channel(GPS_REALTIME_CHANNEL, {
+        config: { broadcast: { self: true } }
+      })
+      .on('broadcast', { event: 'passenger-location-update' }, (event) => {
+        const payload = event.payload;
+        if (payload?.lat && payload?.lng) {
+          const isMatch = (activeTask.code && payload.booking_code === activeTask.code) ||
+                          (activeTask.passenger_phone && payload.phone && payload.phone.replace(/[^0-9]/g, '') === activeTask.passenger_phone.replace(/[^0-9]/g, '')) ||
+                          (activeTask.passenger_name && payload.passenger_name && payload.passenger_name.toLowerCase().includes(activeTask.passenger_name.toLowerCase().split(' ')[0]));
+
+          if (isMatch) {
+            setPassengerLiveLocation(payload);
+          }
+        }
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          // Açılışta yolcunun GPS'ini iste
+          channel.send({
+            type: 'broadcast',
+            event: 'request-passenger-location',
+            payload: { booking_code: activeTask.code }
+          }).catch(() => {});
+        }
+      });
+
+    // Her 12 saniyede bir yolcu konumunu yokla
+    const interval = setInterval(() => {
+      channel.send({
+        type: 'broadcast',
+        event: 'request-passenger-location',
+        payload: { booking_code: activeTask.code }
+      }).catch(() => {});
+    }, 12000);
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
+  }, [activeTask?.code, activeTask?.passenger_phone, activeTask?.passenger_name]);
+
+  // 3. Haritayı başlat
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -93,7 +141,7 @@ export default function DriverLiveMap({ activeTask }) {
     return () => clearTimeout(timer);
   }, [isExpanded]);
 
-  // Şoförün Canlı Marker'ını Güncelle
+  // 4. Şoförün Canlı Araç Marker'ını Güncelle
   useEffect(() => {
     if (!mapInstanceRef.current || !location?.lat || !location?.lng) return;
     const map = mapInstanceRef.current;
@@ -122,7 +170,7 @@ export default function DriverLiveMap({ activeTask }) {
     }
   }, [location]);
 
-  // Aktif Görev & Yolcu Konumunu Çiz
+  // 5. Aktif Görev, Canlı Yolcu GPS'i & Varış Rota Çizgisi
   useEffect(() => {
     if (!mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
@@ -135,14 +183,19 @@ export default function DriverLiveMap({ activeTask }) {
     const taskCoords = resolveTaskLocations(activeTask);
     if (!taskCoords) return;
 
-    // Yolcu Karşılama Noktası İkonu
+    // Yolcunun GERÇEK Canlı GPS Koordinatları veya Biniş Noktası
+    const isLiveGps = !!(passengerLiveLocation?.lat && passengerLiveLocation?.lng);
+    const passengerCoord = isLiveGps
+      ? [passengerLiveLocation.lat, passengerLiveLocation.lng]
+      : taskCoords.pickup;
+
     const passengerHtml = `
       <div class="passenger-pin-badge">
-        <div class="passenger-pulse-ring"></div>
-        <div class="passenger-icon">👤</div>
-        <div class="passenger-tag">
-          <strong>Yolcu</strong>
-          <small>${activeTask.passenger_name?.split(' ')[0] || 'VIP Yolcu'}</small>
+        <div class="passenger-pulse-ring" style="border-color:${isLiveGps ? '#2563eb' : '#0284c7'};"></div>
+        <div class="passenger-icon" style="background:${isLiveGps ? '#2563eb' : '#0284c7'};">👤</div>
+        <div class="passenger-tag" style="background:${isLiveGps ? 'rgba(37,99,235,0.95)' : 'rgba(15,23,42,0.92)'};">
+          <strong>${isLiveGps ? '📡 Canlı Yolcu' : 'Biniş Noktası'}</strong>
+          <small>${activeTask.passenger_name?.split(' ')[0] || 'Yolcu'}</small>
         </div>
       </div>
     `;
@@ -154,7 +207,7 @@ export default function DriverLiveMap({ activeTask }) {
       iconAnchor: [18, 18]
     });
 
-    // Varış Otel/Adres İkonu
+    // Varış Otel / Adres İkonu
     const dIcon = L.divIcon({
       className: 'custom-map-pin',
       html: '<div style="background:#10b981;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-size:11px;">🏨</div>',
@@ -162,31 +215,43 @@ export default function DriverLiveMap({ activeTask }) {
       iconAnchor: [13, 13]
     });
 
-    const pMarker = L.marker(taskCoords.pickup, { icon: pIcon })
+    const pMarker = L.marker(passengerCoord, { icon: pIcon, zIndexOffset: 950 })
       .addTo(map)
-      .bindPopup(`<b>VIP Yolcu:</b> ${activeTask.passenger_name}<br><b>Biniş:</b> ${activeTask.pickup_location}`);
+      .bindPopup(`
+        <b>VIP Yolcu:</b> ${activeTask.passenger_name}<br>
+        <b>Konum:</b> ${isLiveGps ? '📡 Yolcunun Canlı GPS Konumu' : activeTask.pickup_location}<br>
+        ${passengerLiveLocation?.updated_at ? `<small>Son sinyal: ${new Date(passengerLiveLocation.updated_at).toLocaleTimeString()}</small>` : ''}
+      `);
+
     const dMarker = L.marker(taskCoords.dest, { icon: dIcon })
       .addTo(map)
-      .bindPopup(`<b>Varış:</b> ${activeTask.destination_location}`);
+      .bindPopup(`<b>Varış Noktası:</b> ${activeTask.destination_location}`);
 
+    // Şoför -> Canlı Yolcu -> Varış Noktası Rota Çizgisi
     const points = location?.lat && location?.lng 
-      ? [[location.lat, location.lng], taskCoords.pickup, taskCoords.dest]
-      : [taskCoords.pickup, taskCoords.dest];
+      ? [[location.lat, location.lng], passengerCoord, taskCoords.dest]
+      : [passengerCoord, taskCoords.dest];
 
     const polyline = L.polyline(points, {
-      color: '#0284c7',
-      weight: 3.5,
-      opacity: 0.8,
+      color: isLiveGps ? '#2563eb' : '#0284c7',
+      weight: 4,
+      opacity: 0.85,
       dashArray: '8, 6'
     }).addTo(map);
 
     taskLayersRef.current.push(pMarker, dMarker, polyline);
-  }, [activeTask, location]);
+  }, [activeTask, location, passengerLiveLocation]);
 
   const taskCoords = resolveTaskLocations(activeTask);
-  const distanceToPassenger = (location?.lat && taskCoords?.pickup)
-    ? calculateDistanceKm(location.lat, location.lng, taskCoords.pickup[0], taskCoords.pickup[1])
+  const targetCoord = (passengerLiveLocation?.lat && passengerLiveLocation?.lng)
+    ? [passengerLiveLocation.lat, passengerLiveLocation.lng]
+    : taskCoords?.pickup;
+
+  const distanceToPassenger = (location?.lat && targetCoord)
+    ? calculateDistanceKm(location.lat, location.lng, targetCoord[0], targetCoord[1])
     : null;
+
+  const estimatedMins = distanceToPassenger !== null ? Math.max(1, Math.round((distanceToPassenger / 35) * 60)) : null;
 
   const handleCenterMyLocation = () => {
     if (mapInstanceRef.current && location?.lat && location?.lng) {
@@ -194,10 +259,22 @@ export default function DriverLiveMap({ activeTask }) {
     }
   };
 
+  const handleFocusPassenger = () => {
+    if (mapInstanceRef.current && targetCoord) {
+      mapInstanceRef.current.flyTo(targetCoord, 16, { duration: 1.2 });
+    }
+  };
+
   const openNativeNavigation = () => {
     if (!activeTask) return;
-    const dest = encodeURIComponent(activeTask.pickup_location || 'İstanbul Havalimanı');
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+    let url = '';
+    if (passengerLiveLocation?.lat && passengerLiveLocation?.lng) {
+      // Yolcunun GERÇEK Canlı GPS Koordinatlarına Navigasyon
+      url = `https://www.google.com/maps/dir/?api=1&destination=${passengerLiveLocation.lat},${passengerLiveLocation.lng}`;
+    } else {
+      const dest = encodeURIComponent(activeTask.pickup_location || 'İstanbul Havalimanı');
+      url = `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+    }
     window.open(url, '_blank');
   };
 
@@ -211,11 +288,18 @@ export default function DriverLiveMap({ activeTask }) {
         </div>
 
         <div className="driver-live-map-controls">
-          {location && (
-            <span className="driver-live-map-speed">
-              <Gauge size={13} />
-              <b>{location.speed || 0} km/s</b>
+          {passengerLiveLocation ? (
+            <span className="driver-live-map-speed" style={{ background: '#eff6ff', borderColor: '#bfdbfe', color: '#1d4ed8' }}>
+              <Radio size={12} className="pulse-icon" />
+              <b>Yolcu Canlı</b>
             </span>
+          ) : (
+            location && (
+              <span className="driver-live-map-speed">
+                <Gauge size={13} />
+                <b>{location.speed || 0} km/s</b>
+              </span>
+            )
           )}
 
           <button
@@ -226,6 +310,18 @@ export default function DriverLiveMap({ activeTask }) {
           >
             <Compass size={15} />
           </button>
+
+          {activeTask && (
+            <button
+              type="button"
+              className="driver-map-btn"
+              onClick={handleFocusPassenger}
+              title="Yolcuya Odaklan"
+              style={{ color: '#2563eb' }}
+            >
+              <User size={15} />
+            </button>
+          )}
 
           <button
             type="button"
@@ -250,7 +346,8 @@ export default function DriverLiveMap({ activeTask }) {
           <span className="driver-map-stat-dot" />
           {activeTask ? (
             <span>
-              👤 <b>{activeTask.passenger_name}</b> {distanceToPassenger !== null ? `· Yolcuya ${distanceToPassenger} km` : ''}
+              👤 <b>{activeTask.passenger_name}</b> {passengerLiveLocation ? '(📡 Canlı GPS)' : '(Biniş Noktası)'}
+              {distanceToPassenger !== null ? ` · Yolcuya ${distanceToPassenger} km (~${estimatedMins} dk)` : ''}
             </span>
           ) : (
             <span>
@@ -269,7 +366,7 @@ export default function DriverLiveMap({ activeTask }) {
               onClick={openNativeNavigation}
             >
               <ExternalLink size={12} />
-              <span>Yolcuya Git</span>
+              <span>{passengerLiveLocation ? 'Canlı Yolcuya Git' : 'Biniş Noktasına Git'}</span>
             </button>
           </div>
         )}

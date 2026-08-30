@@ -4,11 +4,16 @@ import { supabase } from './supabase';
 
 export const GPS_REALTIME_CHANNEL = 'driver-live-gps-channel';
 
-let activeWatchId = null;
+let activeDriverWatchId = null;
+let activePassengerWatchId = null;
 let broadcastChannel = null;
+
 let lastBroadcastTime = 0;
-let lastKnownLocation = null;
-const listeners = new Set();
+let lastKnownDriverLocation = null;
+let lastKnownPassengerLocation = null;
+
+const driverListeners = new Set();
+const passengerListeners = new Set();
 const THROTTLE_MS = 2000; // 2 saniyede bir konum yayını
 
 /**
@@ -16,19 +21,58 @@ const THROTTLE_MS = 2000; // 2 saniyede bir konum yayını
  */
 export function addLocationListener(callback) {
   if (typeof callback === 'function') {
-    listeners.add(callback);
-    if (lastKnownLocation) {
-      callback(lastKnownLocation);
+    driverListeners.add(callback);
+    if (lastKnownDriverLocation) {
+      callback(lastKnownDriverLocation);
     }
   }
 }
 
 export function removeLocationListener(callback) {
-  listeners.delete(callback);
+  driverListeners.delete(callback);
 }
 
 export function getLastKnownLocation() {
-  return lastKnownLocation;
+  return lastKnownDriverLocation;
+}
+
+export function getLastKnownPassengerLocation() {
+  return lastKnownPassengerLocation;
+}
+
+function getOrCreateBroadcastChannel() {
+  if (!broadcastChannel) {
+    broadcastChannel = supabase.channel(GPS_REALTIME_CHANNEL, {
+      config: { broadcast: { self: true } }
+    });
+
+    // Yönetici veya Şoför anlık GPS ping'i attığında cevap ver
+    broadcastChannel.on('broadcast', { event: 'request-driver-locations' }, () => {
+      if (lastKnownDriverLocation && broadcastChannel) {
+        broadcastChannel.send({
+          type: 'broadcast',
+          event: 'location-update',
+          payload: lastKnownDriverLocation
+        }).catch(() => {});
+      }
+    });
+
+    // Şoför yolcunun anlık GPS'ini istediğinde yolcu cihazı cevap verir
+    broadcastChannel.on('broadcast', { event: 'request-passenger-location' }, () => {
+      if (lastKnownPassengerLocation && broadcastChannel) {
+        broadcastChannel.send({
+          type: 'broadcast',
+          event: 'passenger-location-update',
+          payload: lastKnownPassengerLocation
+        }).catch(() => {});
+      }
+    });
+
+    broadcastChannel.subscribe((status) => {
+      console.log('[Location] Realtime kanal durumu:', status);
+    });
+  }
+  return broadcastChannel;
 }
 
 /**
@@ -56,47 +100,23 @@ export async function requestLocationPermission() {
 }
 
 /**
- * Şoförün canlı GPS konumunu izlemeye başlar ve Supabase Realtime kanalından yayınlar
- * Tüm sayfalarda arka planda çalışır.
+ * ==============================================================================
+ * 1. ŞOFÖR CANLI GPS İZLEME SERVİSİ
+ * ==============================================================================
  */
 export async function startDriverLocationTracking(driver, onLocationUpdate) {
   if (!driver) return null;
 
   if (typeof onLocationUpdate === 'function') {
-    listeners.add(onLocationUpdate);
+    driverListeners.add(onLocationUpdate);
   }
 
-  // Zaten aktif bir izleme varsa tekrar başlatma
-  if (activeWatchId !== null) {
-    return activeWatchId;
+  if (activeDriverWatchId !== null) {
+    return activeDriverWatchId;
   }
 
-  const hasPermission = await requestLocationPermission();
-  if (!hasPermission) {
-    console.warn('[Location] Konum izni verilmedi.');
-  }
-
-  // Supabase Realtime Kanalını Aç
-  if (!broadcastChannel) {
-    broadcastChannel = supabase.channel(GPS_REALTIME_CHANNEL, {
-      config: { broadcast: { self: true } }
-    });
-    
-    // Yönetici haritayı açtığında gelen anlık konum isteğine cevap ver
-    broadcastChannel.on('broadcast', { event: 'request-driver-locations' }, () => {
-      if (lastKnownLocation && broadcastChannel) {
-        broadcastChannel.send({
-          type: 'broadcast',
-          event: 'location-update',
-          payload: lastKnownLocation
-        }).catch(() => {});
-      }
-    });
-
-    broadcastChannel.subscribe((status) => {
-      console.log('[Location] Realtime kanal durumu:', status);
-    });
-  }
+  await requestLocationPermission();
+  const channel = getOrCreateBroadcastChannel();
 
   const handlePosition = async (position) => {
     if (!position?.coords) return;
@@ -117,119 +137,207 @@ export async function startDriverLocationTracking(driver, onLocationUpdate) {
       updated_at: new Date().toISOString()
     };
 
-    lastKnownLocation = locationData;
+    lastKnownDriverLocation = locationData;
 
-    // Tüm abone olan bileşenleri bilgilendir
-    listeners.forEach((fn) => {
+    driverListeners.forEach((fn) => {
       try {
         fn(locationData);
       } catch (e) {
-        console.warn('[Location] Listener callback error:', e);
+        console.warn('[Location] Driver listener error:', e);
       }
     });
 
-    // Supabase Realtime üzerinden anlık yayınla (Throttle 2sn)
     if (now - lastBroadcastTime > THROTTLE_MS) {
       lastBroadcastTime = now;
       try {
-        if (broadcastChannel) {
-          await broadcastChannel.send({
+        if (channel) {
+          await channel.send({
             type: 'broadcast',
             event: 'location-update',
             payload: locationData
           });
         }
 
-        // Supabase drivers tablosunu güncelle
         if (driver.id) {
           await supabase
             .from('drivers')
-            .update({
-              status: 'on_duty'
-            })
+            .update({ status: 'on_duty' })
             .eq('id', driver.id);
         }
       } catch (err) {
-        console.warn('[Location] Broadcast send error:', err);
+        console.warn('[Location] Driver broadcast error:', err);
       }
     }
   };
 
-  // 1. İlk anlık konumu hemen al ve gönder (hareket beklemeden)
+  // İlk konumu hemen al
   if (Capacitor.isNativePlatform()) {
-    try {
-      Geolocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 5000
-      }).then((pos) => {
-        if (pos) handlePosition(pos);
-      }).catch((e) => console.warn('[Location] Initial pos error:', e));
-    } catch (e) {
-      console.warn('[Location] Initial fetch error:', e);
-    }
+    Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 5000
+    }).then((pos) => {
+      if (pos) handlePosition(pos);
+    }).catch(() => {});
   } else if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
       handlePosition,
-      (err) => console.warn('[Location] Web initial pos error:', err.message),
+      () => {},
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }
 
-  // 2. Sürekli GPS Değişimlerini İzle (Watch)
+  // Sürekli GPS izle
   if (Capacitor.isNativePlatform()) {
     try {
-      activeWatchId = await Geolocation.watchPosition(
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 3000
-        },
+      activeDriverWatchId = await Geolocation.watchPosition(
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 },
         (position, err) => {
-          if (err) {
-            console.warn('[Location] Capacitor watch error:', err);
-            return;
-          }
-          if (position) handlePosition(position);
+          if (position && !err) handlePosition(position);
         }
       );
-      return activeWatchId;
+      return activeDriverWatchId;
     } catch (e) {
-      console.warn('[Location] Geolocation watch error:', e);
+      console.warn('[Location] Geolocation driver watch error:', e);
     }
   }
 
-  // Web fallback (HTML5 Geolocation API)
   if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
-    activeWatchId = navigator.geolocation.watchPosition(
+    activeDriverWatchId = navigator.geolocation.watchPosition(
       handlePosition,
-      (err) => console.warn('[Location] Web watch error:', err.message),
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 3000
-      }
+      () => {},
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
     );
   }
 
-  return activeWatchId;
+  return activeDriverWatchId;
+}
+
+export function stopDriverLocationTracking() {
+  if (activeDriverWatchId !== null) {
+    if (Capacitor.isNativePlatform() && typeof activeDriverWatchId === 'string') {
+      Geolocation.clearWatch({ id: activeDriverWatchId }).catch(() => {});
+    } else if (typeof navigator !== 'undefined' && 'geolocation' in navigator && typeof activeDriverWatchId === 'number') {
+      navigator.geolocation.clearWatch(activeDriverWatchId);
+    }
+    activeDriverWatchId = null;
+  }
 }
 
 /**
- * Konum izlemeyi durdurur
+ * ==============================================================================
+ * 2. YOLCU CANLI GPS İZLEME VE YAYIN SERVİSİ
+ * ==============================================================================
  */
-export function stopDriverLocationTracking() {
-  if (activeWatchId !== null) {
-    if (Capacitor.isNativePlatform() && typeof activeWatchId === 'string') {
-      Geolocation.clearWatch({ id: activeWatchId }).catch(() => {});
-    } else if (typeof navigator !== 'undefined' && 'geolocation' in navigator && typeof activeWatchId === 'number') {
-      navigator.geolocation.clearWatch(activeWatchId);
-    }
-    activeWatchId = null;
+let lastPassengerBroadcastTime = 0;
+
+export async function startPassengerLocationTracking(passenger, onLocationUpdate) {
+  if (!passenger) return null;
+
+  if (typeof onLocationUpdate === 'function') {
+    passengerListeners.add(onLocationUpdate);
   }
 
-  if (broadcastChannel) {
-    supabase.removeChannel(broadcastChannel);
-    broadcastChannel = null;
+  if (activePassengerWatchId !== null) {
+    return activePassengerWatchId;
+  }
+
+  await requestLocationPermission();
+  const channel = getOrCreateBroadcastChannel();
+
+  const handlePassengerPosition = async (position) => {
+    if (!position?.coords) return;
+
+    const { latitude, longitude, accuracy } = position.coords;
+    const now = Date.now();
+
+    const passengerData = {
+      booking_code: passenger.booking_code || passenger.code || '',
+      passenger_id: passenger.id || passenger.email || 'passenger',
+      passenger_name: passenger.full_name || passenger.passenger_name || 'VIP Yolcu',
+      phone: passenger.phone || passenger.passenger_phone || '',
+      lat: latitude,
+      lng: longitude,
+      accuracy: Math.round(accuracy || 5),
+      updated_at: new Date().toISOString()
+    };
+
+    lastKnownPassengerLocation = passengerData;
+
+    passengerListeners.forEach((fn) => {
+      try {
+        fn(passengerData);
+      } catch (e) {
+        console.warn('[Location] Passenger listener error:', e);
+      }
+    });
+
+    if (now - lastPassengerBroadcastTime > THROTTLE_MS) {
+      lastPassengerBroadcastTime = now;
+      try {
+        if (channel) {
+          await channel.send({
+            type: 'broadcast',
+            event: 'passenger-location-update',
+            payload: passengerData
+          });
+        }
+      } catch (err) {
+        console.warn('[Location] Passenger broadcast error:', err);
+      }
+    }
+  };
+
+  // İlk konumu anında al
+  if (Capacitor.isNativePlatform()) {
+    Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 5000
+    }).then((pos) => {
+      if (pos) handlePassengerPosition(pos);
+    }).catch(() => {});
+  } else if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      handlePassengerPosition,
+      () => {},
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  // Sürekli GPS izle
+  if (Capacitor.isNativePlatform()) {
+    try {
+      activePassengerWatchId = await Geolocation.watchPosition(
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 },
+        (position, err) => {
+          if (position && !err) handlePassengerPosition(position);
+        }
+      );
+      return activePassengerWatchId;
+    } catch (e) {
+      console.warn('[Location] Passenger watch error:', e);
+    }
+  }
+
+  if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+    activePassengerWatchId = navigator.geolocation.watchPosition(
+      handlePassengerPosition,
+      () => {},
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
+    );
+  }
+
+  return activePassengerWatchId;
+}
+
+export function stopPassengerLocationTracking() {
+  if (activePassengerWatchId !== null) {
+    if (Capacitor.isNativePlatform() && typeof activePassengerWatchId === 'string') {
+      Geolocation.clearWatch({ id: activePassengerWatchId }).catch(() => {});
+    } else if (typeof navigator !== 'undefined' && 'geolocation' in navigator && typeof activePassengerWatchId === 'number') {
+      navigator.geolocation.clearWatch(activePassengerWatchId);
+    }
+    activePassengerWatchId = null;
   }
 }

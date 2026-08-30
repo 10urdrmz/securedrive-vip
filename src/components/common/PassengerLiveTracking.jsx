@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Car, Navigation, Phone, MessageCircle, Clock, MapPin, Gauge, ShieldCheck, Compass, Maximize2, Minimize2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { GPS_REALTIME_CHANNEL } from '../../lib/locationService';
+import { GPS_REALTIME_CHANNEL, startPassengerLocationTracking, stopPassengerLocationTracking } from '../../lib/locationService';
 
 const COORDS = {
   IST: { pickup: [41.2753, 28.7519], label: 'İstanbul Havalimanı (IST)' },
@@ -56,20 +56,20 @@ export default function PassengerLiveTracking({ booking }) {
 
   const coords = resolveBookingCoords(booking);
 
-  // Yolcunun kendi cihazının GPS konumunu al (izin verilirse)
+  // Yolcunun kendi cihazının canlı GPS konumunu izle ve Şoföre yayınla
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if (pos?.coords) {
-            setPassengerGps([pos.coords.latitude, pos.coords.longitude]);
-          }
-        },
-        () => {},
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    }
-  }, []);
+    if (!booking) return;
+
+    const unwatch = startPassengerLocationTracking(booking, (pos) => {
+      if (pos?.lat && pos?.lng) {
+        setPassengerGps([pos.lat, pos.lng]);
+      }
+    });
+
+    return () => {
+      stopPassengerLocationTracking();
+    };
+  }, [booking?.code, booking?.passenger_phone]);
 
   // Supabase Realtime: Atanmış şoförün canlı GPS sinyalini dinle
   useEffect(() => {
